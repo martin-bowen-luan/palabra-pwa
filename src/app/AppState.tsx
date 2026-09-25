@@ -60,7 +60,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   const startSession = async (extraWords = 0) => {
     if (activeSession) return activeSession
-    const plan = buildDailyPlan(vocabulary, progress, settings.dailyNewWords + extraWords)
+    const plan = buildDailyPlan(vocabulary, progress, extraWords || settings.dailyNewWords)
     if (!plan.all.length) return undefined
     const session: ActiveSession = {
       id: 'active-session',
@@ -167,4 +167,3 @@ export function useAppState(): AppStateValue {
   if (!context) throw new Error('useAppState must be used inside AppStateProvider')
   return context
 }
-

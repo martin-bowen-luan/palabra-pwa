@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from './App'
@@ -9,6 +9,7 @@ const databaseNames: string[] = []
 const storageClients: PalabraStorage[] = []
 
 afterEach(async () => {
+  cleanup()
   document.documentElement.removeAttribute('data-theme')
   storageClients.splice(0).forEach((client) => client.close())
   await Promise.all(databaseNames.splice(0).map((name) => new Promise<void>((resolve, reject) => {
@@ -64,5 +65,41 @@ describe('Palabra app', () => {
     await user.click(await screen.findByRole('radio', { name: '深色' }))
     await waitFor(() => expect(document.documentElement.dataset.theme).toBe('dark'))
     await expect(storage.getSettings()).resolves.toMatchObject({ theme: 'dark' })
+  })
+
+  it('completes learning, choice and spelling steps through the result page', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp()
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+
+    for (const word of ['hola', 'adiós', 'gracias', 'por favor', 'sí']) {
+      expect(await screen.findByRole('heading', { name: word })).toBeInTheDocument()
+      await user.click(await screen.findByRole('button', { name: '点击查看释义' }))
+      await user.click(screen.getByRole('button', { name: '认识' }))
+    }
+
+    const answers = [
+      { mode: 'choice', value: '你好' },
+      { mode: 'spelling', value: 'adiós' },
+      { mode: 'choice', value: '谢谢' },
+      { mode: 'spelling', value: 'por favor' },
+      { mode: 'choice', value: '是；对' },
+    ]
+    for (const answer of answers) {
+      if (answer.mode === 'choice') {
+        await user.click(await screen.findByRole('button', { name: answer.value }))
+      } else {
+        await user.type(await screen.findByLabelText('西班牙语'), answer.value)
+        await user.click(screen.getByRole('button', { name: '检查答案' }))
+      }
+      expect(await screen.findByRole('status')).toHaveTextContent('正确')
+      await user.click(screen.getByRole('button', { name: '继续' }))
+    }
+
+    expect(await screen.findByRole('heading', { name: '100%' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '回到今日' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '回到今日' }))
+    await user.click(await screen.findByRole('button', { name: '再学 5 个' }))
+    await waitFor(async () => expect((await storage.getActiveSession())?.newWordIds).toHaveLength(5))
   })
 })
