@@ -22,4 +22,3 @@ export function ResultPage() {
     <button className={styles.primaryButton} onClick={() => navigate('/today')}>回到今日</button>
   </main>
 }
-

@@ -31,4 +31,3 @@ export function ProgressPage() {
     </>}
   </main>
 }
-

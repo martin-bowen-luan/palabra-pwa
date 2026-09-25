@@ -13,7 +13,8 @@ export function StudyPage() {
   const [answer, setAnswer] = useState('')
   const [feedback, setFeedback] = useState<{ correct: boolean; selected: string }>()
 
-  const word = activeSession ? vocabulary.find((item) => item.id === activeSession.wordIds[activeSession.currentIndex]) : undefined
+  const phaseWordIds = activeSession?.phase === 'learn' ? activeSession.newWordIds : activeSession?.wordIds
+  const word = activeSession && phaseWordIds ? vocabulary.find((item) => item.id === phaseWordIds[activeSession.currentIndex]) : undefined
   const mode = useMemo(() => {
     if (!activeSession) return 'choice'
     if (!settings.enableSpelling) return 'choice'
@@ -58,12 +59,13 @@ export function StudyPage() {
     if (finished) navigate('/result')
   }
 
-  const percent = ((activeSession.currentIndex + (activeSession.phase === 'quiz' ? 1 : 0)) / activeSession.wordIds.length) * 100
+  const phaseTotal = phaseWordIds?.length ?? 0
+  const percent = ((activeSession.currentIndex + (activeSession.phase === 'quiz' ? 1 : 0)) / phaseTotal) * 100
 
   return <main className={styles.studyPage}>
     <header className={styles.studyHeader}>
       <button className={styles.quietButton} onClick={() => void leave()}>结束</button>
-      <span>{activeSession.currentIndex + 1} / {activeSession.wordIds.length}</span>
+      <span>{activeSession.currentIndex + 1} / {phaseTotal}</span>
     </header>
     <div className={styles.studyProgress}><span style={{ width: `${percent}%` }} /></div>
 
@@ -118,4 +120,3 @@ export function StudyPage() {
     )}
   </main>
 }
-

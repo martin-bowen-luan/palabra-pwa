@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from './App'
 import { DEFAULT_SETTINGS, PalabraStorage } from './data/storage'
+import type { WordProgress } from './types'
 
 const databaseNames: string[] = []
 const storageClients: PalabraStorage[] = []
@@ -19,12 +20,13 @@ afterEach(async () => {
   })))
 })
 
-async function renderApp(path = '/today') {
+async function renderApp(path = '/today', prepare?: (storage: PalabraStorage) => Promise<void>) {
   const name = `palabra-app-${crypto.randomUUID()}`
   databaseNames.push(name)
   const storage = new PalabraStorage(name)
   storageClients.push(storage)
   await storage.saveSettings({ ...DEFAULT_SETTINGS, dailyNewWords: 5 })
+  await prepare?.(storage)
   render(
     <MemoryRouter initialEntries={[path]}>
       <App storageClient={storage} />
@@ -34,6 +36,17 @@ async function renderApp(path = '/today') {
 }
 
 describe('Palabra app', () => {
+  it('shows a concrete recovery message when local data cannot be opened', async () => {
+    class FailingStorage extends PalabraStorage {
+      override async getAllProgress(): Promise<WordProgress[]> { throw new Error('IndexedDB unavailable') }
+    }
+    const client = new FailingStorage(`palabra-failing-${crypto.randomUUID()}`)
+    storageClients.push(client)
+    render(<MemoryRouter><App storageClient={client} /></MemoryRouter>)
+    expect(await screen.findByRole('heading', { name: '无法读取学习数据' })).toBeInTheDocument()
+    expect(screen.getByText('请刷新页面重试，或检查浏览器是否允许本地存储。')).toBeInTheDocument()
+  })
+
   it('starts today’s session and reveals the first word meaning', async () => {
     const user = userEvent.setup()
     await renderApp()
@@ -46,6 +59,33 @@ describe('Palabra app', () => {
     await user.click(screen.getByRole('button', { name: '点击查看释义' }))
     expect(screen.getByText('你好')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '认识' })).toBeInTheDocument()
+  })
+
+  it('keeps due reviews out of the new-word phase and reschedules them after a correct quiz', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', async (client) => {
+      await client.putProgress({
+        wordId: 'basic-01',
+        stage: 1,
+        status: 'learning',
+        nextReviewAt: '2020-01-01T00:00:00.000Z',
+        reviewCount: 1,
+        correctCount: 1,
+        lastReviewedAt: '2020-01-01T00:00:00.000Z',
+      })
+    })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+
+    for (const word of ['adiós', 'gracias', 'por favor', 'sí', 'no']) {
+      expect(await screen.findByRole('heading', { name: word })).toBeInTheDocument()
+      await user.click(await screen.findByRole('button', { name: '点击查看释义' }))
+      await user.click(screen.getByRole('button', { name: '认识' }))
+    }
+
+    expect(await screen.findByRole('heading', { name: 'hola' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '你好' }))
+    await user.click(screen.getByRole('button', { name: '继续' }))
+    await waitFor(async () => expect((await storage.getAllProgress()).find((item) => item.wordId === 'basic-01')?.stage).toBe(2))
   })
 
   it('searches the library in Chinese and Spanish', async () => {

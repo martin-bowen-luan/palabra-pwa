@@ -138,4 +138,3 @@ export class PalabraStorage {
 }
 
 export const storage = new PalabraStorage()
-

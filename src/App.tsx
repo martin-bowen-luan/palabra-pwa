@@ -11,9 +11,14 @@ import { TodayPage } from './pages/TodayPage'
 import styles from './styles/App.module.css'
 
 function AppRoutes() {
-  const { ready } = useAppState()
+  const { loadError, ready } = useAppState()
   const location = useLocation()
   const immersive = location.pathname === '/study' || location.pathname === '/result'
+  if (loadError) return <main className={styles.loadError}>
+    <span className={styles.brand}>palabra</span>
+    <div><h1>{loadError}</h1><p>请刷新页面重试，或检查浏览器是否允许本地存储。</p></div>
+    <button className={styles.primaryButton} onClick={() => window.location.reload()}>刷新页面</button>
+  </main>
   if (!ready) return <div className={styles.loading}><span>palabra</span><i /></div>
   return <div className={styles.appShell}>
     <Routes>
@@ -32,4 +37,3 @@ function AppRoutes() {
 export default function App({ storageClient }: { storageClient?: PalabraStorage }) {
   return <AppStateProvider storageClient={storageClient}><AppRoutes /></AppStateProvider>
 }
-

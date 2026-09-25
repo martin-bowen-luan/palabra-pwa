@@ -8,6 +8,7 @@ import type { ActiveSession, ReviewRating, StudySession, UserSettings, WordProgr
 
 interface AppStateValue {
   ready: boolean
+  loadError?: string
   progress: Record<string, WordProgress>
   sessions: StudySession[]
   settings: UserSettings
@@ -26,6 +27,7 @@ const AppStateContext = createContext<AppStateValue | null>(null)
 
 export function AppStateProvider({ children, storageClient = defaultStorage }: { children: ReactNode; storageClient?: PalabraStorage }) {
   const [ready, setReady] = useState(false)
+  const [loadError, setLoadError] = useState<string>()
   const [progress, setProgress] = useState<Record<string, WordProgress>>({})
   const [sessions, setSessions] = useState<StudySession[]>([])
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS)
@@ -38,14 +40,18 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       storageClient.getSessions(),
       storageClient.getSettings(),
       storageClient.getActiveSession(),
-    ]).then(([savedProgress, savedSessions, savedSettings, savedActive]) => {
-      if (!mounted) return
-      setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
-      setSessions(savedSessions)
-      setSettings(savedSettings)
-      setActiveSession(savedActive)
-      setReady(true)
-    })
+    ])
+      .then(([savedProgress, savedSessions, savedSettings, savedActive]) => {
+        if (!mounted) return
+        setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
+        setSessions(savedSessions)
+        setSettings(savedSettings)
+        setActiveSession(savedActive)
+        setReady(true)
+      })
+      .catch(() => {
+        if (mounted) setLoadError('无法读取学习数据')
+      })
     return () => { mounted = false }
   }, [storageClient])
 
@@ -68,7 +74,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       newWordIds: plan.newWords.map((word) => word.id),
       reviewWordIds: plan.review.map((word) => word.id),
       currentIndex: 0,
-      phase: 'learn',
+      phase: plan.newWords.length ? 'learn' : 'quiz',
       correctCount: 0,
       answeredCount: 0,
       startedAt: new Date().toISOString(),
@@ -80,7 +86,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   const rateCurrentWord = async (rating: ReviewRating) => {
     if (!activeSession) return
-    const wordId = activeSession.wordIds[activeSession.currentIndex]
+    const wordId = activeSession.newWordIds[activeSession.currentIndex]
     const now = new Date()
     const nextProgress = progress[wordId]
       ? applyReview(progress[wordId], rating, now)
@@ -88,7 +94,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     await storageClient.putProgress(nextProgress)
     setProgress((current) => ({ ...current, [wordId]: nextProgress }))
 
-    const isLast = activeSession.currentIndex >= activeSession.wordIds.length - 1
+    const isLast = activeSession.currentIndex >= activeSession.newWordIds.length - 1
     const nextSession: ActiveSession = isLast
       ? { ...activeSession, phase: 'quiz', currentIndex: 0 }
       : { ...activeSession, currentIndex: activeSession.currentIndex + 1 }
@@ -98,6 +104,15 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   const completeQuizItem = async (correct: boolean) => {
     if (!activeSession) return false
+    const wordId = activeSession.wordIds[activeSession.currentIndex]
+    if (activeSession.reviewWordIds.includes(wordId) || !correct) {
+      const now = new Date()
+      const nextProgress = progress[wordId]
+        ? applyReview(progress[wordId], correct ? 'known' : 'forgotten', now)
+        : createProgress(wordId, correct ? 'known' : 'forgotten', now)
+      await storageClient.putProgress(nextProgress)
+      setProgress((current) => ({ ...current, [wordId]: nextProgress }))
+    }
     const correctCount = activeSession.correctCount + (correct ? 1 : 0)
     const answeredCount = activeSession.answeredCount + 1
     const isLast = activeSession.currentIndex >= activeSession.wordIds.length - 1
@@ -145,6 +160,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   const value: AppStateValue = {
     ready,
+    loadError,
     progress,
     sessions,
     settings,
