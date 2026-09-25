@@ -4,7 +4,17 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from './App'
 import { DEFAULT_SETTINGS, PalabraStorage } from './data/storage'
-import type { WordProgress } from './types'
+import type { VocabularyEntry, WordProgress } from './types'
+
+const databaseWord: VocabularyEntry = {
+  id: 'database-01',
+  spanish: 'persistir',
+  partOfSpeech: '动词',
+  chinese: '持久保存',
+  category: '数据库测试',
+  example: 'Los datos pueden persistir.',
+  exampleZh: '数据可以持久保存。',
+}
 
 const databaseNames: string[] = []
 const storageClients: PalabraStorage[] = []
@@ -20,10 +30,14 @@ afterEach(async () => {
   })))
 })
 
-async function renderApp(path = '/today', prepare?: (storage: PalabraStorage) => Promise<void>) {
+async function renderApp(
+  path = '/today',
+  prepare?: (storage: PalabraStorage) => Promise<void>,
+  options?: ConstructorParameters<typeof PalabraStorage>[1],
+) {
   const name = `palabra-app-${crypto.randomUUID()}`
   databaseNames.push(name)
-  const storage = new PalabraStorage(name)
+  const storage = new PalabraStorage(name, options)
   storageClients.push(storage)
   await storage.saveSettings({ ...DEFAULT_SETTINGS, dailyNewWords: 5 })
   await prepare?.(storage)
@@ -96,6 +110,23 @@ describe('Palabra app', () => {
     await user.type(search, '家庭')
     expect(screen.getByText('familia')).toBeInTheDocument()
     expect(screen.queryByText('aeropuerto')).not.toBeInTheDocument()
+  })
+
+  it('builds the library from vocabulary stored in IndexedDB', async () => {
+    await renderApp('/library', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+
+    expect(await screen.findByText('persistir')).toBeInTheDocument()
+    expect(screen.getByText('1 个词')).toBeInTheDocument()
+    expect(screen.queryByText('hola')).not.toBeInTheDocument()
+  })
+
+  it('builds today and study views from vocabulary stored in IndexedDB', async () => {
+    const user = userEvent.setup()
+    await renderApp('/today', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+
+    expect(await screen.findByText('persistir')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
   })
 
   it('applies and persists a manual dark theme', async () => {

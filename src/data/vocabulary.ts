@@ -163,5 +163,3 @@ export const vocabulary: VocabularyEntry[] = groups.flatMap((group) =>
     }
   }),
 )
-
-export const categories = ['全部', ...groups.map((group) => group.category)]

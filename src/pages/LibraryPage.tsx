@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react'
-import { categories, vocabulary } from '../data/vocabulary'
 import type { VocabularyEntry } from '../types'
 import { BackIcon, SearchIcon } from '../components/Icons'
 import { useAppState } from '../app/AppState'
 import styles from '../styles/App.module.css'
 
 export function LibraryPage() {
-  const { progress } = useAppState()
+  const { categories, progress, vocabulary } = useAppState()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('全部')
   const [selected, setSelected] = useState<VocabularyEntry>()

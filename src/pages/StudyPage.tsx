@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
-import { vocabulary } from '../data/vocabulary'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
 import type { ReviewRating } from '../types'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
-  const { activeSession, settings, rateCurrentWord, completeQuizItem, exitSession } = useAppState()
+  const { activeSession, settings, vocabulary, rateCurrentWord, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
   const [revealed, setRevealed] = useState(false)
   const [answer, setAnswer] = useState('')

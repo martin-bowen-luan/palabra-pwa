@@ -1,14 +1,15 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { vocabulary } from '../data/vocabulary'
 import { DEFAULT_SETTINGS, storage as defaultStorage, type PalabraStorage } from '../data/storage'
 import { buildDailyPlan, type DailyPlan } from '../domain/dailyPlan'
 import { applyReview, createProgress } from '../domain/reviewScheduler'
 import { calculateStreak, toLocalDate } from '../domain/stats'
-import type { ActiveSession, ReviewRating, StudySession, UserSettings, WordProgress } from '../types'
+import type { ActiveSession, ReviewRating, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
 
 interface AppStateValue {
   ready: boolean
   loadError?: string
+  vocabulary: VocabularyEntry[]
+  categories: string[]
   progress: Record<string, WordProgress>
   sessions: StudySession[]
   settings: UserSettings
@@ -28,6 +29,7 @@ const AppStateContext = createContext<AppStateValue | null>(null)
 export function AppStateProvider({ children, storageClient = defaultStorage }: { children: ReactNode; storageClient?: PalabraStorage }) {
   const [ready, setReady] = useState(false)
   const [loadError, setLoadError] = useState<string>()
+  const [vocabulary, setVocabulary] = useState<VocabularyEntry[]>([])
   const [progress, setProgress] = useState<Record<string, WordProgress>>({})
   const [sessions, setSessions] = useState<StudySession[]>([])
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS)
@@ -36,13 +38,15 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   useEffect(() => {
     let mounted = true
     Promise.all([
+      storageClient.getVocabulary(),
       storageClient.getAllProgress(),
       storageClient.getSessions(),
       storageClient.getSettings(),
       storageClient.getActiveSession(),
     ])
-      .then(([savedProgress, savedSessions, savedSettings, savedActive]) => {
+      .then(([savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive]) => {
         if (!mounted) return
+        setVocabulary(savedVocabulary)
         setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
         setSessions(savedSessions)
         setSettings(savedSettings)
@@ -61,7 +65,12 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   const dailyPlan = useMemo(
     () => buildDailyPlan(vocabulary, progress, settings.dailyNewWords),
-    [progress, settings.dailyNewWords],
+    [progress, settings.dailyNewWords, vocabulary],
+  )
+
+  const categories = useMemo(
+    () => ['全部', ...new Set(vocabulary.map((word) => word.category))],
+    [vocabulary],
   )
 
   const startSession = async (extraWords = 0) => {
@@ -161,6 +170,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   const value: AppStateValue = {
     ready,
     loadError,
+    vocabulary,
+    categories,
     progress,
     sessions,
     settings,
