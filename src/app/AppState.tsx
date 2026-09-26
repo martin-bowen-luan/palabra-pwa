@@ -148,7 +148,9 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const nextSession: ActiveSession = {
       ...activeSession,
       wordIds: activeSession.wordIds.filter((id) => id !== wordId),
-      newWordIds: activeSession.newWordIds.filter((id) => id !== wordId),
+      newWordIds: activeSession.phase === 'learn'
+        ? activeSession.newWordIds.filter((id) => id !== wordId)
+        : activeSession.newWordIds,
       reviewWordIds: activeSession.reviewWordIds.filter((id) => id !== wordId),
     }
     if (!nextSession.wordIds.length || (nextSession.phase === 'quiz' && activeSession.currentIndex >= nextSession.wordIds.length)) {
