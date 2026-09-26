@@ -14,7 +14,7 @@ import styles from '../styles/App.module.css'
 export function StudyPage() {
   const { activeSession, settings, vocabulary, progress, rateCurrentWord, markCurrentWordFluent, submitQuizAnswer, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
-  const [revealed, setRevealed] = useState(false)
+  const [revealedFor, setRevealedFor] = useState<string | null>(null)
   const [answer, setAnswer] = useState('')
   const [busy, setBusy] = useState(false)
   const actionPending = useRef(false)
@@ -22,6 +22,8 @@ export function StudyPage() {
   const phaseWordIds = activeSession?.phase === 'learn' ? activeSession.newWordIds : activeSession?.wordIds
   const queue = activeSession?.practice ?? createPracticeQueue(phaseWordIds?.slice(activeSession?.currentIndex ?? 0) ?? [])
   const word = activeSession ? vocabulary.find((item) => item.id === currentPracticeWord(queue)) : undefined
+  const revealIdentity = activeSession && word ? `${activeSession.id}:${activeSession.phase}:${queue.promptNumber}:${word.id}` : ''
+  const revealed = revealedFor === revealIdentity
   const feedback = activeSession?.quizFeedback
   const phaseTotal = activeSession?.phase === 'learn'
     ? activeSession.assignedNewCount ?? activeSession.newWordIds.length
@@ -60,7 +62,6 @@ export function StudyPage() {
   }, [activeSession?.id, activeSession?.phase, activeSession?.practice?.promptNumber, mode, word])
 
   useEffect(() => {
-    setRevealed(false)
     setAnswer('')
   }, [activeSession?.practice?.promptNumber, activeSession?.currentIndex, activeSession?.phase, word?.id])
 
@@ -132,7 +133,7 @@ export function StudyPage() {
           <p>{word.partOfSpeech}</p>
         </div>
         {!revealed ? (
-          <button className={styles.revealButton} disabled={busy} onClick={() => setRevealed(true)}>点击查看释义</button>
+          <button className={styles.revealButton} disabled={busy} onClick={() => setRevealedFor(revealIdentity)}>点击查看释义</button>
         ) : (
           <div className={styles.definition}>
             <strong>{word.meaningZh}</strong>
