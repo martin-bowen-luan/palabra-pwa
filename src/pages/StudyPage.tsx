@@ -5,6 +5,7 @@ import { isCorrectSpelling } from '../domain/reviewScheduler'
 import { createPracticeQueue, currentPracticeWord } from '../domain/practiceQueue'
 import type { ReviewRating } from '../types'
 import { PronunciationButton } from '../components/PronunciationButton'
+import { WordRelations } from '../components/WordRelations'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
@@ -115,6 +116,7 @@ export function StudyPage() {
         ) : (
           <div className={styles.definition}>
             <strong>{word.meaningZh}</strong>
+            <WordRelations word={word} />
             <p lang={word.language}>{word.examples[0]?.text}</p>
             <span>{word.examples[0]?.translationZh}</span>
           </div>

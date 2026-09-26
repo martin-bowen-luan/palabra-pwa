@@ -54,6 +54,57 @@ async function renderApp(
 }
 
 describe('Palabra app', () => {
+  it('filters the learned vocabulary including fluent words and keeps search active', async () => {
+    const user = userEvent.setup()
+    const go: VocabularyEntry = {
+      id: 'en:go', language: 'en', term: 'go', partOfSpeech: 'v.', meaningZh: '去',
+      category: '高考 3500', examples: [], relatedTerms: ['move'],
+      specialForms: [{ label: '过去式', form: 'went' }],
+    }
+    const stay = { ...go, id: 'en:stay', term: 'stay', meaningZh: '停留' }
+    await renderApp('/library', async (client) => {
+      await client.putProgress({
+        wordId: 'en:go', language: 'en', stage: 4, status: 'mastered', skipReview: true,
+        nextReviewAt: '2026-10-01T00:00:00.000Z', reviewCount: 1, correctCount: 1,
+        lastReviewedAt: '2026-09-26T00:00:00.000Z',
+      })
+    }, { vocabularySeeds: { en: [go, stay] } })
+    await user.click(await screen.findByRole('button', { name: '英语' }))
+    await user.click(await screen.findByRole('button', { name: '已背' }))
+    expect(screen.getByText('go')).toBeInTheDocument()
+    expect(screen.queryByText('stay')).not.toBeInTheDocument()
+    await user.type(screen.getByRole('searchbox', { name: '搜索词库' }), '停留')
+    expect(screen.queryByText('go')).not.toBeInTheDocument()
+    await user.clear(screen.getByRole('searchbox', { name: '搜索词库' }))
+    await user.click(screen.getByText('go'))
+    expect(screen.getByText('已标为熟练 · 无需复习')).toBeInTheDocument()
+  })
+
+  it('shows a learned-list empty state scoped to the current language', async () => {
+    const user = userEvent.setup()
+    await renderApp('/library')
+    await user.click(await screen.findByRole('button', { name: '已背' }))
+    expect(screen.getByText('还没有背过单词')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '英语' }))
+    expect(screen.getByText('还没有背过单词')).toBeInTheDocument()
+  })
+
+  it('shows English related words and special forms after reveal but omits empty sections', async () => {
+    const user = userEvent.setup()
+    const go: VocabularyEntry = {
+      id: 'en:go', language: 'en', term: 'go', partOfSpeech: 'v.', meaningZh: '去',
+      category: '高考 3500', examples: [], relatedTerms: ['move'],
+      specialForms: [{ label: '过去式', form: 'went' }],
+    }
+    await renderApp('/today', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, learningLanguage: 'en' })
+    }, { vocabularySeeds: { en: [go] } })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(screen.queryByText(/近义词/)).not.toBeInTheDocument()
+    await user.click(await screen.findByRole('button', { name: '点击查看释义' }))
+    expect(screen.getByText('近义词：move')).toBeInTheDocument()
+    expect(screen.getByText('特殊变形：过去式 went')).toBeInTheDocument()
+  })
   it('splits a twenty-word target into two manually started groups', async () => {
     const user = userEvent.setup()
     const storage = await renderApp('/today', async (client) => {
