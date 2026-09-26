@@ -4,9 +4,9 @@ import { recentSevenDays, summarizeStages } from '../domain/stats'
 import styles from '../styles/App.module.css'
 
 export function ProgressPage() {
-  const { progress, sessions, streak } = useAppState()
+  const { progress, sessions, streak, settings } = useAppState()
   const days = recentSevenDays(sessions)
-  const stages = summarizeStages(Object.values(progress))
+  const stages = summarizeStages(Object.values(progress), settings.learningLanguage === 'en' ? 7 : 5)
   const maxDay = Math.max(1, ...days.map((day) => day.count))
   const total = Object.keys(progress).length
 

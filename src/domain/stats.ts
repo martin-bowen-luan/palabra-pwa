@@ -27,10 +27,10 @@ export function calculateStreak(sessions: StudySession[], now = new Date()): num
   return streak
 }
 
-export function summarizeStages(records: WordProgress[]): [number, number, number, number, number] {
-  const stages: [number, number, number, number, number] = [0, 0, 0, 0, 0]
+export function summarizeStages(records: WordProgress[], count = 5): number[] {
+  const stages = Array.from({ length: count }, () => 0)
   records.forEach((record) => {
-    const stage = Math.max(0, Math.min(4, record.stage))
+    const stage = Math.max(0, Math.min(count - 1, record.stage))
     stages[stage] += 1
   })
   return stages
@@ -46,4 +46,3 @@ export function recentSevenDays(sessions: StudySession[], now = new Date()): Arr
     return { date: key, count }
   })
 }
-

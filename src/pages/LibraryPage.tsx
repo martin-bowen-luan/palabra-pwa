@@ -48,8 +48,8 @@ export function LibraryPage() {
           <blockquote lang={selected.language}>{example.text}</blockquote>
           <p>{example.translationZh}</p>
         </div>)}
-        <WordRelations word={selected} />
-        <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / 5`}</footer>
+        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} onSelectTerm={word => { setSelected(word); window.scrollTo?.(0, 0) }} />
+        <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / ${progress[selected.id]?.scheduleVersion === 1 ? 7 : 5}`}{progress[selected.id]?.reviewPriority === 'skipped' && ' · 拼写跳过，优先复习'}</footer>
       </section>
     </main>
   }

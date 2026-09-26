@@ -10,8 +10,14 @@ import { PronunciationButton } from '../components/PronunciationButton'
 import { WordRelations } from '../components/WordRelations'
 import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
+import { EnglishStudyPage } from './EnglishStudyPage'
 
 export function StudyPage() {
+  const { activeSession } = useAppState()
+  return activeSession?.memoryRound ? <EnglishStudyPage /> : <LegacyStudyPage />
+}
+
+function LegacyStudyPage() {
   const { activeSession, settings, vocabulary, progress, rateCurrentWord, markCurrentWordFluent, submitQuizAnswer, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
   const [revealedFor, setRevealedFor] = useState<string | null>(null)

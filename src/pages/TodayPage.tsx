@@ -3,6 +3,7 @@ import { useAppState } from '../app/AppState'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { toLocalDate } from '../domain/stats'
 import styles from '../styles/App.module.css'
+import { EnglishToday } from './EnglishToday'
 
 export function TodayPage() {
   const { activeSession, dailyPlan, sessions, settings, startSession, startNextGroup, moreGroupsToday, streak } = useAppState()
@@ -23,6 +24,8 @@ export function TodayPage() {
     const session = await startSession(extra)
     if (session) navigate('/study')
   }
+
+  if (settings.learningLanguage === 'en') return <EnglishToday />
 
   return <main className={styles.page}>
     <header className={styles.brandHeader}>

@@ -25,9 +25,11 @@ export function SettingsPage() {
     </section>
     {settings.learningLanguage === 'en' && <AudioPackSettings />}
     <section className={styles.settingsSection}>
+      {settings.learningLanguage === 'en' ? <><div className={styles.settingTitle}><h2>四关记忆</h2></div><p className={styles.settingDescription}>每组依次完成选择释义、例句回忆、无提示回忆和集中拼写。拼写可跳过，跳过词会优先复习。</p><p className={styles.settingDescription}>参考间隔：10 分钟、1 天、2 天、4 天、7 天、15 天、30 天。答错后缩短间隔，记住后逐渐延长。</p></> : <>
       <div className={styles.settingTitle}><h2>测试题型</h2><span>至少保留一种</span></div>
-      <label className={styles.toggleRow}><span><strong>{settings.learningLanguage === 'en' ? '中英互选' : '中西互选'}</strong><small>识别词义</small></span><input type="checkbox" checked={settings.enableChoice} disabled={settings.enableChoice && !settings.enableSpelling} onChange={(event) => void updateSettings({ enableChoice: event.target.checked })} /></label>
-      <label className={styles.toggleRow}><span><strong>{settings.learningLanguage === 'en' ? '英语拼写' : '西语拼写'}</strong><small>主动回忆</small></span><input type="checkbox" checked={settings.enableSpelling} disabled={settings.enableSpelling && !settings.enableChoice} onChange={(event) => void updateSettings({ enableSpelling: event.target.checked })} /></label>
+      <label className={styles.toggleRow}><span><strong>中西互选</strong><small>识别词义</small></span><input type="checkbox" checked={settings.enableChoice} disabled={settings.enableChoice && !settings.enableSpelling} onChange={(event) => void updateSettings({ enableChoice: event.target.checked })} /></label>
+      <label className={styles.toggleRow}><span><strong>西语拼写</strong><small>主动回忆</small></span><input type="checkbox" checked={settings.enableSpelling} disabled={settings.enableSpelling && !settings.enableChoice} onChange={(event) => void updateSettings({ enableSpelling: event.target.checked })} /></label>
+      </>}
     </section>
     <section className={styles.settingsSection}>
       <div className={styles.settingTitle}><h2>界面主题</h2></div>

@@ -31,6 +31,11 @@ describe('English choice options', () => {
     expect(orders.size).toBeGreaterThan(1)
   })
 
+  it('still returns exactly four options when the fallback pool is large', () => {
+    const large = [...corpus, ...Array.from({ length: 40 }, (_, i) => entry(`extra${i}`, `其他含义${i}`))]
+    expect(buildEnglishChoiceOptions(target, large, new Set(), 'large')).toHaveLength(4)
+  })
+
   it('uses spelling instead of a partial choice list when corpus is too small', () => {
     expect(buildEnglishChoiceOptions(target, [target, entry('from', '从'), entry('farm', '农场')], new Set(), 'sparse')).toBeUndefined()
   })
