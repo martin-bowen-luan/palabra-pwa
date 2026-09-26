@@ -84,6 +84,14 @@
 .relationPanel p { margin: 6px 0; color: var(--muted); }
 .relationPanel a { display: inline-flex; align-items: center; min-height: 44px; color: var(--blue); font-size: 12px; }
 .relationPanel strong { color: var(--ink); font: 600 22px/1.5 'Source Serif 4 Variable', serif; }
+.aiMeta { padding: 12px 0 18px; font-size: 13px; line-height: 1.7; color: var(--muted); }
+.aiMeta p { margin: 0 0 8px; }
+.aiMeta > div { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.aiMeta button { min-height: 44px; border: 0; background: transparent; color: var(--blue); padding: 0; cursor: pointer; font-size: 12px; }
+.aiMeta button:disabled { opacity: .55; cursor: default; }
+.aiSource { display: block; color: var(--muted); font-size: 11px; }
+.aiSupplement { border-left: 2px solid var(--blue); padding: 6px 0 6px 12px; margin: 8px 0 16px; }
+.aiSupplement > small { color: var(--blue); font-size: 11px; }
 
 .languageSwitch { min-height: 52px; display: flex; align-items: stretch; gap: 26px; border-bottom: 1px solid var(--line); }
 .languageSwitch button { position: relative; min-height: 52px; padding: 0; border: 0; color: var(--muted); background: transparent; font-size: 14px; cursor: pointer; }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAppState } from '../app/AppState'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { AudioPackSettings } from '../components/AudioPackSettings'
+import { AiSettingsPanel } from '../components/AiSettingsPanel'
 import type { ThemeMode, UserSettings } from '../types'
 import styles from '../styles/App.module.css'
 
@@ -24,6 +25,7 @@ export function SettingsPage() {
       </div>
     </section>
     {settings.learningLanguage === 'en' && <AudioPackSettings />}
+    {settings.learningLanguage === 'en' && <AiSettingsPanel />}
     <section className={styles.settingsSection}>
       {settings.learningLanguage === 'en' ? <><div className={styles.settingTitle}><h2>四关记忆</h2></div><p className={styles.settingDescription}>每组依次完成选择释义、例句回忆、无提示回忆和集中拼写。拼写可跳过，跳过词会优先复习。</p><p className={styles.settingDescription}>参考间隔：10 分钟、1 天、2 天、4 天、7 天、15 天、30 天。答错后缩短间隔，记住后逐渐延长。</p></> : <>
       <div className={styles.settingTitle}><h2>测试题型</h2><span>至少保留一种</span></div>

@@ -8,8 +8,9 @@ import type {
 } from '../types'
 import { vocabulary } from './vocabulary'
 import { englishVocabulary } from './englishVocabulary'
+import { DEFAULT_AI_SETTINGS, type AiSettings, type EncryptedCredential, type WordAiAnalysis } from '../ai/types'
 
-const DB_VERSION = 3
+const DB_VERSION = 4
 const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 1, en: 4 }
 const STORE_PROGRESS = 'wordProgress'
 const STORE_SESSIONS = 'sessions'
@@ -17,6 +18,10 @@ const STORE_SETTINGS = 'settings'
 const STORE_ACTIVE = 'activeSession'
 const STORE_VOCABULARY = 'vocabulary'
 const STORE_METADATA = 'metadata'
+const STORE_AI_SETTINGS = 'aiSettings'
+const STORE_AI_CREDENTIALS = 'aiCredentials'
+const STORE_AI_ANALYSES = 'aiAnalyses'
+interface AiLease { id: 'lease'; owner: string; revision: number; expiresAt: number; wordId?: string }
 
 interface VocabularyMetadata {
   id: `vocabulary:${LearningLanguage}`
@@ -197,6 +202,9 @@ export class PalabraStorage {
           if (!database.objectStoreNames.contains(STORE_ACTIVE)) database.createObjectStore(STORE_ACTIVE, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_VOCABULARY)) database.createObjectStore(STORE_VOCABULARY, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_METADATA)) database.createObjectStore(STORE_METADATA, { keyPath: 'id' })
+          if (!database.objectStoreNames.contains(STORE_AI_SETTINGS)) database.createObjectStore(STORE_AI_SETTINGS, { keyPath: 'id' })
+          if (!database.objectStoreNames.contains(STORE_AI_CREDENTIALS)) database.createObjectStore(STORE_AI_CREDENTIALS, { keyPath: 'id' })
+          if (!database.objectStoreNames.contains(STORE_AI_ANALYSES)) database.createObjectStore(STORE_AI_ANALYSES, { keyPath: 'key' })
           if (event.oldVersion < 3) migrateToVersionThree(request.transaction!)
         }
         request.onsuccess = () => {
@@ -423,6 +431,115 @@ export class PalabraStorage {
       .forEach((session) => sessionsStore.delete(session.id))
     transaction.objectStore(STORE_ACTIVE).delete(activeSessionId(language))
     await transactionDone(transaction)
+  }
+
+  get aiChannelName(): string { return `${this.databaseName}:ai-events` }
+
+  async getAiConfiguration(): Promise<{ settings: AiSettings; credential?: EncryptedCredential }> {
+    const database = await this.open()
+    const tx = database.transaction([STORE_AI_SETTINGS, STORE_AI_CREDENTIALS])
+    const [settings, credential] = await Promise.all([
+      requestResult<AiSettings | undefined>(tx.objectStore(STORE_AI_SETTINGS).get('ai')),
+      requestResult<EncryptedCredential | undefined>(tx.objectStore(STORE_AI_CREDENTIALS).get('ai')),
+    ])
+    return { settings: settings ?? { ...DEFAULT_AI_SETTINGS }, credential }
+  }
+
+  async saveAiConfiguration(settings: AiSettings, credential?: EncryptedCredential): Promise<{ settings: AiSettings; credential?: EncryptedCredential }> {
+    const database = await this.open()
+    const tx = database.transaction([STORE_AI_SETTINGS, STORE_AI_CREDENTIALS], 'readwrite')
+    const store = tx.objectStore(STORE_AI_SETTINGS)
+    const request = store.get('ai') as IDBRequest<AiSettings | undefined>
+    let saved = settings
+    let stale = false
+    request.onsuccess = () => {
+      const revision = request.result?.revision ?? 0
+      if (settings.revision !== revision) { stale = true; tx.abort(); return }
+      saved = { ...settings, id: 'ai', revision: revision + 1 }
+      store.put(saved)
+      store.delete('lease')
+      if (credential) tx.objectStore(STORE_AI_CREDENTIALS).put(credential)
+      else tx.objectStore(STORE_AI_CREDENTIALS).delete('ai')
+    }
+    try { await transactionDone(tx) } catch (error) {
+      if (stale) throw new Error('AI 配置已在其他页面修改，请刷新设置后重试。')
+      throw error
+    }
+    return { settings: saved, credential }
+  }
+
+  async getAiAnalysis(key: string): Promise<WordAiAnalysis | undefined> {
+    const database = await this.open()
+    return requestResult(database.transaction(STORE_AI_ANALYSES).objectStore(STORE_AI_ANALYSES).get(key))
+  }
+
+  async acquireAiLease(owner: string, revision: number, now = Date.now(), wordId?: string): Promise<boolean> {
+    const database = await this.open()
+    const tx = database.transaction(STORE_AI_SETTINGS, 'readwrite')
+    const store = tx.objectStore(STORE_AI_SETTINGS)
+    const settingsRequest = store.get('ai') as IDBRequest<AiSettings | undefined>
+    let acquired = false
+    settingsRequest.onsuccess = () => {
+      if (!settingsRequest.result?.enabled || settingsRequest.result.revision !== revision) return
+      const request = store.get('lease') as IDBRequest<AiLease | undefined>
+      request.onsuccess = () => {
+        if (request.result && request.result.expiresAt > now) return
+        store.put({ id: 'lease', owner, revision, expiresAt: now + 90000, wordId } satisfies AiLease)
+        acquired = true
+      }
+    }
+    await transactionDone(tx)
+    return acquired
+  }
+
+  async releaseAiLease(owner: string): Promise<void> {
+    const database = await this.open()
+    const tx = database.transaction(STORE_AI_SETTINGS, 'readwrite')
+    const store = tx.objectStore(STORE_AI_SETTINGS)
+    const request = store.get('lease') as IDBRequest<AiLease | undefined>
+    request.onsuccess = () => { if (request.result?.owner === owner) store.delete('lease') }
+    await transactionDone(tx)
+  }
+
+  async saveAiAnalysis(analysis: WordAiAnalysis, owner: string, revision: number, now = Date.now()): Promise<boolean> {
+    const database = await this.open()
+    const tx = database.transaction([STORE_AI_SETTINGS, STORE_AI_ANALYSES], 'readwrite')
+    const store = tx.objectStore(STORE_AI_SETTINGS)
+    const request = store.get('ai') as IDBRequest<AiSettings | undefined>
+    let saved = false
+    request.onsuccess = () => {
+      if (!request.result?.enabled || request.result.revision !== revision) return
+      const lease = store.get('lease') as IDBRequest<AiLease | undefined>
+      lease.onsuccess = () => {
+        if (lease.result?.owner !== owner || lease.result.revision !== revision || lease.result.expiresAt <= now) return
+        tx.objectStore(STORE_AI_ANALYSES).put(analysis)
+        saved = true
+      }
+    }
+    await transactionDone(tx)
+    return saved
+  }
+
+  async clearAiAnalyses(wordId?: string): Promise<void> {
+    const database = await this.open()
+    const tx = database.transaction([STORE_AI_SETTINGS, STORE_AI_ANALYSES], 'readwrite')
+    const settingsStore = tx.objectStore(STORE_AI_SETTINGS)
+    const lease = settingsStore.get('lease') as IDBRequest<AiLease | undefined>
+    lease.onsuccess = () => {
+      if (!wordId || !lease.result?.wordId || lease.result.wordId === wordId) settingsStore.delete('lease')
+    }
+    const store = tx.objectStore(STORE_AI_ANALYSES)
+    if (!wordId) store.clear()
+    else {
+      const request = store.openCursor()
+      request.onsuccess = () => {
+        const cursor = request.result
+        if (!cursor) return
+        if ((cursor.value as WordAiAnalysis).wordId === wordId) cursor.delete()
+        cursor.continue()
+      }
+    }
+    await transactionDone(tx)
   }
 
   close(): void {

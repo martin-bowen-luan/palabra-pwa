@@ -1,0 +1,25 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--blue);
+  background: var(--control);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.button:hover { background: var(--blue-soft); }
+.button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.status, .error { font-size: 12px; line-height: 1.5; }
+.status { color: var(--muted); }
+.error { color: var(--red); }

@@ -8,6 +8,8 @@ import { toLocalDate } from '../domain/stats'
 import type { ReviewRating } from '../types'
 import { PronunciationButton } from '../components/PronunciationButton'
 import { WordRelations } from '../components/WordRelations'
+import { SentenceSpeechButton } from '../components/SentenceSpeechButton'
+import { useAi } from '../ai/AiProvider'
 import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
 import { EnglishStudyPage } from './EnglishStudyPage'
@@ -18,6 +20,7 @@ export function StudyPage() {
 }
 
 function LegacyStudyPage() {
+  const { settings: aiSettings } = useAi()
   const { activeSession, settings, vocabulary, progress, rateCurrentWord, markCurrentWordFluent, submitQuizAnswer, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
   const [revealedFor, setRevealedFor] = useState<string | null>(null)
@@ -144,8 +147,9 @@ function LegacyStudyPage() {
           <div className={styles.definition}>
             <strong>{word.meaningZh}</strong>
             <p lang={word.language}>{word.examples[0]?.text}</p>
+            {aiSettings.enabled && word.language === 'en' && word.examples[0] && <SentenceSpeechButton key={word.id} text={word.examples[0].text} />}
             <span>{word.examples[0]?.translationZh}</span>
-            <WordRelations word={word} />
+            <WordRelations key={word.id} word={word} />
           </div>
         )}
         {revealed && <div className={styles.ratingBar} aria-label="记忆程度">

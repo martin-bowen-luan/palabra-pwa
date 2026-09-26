@@ -4,6 +4,8 @@ import { useAppState } from '../app/AppState'
 import { PronunciationButton } from '../components/PronunciationButton'
 import { SpellingComparison } from '../components/SpellingComparison'
 import { WordRelations } from '../components/WordRelations'
+import { SentenceSpeechButton } from '../components/SentenceSpeechButton'
+import { useAi } from '../ai/AiProvider'
 import { pronunciationPlayer } from '../audio/pronunciation'
 import { buildEnglishChoiceOptions } from '../domain/choiceOptions'
 import { MEMORY_ROUNDS, ROUND_LABELS } from '../domain/memoryRounds'
@@ -44,6 +46,7 @@ export function EnglishStudyPage() {
 
 function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSession; word: VocabularyEntry; busy: boolean; perform: (action: () => Promise<boolean | void>) => Promise<void> }) {
   const { vocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord } = useAppState()
+  const { settings: aiSettings } = useAi()
   const [answer, setAnswer] = useState('')
   const [checking, setChecking] = useState(false)
   const [hinted, setHinted] = useState(false)
@@ -72,13 +75,13 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
       <h1 lang={round === 'spelling' ? 'zh-CN' : 'en'} className={round === 'spelling' ? styles.meaningPrompt : ''}>{round === 'spelling' ? word.meaningZh : word.term}</h1>
       <div className={styles.pronunciationRow}><span>{word.pronunciation?.ipa || '美式发音'}</span><PronunciationButton word={word} /></div>
     </div>
-    {round === 'context' && !revealed && <blockquote className={styles.contextSentence} lang="en">{word.examples[0]?.text || '这个词暂未收录例句，请直接回忆词义。'}</blockquote>}
+    {round === 'context' && !revealed && <><blockquote className={styles.contextSentence} lang="en">{word.examples[0]?.text || '这个词暂未收录例句，请直接回忆词义。'}</blockquote>{aiSettings.enabled && word.examples[0] && <SentenceSpeechButton text={word.examples[0].text} />}</>}
     {round === 'recall' && !revealed && <p className={styles.recallInstruction}>先在心里说出词义，再核对答案。</p>}
     {round === 'choice' && choices && !feedback && <><div className={styles.memoryChoices} role="group" aria-label="选择释义">{choices.map(option => <button key={option.id} disabled={busy} onClick={() => void submit(option.id === word.id, option.meaningZh, option.id)}><small>{option.partOfSpeech}</small>{option.meaningZh}</button>)}</div><button className={styles.textButton} disabled={busy} onClick={() => void submit(false, '没有想起')}>看答案</button></>}
     {recall && !revealed && <div className={styles.recallActions}><button className={styles.textButton} disabled={busy} onClick={() => { setChecking(true); setHinted(true) }}>提示一下</button><div><button disabled={busy} onClick={() => setChecking(true)}>认识</button><button disabled={busy} onClick={() => void submit(false, '不认识')}>不认识</button></div></div>}
     {revealed && round !== 'spelling' && <div className={styles.memoryDefinition}>
       <p><small>{word.partOfSpeech}</small><strong>{word.meaningZh}</strong></p>
-      {word.examples[0] && <><blockquote lang="en">{word.examples[0].text}</blockquote><p>{word.examples[0].translationZh}</p></>}
+      {word.examples[0] && <><blockquote lang="en">{word.examples[0].text}</blockquote>{aiSettings.enabled && <SentenceSpeechButton text={word.examples[0].text} />}<p>{word.examples[0].translationZh}</p></>}
       {selectedWord && !feedback?.correct && <div className={styles.choiceComparison}><small>你选的是</small><strong lang="en">{selectedWord.term}</strong><p>{selectedWord.meaningZh}</p><small>本题单词</small><strong lang="en">{word.term}</strong><p>{word.meaningZh}</p></div>}
       <WordRelations word={word} />
     </div>}
