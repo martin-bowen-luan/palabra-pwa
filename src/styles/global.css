@@ -1,6 +1,6 @@
 :root {
   font-family: 'Noto Sans SC Variable', 'Noto Sans SC', sans-serif;
-  color: #172128;
+  color: var(--ink);
   background: #e7e9e6;
   font-synthesis: none;
   text-rendering: optimizeLegibility;

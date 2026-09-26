@@ -154,6 +154,10 @@ export const vocabulary: VocabularyEntry[] = groups.flatMap((group) =>
     const [example, exampleZh] = examples[spanish] ?? genericExample(word)
     return {
       id: `${group.key}-${String(index + 1).padStart(2, '0')}`,
+      language: 'es',
+      term: spanish,
+      meaningZh: chinese,
+      examples: [{ text: example, translationZh: exampleZh }],
       spanish,
       chinese,
       partOfSpeech,

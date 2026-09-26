@@ -3,7 +3,7 @@ import { DEFAULT_SETTINGS, storage as defaultStorage, type PalabraStorage } from
 import { buildDailyPlan, type DailyPlan } from '../domain/dailyPlan'
 import { applyReview, createProgress } from '../domain/reviewScheduler'
 import { calculateStreak, toLocalDate } from '../domain/stats'
-import type { ActiveSession, ReviewRating, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
+import type { ActiveSession, LearningLanguage, ReviewRating, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
 
 interface AppStateValue {
   ready: boolean
@@ -21,6 +21,7 @@ interface AppStateValue {
   completeQuizItem: (correct: boolean) => Promise<boolean>
   exitSession: () => Promise<void>
   updateSettings: (patch: Partial<UserSettings>) => Promise<void>
+  setLearningLanguage: (language: LearningLanguage) => Promise<void>
   clearLearningData: () => Promise<void>
 }
 
@@ -37,14 +38,17 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   useEffect(() => {
     let mounted = true
-    Promise.all([
-      storageClient.getVocabulary(),
-      storageClient.getAllProgress(),
-      storageClient.getSessions(),
-      storageClient.getSettings(),
-      storageClient.getActiveSession(),
-    ])
-      .then(([savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive]) => {
+    storageClient.getSettings().then(async (savedSettings) => {
+      const language = savedSettings.learningLanguage
+      const [savedVocabulary, savedProgress, savedSessions, savedActive] = await Promise.all([
+        storageClient.getVocabulary(language),
+        storageClient.getAllProgress(language),
+        storageClient.getSessions(language),
+        storageClient.getActiveSession(language),
+      ])
+      return { savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive }
+    })
+      .then(({ savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive }) => {
         if (!mounted) return
         setVocabulary(savedVocabulary)
         setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
@@ -78,7 +82,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const plan = buildDailyPlan(vocabulary, progress, extraWords || settings.dailyNewWords)
     if (!plan.all.length) return undefined
     const session: ActiveSession = {
-      id: 'active-session',
+      id: `active-session:${settings.learningLanguage}`,
+      language: settings.learningLanguage,
       wordIds: plan.all.map((word) => word.id),
       newWordIds: plan.newWords.map((word) => word.id),
       reviewWordIds: plan.review.map((word) => word.id),
@@ -99,7 +104,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const now = new Date()
     const nextProgress = progress[wordId]
       ? applyReview(progress[wordId], rating, now)
-      : createProgress(wordId, rating, now)
+      : createProgress(wordId, rating, now, activeSession.language)
     await storageClient.putProgress(nextProgress)
     setProgress((current) => ({ ...current, [wordId]: nextProgress }))
 
@@ -118,7 +123,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       const now = new Date()
       const nextProgress = progress[wordId]
         ? applyReview(progress[wordId], correct ? 'known' : 'forgotten', now)
-        : createProgress(wordId, correct ? 'known' : 'forgotten', now)
+        : createProgress(wordId, correct ? 'known' : 'forgotten', now, activeSession.language)
       await storageClient.putProgress(nextProgress)
       setProgress((current) => ({ ...current, [wordId]: nextProgress }))
     }
@@ -135,6 +140,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const now = new Date()
     const completed: StudySession = {
       id: `${toLocalDate(now)}-${now.getTime()}`,
+      language: activeSession.language,
       date: toLocalDate(now),
       newCount: activeSession.newWordIds.length,
       reviewCount: activeSession.reviewWordIds.length,
@@ -144,7 +150,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       completed: true,
     }
     await storageClient.putSession(completed)
-    await storageClient.clearActiveSession()
+    await storageClient.clearActiveSession(activeSession.language)
     setSessions((current) => [...current, completed])
     setActiveSession(undefined)
     return true
@@ -160,8 +166,25 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     setSettings(next)
   }
 
+  const setLearningLanguage = async (language: LearningLanguage) => {
+    if (language === settings.learningLanguage) return
+    const [savedVocabulary, savedProgress, savedSessions, savedActive] = await Promise.all([
+      storageClient.getVocabulary(language),
+      storageClient.getAllProgress(language),
+      storageClient.getSessions(language),
+      storageClient.getActiveSession(language),
+    ])
+    const nextSettings = { ...settings, learningLanguage: language }
+    await storageClient.saveSettings(nextSettings)
+    setVocabulary(savedVocabulary)
+    setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
+    setSessions(savedSessions)
+    setActiveSession(savedActive)
+    setSettings(nextSettings)
+  }
+
   const clearLearningData = async () => {
-    await storageClient.clearLearningData()
+    await storageClient.clearLearningData(settings.learningLanguage)
     setProgress({})
     setSessions([])
     setActiveSession(undefined)
@@ -183,6 +206,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     completeQuizItem,
     exitSession,
     updateSettings,
+    setLearningLanguage,
     clearLearningData,
   }
 

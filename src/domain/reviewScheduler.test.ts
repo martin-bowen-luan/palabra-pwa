@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { applyReview, isDue, normalizeSpelling } from './reviewScheduler'
+import { applyReview, isCorrectSpelling, isDue, normalizeSpelling } from './reviewScheduler'
 import type { WordProgress } from '../types'
 
 const baseProgress: WordProgress = {
   wordId: 'hola',
+  language: 'es',
   stage: 2,
   status: 'learning',
   nextReviewAt: '2026-09-25T00:00:00.000Z',
@@ -45,5 +46,10 @@ describe('spelling normalization', () => {
   it('preserves accents and ñ', () => {
     expect(normalizeSpelling('año')).not.toBe(normalizeSpelling('ano'))
     expect(normalizeSpelling('si')).not.toBe(normalizeSpelling('sí'))
+  })
+
+  it('accepts configured spelling variants', () => {
+    expect(isCorrectSpelling('color', 'colour', ['color'])).toBe(true)
+    expect(isCorrectSpelling('collar', 'colour', ['color'])).toBe(false)
   })
 })

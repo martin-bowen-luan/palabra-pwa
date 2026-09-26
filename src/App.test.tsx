@@ -8,10 +8,14 @@ import type { VocabularyEntry, WordProgress } from './types'
 
 const databaseWord: VocabularyEntry = {
   id: 'database-01',
+  language: 'es',
+  term: 'persistir',
   spanish: 'persistir',
   partOfSpeech: '动词',
+  meaningZh: '持久保存',
   chinese: '持久保存',
   category: '数据库测试',
+  examples: [{ text: 'Los datos pueden persistir.', translationZh: '数据可以持久保存。' }],
   example: 'Los datos pueden persistir.',
   exampleZh: '数据可以持久保存。',
 }
@@ -80,6 +84,7 @@ describe('Palabra app', () => {
     const storage = await renderApp('/today', async (client) => {
       await client.putProgress({
         wordId: 'basic-01',
+        language: 'es',
         stage: 1,
         status: 'learning',
         nextReviewAt: '2020-01-01T00:00:00.000Z',
@@ -110,6 +115,49 @@ describe('Palabra app', () => {
     await user.type(search, '家庭')
     expect(screen.getByText('familia')).toBeInTheDocument()
     expect(screen.queryByText('aeropuerto')).not.toBeInTheDocument()
+  })
+
+  it('switches to the English database and keeps active sessions isolated by language', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today')
+
+    await user.click(await screen.findByRole('button', { name: '英语' }))
+    expect(await screen.findByText('altitude')).toBeInTheDocument()
+    await expect(storage.getSettings()).resolves.toMatchObject({ learningLanguage: 'en' })
+
+    await user.click(screen.getByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'altitude' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '结束' }))
+    await user.click(await screen.findByRole('button', { name: '西班牙语' }))
+
+    expect(await screen.findByText('hola')).toBeInTheDocument()
+    await expect(storage.getActiveSession('en')).resolves.toMatchObject({ language: 'en' })
+    await expect(storage.getActiveSession('es')).resolves.toBeUndefined()
+  })
+
+  it('searches English terms, meanings, and configured spelling variants', async () => {
+    const user = userEvent.setup()
+    await renderApp('/library')
+    await user.click(await screen.findByRole('button', { name: '英语' }))
+
+    const search = await screen.findByRole('searchbox', { name: '搜索词库' })
+    await user.type(search, 'color')
+    expect(await screen.findByText('colour')).toBeInTheDocument()
+  })
+
+  it('shows English IPA, pronunciation controls, and offline audio settings', async () => {
+    const user = userEvent.setup()
+    await renderApp('/today')
+    await user.click(await screen.findByRole('button', { name: '英语' }))
+    await user.click(screen.getByRole('button', { name: '开始今天的学习' }))
+
+    expect(await screen.findByText('/ˈæltɪtud/')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '播放 altitude 发音' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '结束' }))
+    await user.click(screen.getByRole('link', { name: '设置' }))
+    expect(await screen.findByRole('heading', { name: '英语离线发音' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '下载离线发音包' })).toBeInTheDocument()
   })
 
   it('builds the library from vocabulary stored in IndexedDB', async () => {

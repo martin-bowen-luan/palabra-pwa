@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
 import type { ReviewRating } from '../types'
+import { PronunciationButton } from '../components/PronunciationButton'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
@@ -24,7 +25,7 @@ export function StudyPage() {
   const options = useMemo(() => {
     if (!word) return []
     const distractors = vocabulary.filter((item) => item.id !== word.id && item.category === word.category).slice(0, 3)
-    return [word, ...distractors].sort((a, b) => a.id.localeCompare(b.id)).map((item) => item.chinese)
+    return [word, ...distractors].sort((a, b) => a.id.localeCompare(b.id)).map((item) => item.meaningZh)
   }, [word])
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export function StudyPage() {
 
   const submit = (selected: string) => {
     if (feedback) return
-    const correct = mode === 'spelling' ? isCorrectSpelling(selected, word.spanish) : selected === word.chinese
+    const correct = mode === 'spelling' ? isCorrectSpelling(selected, word.term, word.spellingVariants) : selected === word.meaningZh
     setFeedback({ correct, selected })
   }
 
@@ -71,7 +72,11 @@ export function StudyPage() {
     {activeSession.phase === 'learn' ? (
       <section className={styles.wordStage}>
         <div className={styles.wordIdentity}>
-          <h1>{word.spanish}</h1>
+          <h1>{word.term}</h1>
+          {word.language === 'en' && <div className={styles.pronunciationRow}>
+            <span>{word.pronunciation?.ipa || '美式发音'}</span>
+            <PronunciationButton word={word} />
+          </div>}
           <span className={styles.annotationLine} />
           <p>{word.partOfSpeech}</p>
         </div>
@@ -79,9 +84,9 @@ export function StudyPage() {
           <button className={styles.revealButton} onClick={() => setRevealed(true)}>点击查看释义</button>
         ) : (
           <div className={styles.definition}>
-            <strong>{word.chinese}</strong>
-            <p lang="es">{word.example}</p>
-            <span>{word.exampleZh}</span>
+            <strong>{word.meaningZh}</strong>
+            <p lang={word.language}>{word.examples[0]?.text}</p>
+            <span>{word.examples[0]?.translationZh}</span>
           </div>
         )}
         {revealed && <div className={styles.ratingBar} aria-label="记忆程度">
@@ -92,8 +97,8 @@ export function StudyPage() {
       </section>
     ) : (
       <section className={styles.quizStage}>
-        <p className={styles.quizPrompt}>{mode === 'choice' ? '选择正确的中文意思' : '写出这个西班牙语单词'}</p>
-        <h1>{mode === 'choice' ? word.spanish : word.chinese}</h1>
+        <p className={styles.quizPrompt}>{mode === 'choice' ? '选择正确的中文意思' : `写出这个${word.language === 'en' ? '英语' : '西班牙语'}单词`}</p>
+        <h1>{mode === 'choice' ? word.term : word.meaningZh}</h1>
         {mode === 'choice' ? (
           <div className={styles.choiceList}>
             {options.map((option) => <button
@@ -105,14 +110,14 @@ export function StudyPage() {
           </div>
         ) : (
           <form className={`${styles.spellingForm} ${feedback && !feedback.correct ? styles.shake : ''}`} onSubmit={(event) => { event.preventDefault(); submit(answer) }}>
-            <label htmlFor="spelling">西班牙语</label>
+            <label htmlFor="spelling">{word.language === 'en' ? '英语' : '西班牙语'}</label>
             <input id="spelling" value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" autoCapitalize="none" disabled={Boolean(feedback)} />
             {!feedback && <button className={styles.primaryButton} type="submit" disabled={!answer.trim()}>检查答案</button>}
           </form>
         )}
         {feedback && <div className={`${styles.feedback} ${feedback.correct ? styles.feedbackCorrect : styles.feedbackWrong}`} role="status">
           <strong>{feedback.correct ? '正确' : '再记一次'}</strong>
-          {!feedback.correct && <p>正确答案是 <span lang="es">{word.spanish}</span></p>}
+          {!feedback.correct && <p>正确答案是 <span lang={word.language}>{word.term}</span></p>}
           <button className={styles.primaryButton} onClick={() => void next()}>继续</button>
         </div>}
       </section>
