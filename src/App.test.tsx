@@ -278,7 +278,8 @@ describe('Palabra app', () => {
       { mode: 'spelling', value: 'por favor' },
       { mode: 'choice', value: '是；对' },
     ]
-    for (const answer of answers) {
+    for (const [index, answer] of answers.entries()) {
+      expect(await screen.findByText(`${index + 1} / ${answers.length}`)).toBeInTheDocument()
       if (answer.mode === 'choice') {
         await user.click(await screen.findByRole('button', { name: answer.value }))
       } else {
