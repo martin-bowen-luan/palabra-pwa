@@ -94,4 +94,13 @@ export interface ActiveSession {
   correctCount: number
   answeredCount: number
   startedAt: string
+  practice?: PracticeQueue
+}
+
+export interface PracticeQueue {
+  pendingIds: string[]
+  delayed: Array<{ wordId: string; remaining: number }>
+  stateById: Record<string, 'fresh' | 'retry' | 'revisit'>
+  firstAnswers: Record<string, boolean>
+  promptNumber: number
 }
