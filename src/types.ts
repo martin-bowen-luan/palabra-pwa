@@ -38,6 +38,8 @@ export interface VocabularyEntry {
   examples: VocabularyExample[]
   pronunciation?: VocabularyPronunciation
   spellingVariants?: string[]
+  relatedTerms?: string[]
+  specialForms?: Array<{ label: string; form: string }>
   source?: VocabularySource
   /** Legacy aliases retained while existing UI migrates to the generic fields. */
   spanish?: string
@@ -92,4 +94,18 @@ export interface ActiveSession {
   correctCount: number
   answeredCount: number
   startedAt: string
+  practice?: PracticeQueue
+  assignedNewCount?: number
+  assignedReviewCount?: number
+  failedWordIds?: string[]
+  quizFeedback?: { wordId: string; correct: boolean; selected: string; nextPractice: PracticeQueue }
+  revision?: number
+}
+
+export interface PracticeQueue {
+  pendingIds: string[]
+  delayed: Array<{ wordId: string; remaining: number }>
+  stateById: Record<string, 'fresh' | 'retry' | 'revisit'>
+  firstAnswers: Record<string, boolean>
+  promptNumber: number
 }

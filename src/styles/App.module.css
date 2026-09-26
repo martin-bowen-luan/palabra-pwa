@@ -57,6 +57,9 @@
 .definition strong { font-size: 24px; }
 .definition p { margin: 24px 0 7px; font: 450 21px/1.45 'Source Serif 4 Variable', serif; }
 .definition span { color: var(--muted); font-size: 14px; }
+.wordRelations { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); }
+.relationRow { padding: 5px 0; color: var(--muted); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.relationSource { display: inline-flex; min-height: 44px; align-items: center; color: var(--blue); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
 .ratingBar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: auto; padding-top: 24px; }
 .ratingBar button, .choiceList button { min-height: 52px; border: 1px solid var(--line); border-radius: 8px; background: transparent; cursor: pointer; }
 .ratingBar button:first-child { color: var(--red); }
@@ -65,6 +68,7 @@
 .quizStage { padding-top: 42px; }
 .quizPrompt { margin: 0 0 24px; color: var(--muted); font-size: 14px; }
 .quizStage h1 { font-size: clamp(45px, 13vw, 64px); }
+.quizPronunciation { min-height: 44px; margin-top: 8px; }
 .choiceList { display: grid; gap: 10px; margin-top: 48px; }
 .choiceList button { padding: 12px 18px; text-align: left; background: var(--control); }
 .choiceList .correctChoice { color: var(--green); border-color: var(--green); background: color-mix(in srgb, var(--green) 9%, var(--paper)); }
@@ -82,12 +86,16 @@
 
 .pageHeader { min-height: 92px; }
 .pageHeader span { color: var(--muted); font-size: 13px; }
+.libraryViews { display: flex; gap: 24px; border-bottom: 1px solid var(--line); }
+.libraryViews button { position: relative; min-width: 52px; min-height: 44px; padding: 0; border: 0; color: var(--muted); background: transparent; cursor: pointer; }
+.libraryViews .libraryViewActive { color: var(--ink); font-weight: 600; }
+.libraryViews .libraryViewActive::after { content: ''; position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: var(--blue); }
 .searchBox { height: 50px; display: flex; align-items: center; gap: 10px; margin: 24px 0 16px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--control); }
 .searchBox svg { color: var(--muted); }
-.searchBox input { flex: 1; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; }
+.searchBox input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; color: var(--ink); background: transparent; }
 .categoryRail { display: flex; gap: 6px; margin: 0 -24px 12px; padding: 0 24px 12px; overflow-x: auto; scrollbar-width: none; }
 .categoryRail::-webkit-scrollbar { display: none; }
-.categoryRail button { min-height: 38px; flex: 0 0 auto; padding: 0 13px; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); background: transparent; font-size: 13px; }
+.categoryRail button { min-height: 44px; flex: 0 0 auto; padding: 0 13px; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); background: transparent; font-size: 13px; }
 .categoryRail .categoryActive { color: var(--paper); border-color: var(--ink); background: var(--ink); }
 .dictionaryList { border-top: 1px solid var(--line); }
 .dictionaryRow { width: 100%; min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; }
@@ -104,6 +112,7 @@
 .wordDetail > .pronunciationRow { width: fit-content; justify-content: flex-start; gap: 4px; margin-top: 8px; }
 .wordDetail > div { display: flex; align-items: baseline; gap: 12px; margin-top: 38px; }
 .wordDetail > .pronunciationRow, .wordDetail > .examplePair { display: flex; }
+.wordDetail > .wordRelations { display: block; margin-top: 24px; }
 .wordDetail > div span { color: var(--muted); font-size: 13px; }
 .wordDetail > div strong { font-size: 25px; }
 .wordDetail blockquote { margin: 42px 0 8px; padding-left: 18px; border-left: 3px solid var(--blue); font: 450 23px/1.5 'Source Serif 4 Variable', serif; }

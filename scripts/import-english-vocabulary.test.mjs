@@ -59,6 +59,42 @@ describe('English vocabulary importer', () => {
     expect(normalizeEnglishRecord(sourceRecord, 0).spellingVariants).toContain('color')
   })
 
+  it('extracts only distinctive inflections from the source', () => {
+    const result = normalizeEnglishRecord({
+      ...sourceRecord,
+      word: 'go',
+      sections: [
+        { title: '变形', text: '过去式：went\n过去分词：gone\n现在分词：going\n第三人称单数：goes' },
+      ],
+    }, 0)
+
+    expect(result.specialForms).toEqual([
+      { label: '过去式', form: 'went' },
+      { label: '过去分词', form: 'gone' },
+      { label: '第三人称单数', form: 'goes' },
+    ])
+  })
+
+  it('extracts brief related terms without importing markup', () => {
+    const result = normalizeEnglishRecord({
+      ...sourceRecord,
+      word: 'go',
+      sections: [
+        { title: '英英释义', text: '同义词：move, travel, <script>bad()</script>, move' },
+      ],
+    }, 0)
+
+    expect(result.relatedTerms).toEqual(['move', 'travel'])
+    expect(JSON.stringify(result)).not.toContain('<script>')
+  })
+
+  it('keeps only related terms found elsewhere in the imported corpus', () => {
+    const go = { ...sourceRecord, word: 'go', sections: [{ title: '英英释义', text: '同义词：move, missing, go' }] }
+    const move = { ...sourceRecord, word: 'move', sections: [] }
+    const entries = validateCorpus([go, move], 2)
+    expect(entries[0].relatedTerms).toEqual(['move'])
+  })
+
   it('keeps subject labels together in the meaning instead of splitting brackets into the part of speech', () => {
     const result = normalizeEnglishRecord({
       ...sourceRecord,

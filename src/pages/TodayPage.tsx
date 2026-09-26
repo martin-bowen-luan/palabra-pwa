@@ -5,12 +5,19 @@ import { toLocalDate } from '../domain/stats'
 import styles from '../styles/App.module.css'
 
 export function TodayPage() {
-  const { activeSession, dailyPlan, sessions, settings, startSession, streak } = useAppState()
+  const { activeSession, dailyPlan, sessions, settings, startSession, startNextGroup, moreGroupsToday, streak } = useAppState()
   const navigate = useNavigate()
   const completedToday = sessions.some((session) => session.completed && session.date === toLocalDate(new Date()))
   const preview = dailyPlan.newWords[0] ?? dailyPlan.review[0]
-  const completed = activeSession ? activeSession.currentIndex : 0
-  const total = activeSession?.wordIds.length ?? dailyPlan.all.length
+  const completedNewToday = sessions.filter((session) => session.completed && session.date === toLocalDate(new Date()))
+    .reduce((sum, session) => sum + session.newCount, 0)
+  const completed = Math.min(settings.dailyNewWords, completedNewToday)
+  const total = settings.dailyNewWords
+  const groupTotal = (activeSession?.assignedNewCount ?? activeSession?.newWordIds.length ?? 0)
+    + (activeSession?.assignedReviewCount ?? activeSession?.reviewWordIds.length ?? 0)
+  const groupRemaining = activeSession?.phase === 'learn' ? activeSession.wordIds.length : activeSession?.practice
+    ? new Set([...activeSession.practice.pendingIds, ...activeSession.practice.delayed.map((item) => item.wordId)]).size
+    : groupTotal - (activeSession?.currentIndex ?? 0)
 
   const begin = async (extra = 0) => {
     const session = await startSession(extra)
@@ -35,8 +42,11 @@ export function TodayPage() {
         <span style={{ width: `${total ? Math.min(100, completed / total * 100) : 100}%` }} />
       </div>
       <div className={styles.progressMeta}><span>今日进度</span><strong>{completed} / {total}</strong></div>
+      {activeSession && <div className={styles.progressMeta}><span>本组进度</span><strong>{Math.max(0, groupTotal - groupRemaining)} / {groupTotal}</strong></div>}
       {activeSession ? (
         <button className={styles.primaryButton} onClick={() => navigate('/study')}>继续今天的学习</button>
+      ) : completedToday && moreGroupsToday ? (
+        <button className={styles.primaryButton} onClick={() => void startNextGroup().then((group) => { if (group) navigate('/study') })}>开始下一组</button>
       ) : completedToday ? (
         <>
           <button className={styles.primaryButton} disabled>今日已完成</button>
