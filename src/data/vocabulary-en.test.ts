@@ -22,4 +22,23 @@ describe('generated English vocabulary', () => {
     expect(serialized).not.toContain('<script')
     expect(serialized).not.toContain('<aside')
   })
+
+  it('ships source-backed components and derivations that resolve within the offline vocabulary', () => {
+    const happiness = englishVocabulary.find(word => word.term === 'happiness')!
+    expect(happiness.roots?.map(root => root.part)).toContain('happy')
+    const terms = new Set(englishVocabulary.map(word => word.term))
+    for (const word of englishVocabulary) {
+      for (const root of word.roots ?? []) {
+        expect(root.meaningZh.trim()).not.toBe('')
+        expect(root.sourceUrl).toMatch(/^https:\/\/en\.wiktionary\.org\/w\/index\.php\?title=.+&oldid=\d+$/)
+      }
+      for (const term of word.derivedTerms ?? []) { expect(terms.has(term)).toBe(true); expect(term).not.toBe(word.term) }
+    }
+  })
+
+  it('does not confuse suffixes with unrelated standalone words', () => {
+    expect(englishVocabulary.find(word => word.term === 'ant')?.derivedTerms ?? []).not.toContain('accountant')
+    expect(englishVocabulary.find(word => word.term === 'age')?.derivedTerms ?? []).not.toContain('marriage')
+    expect(englishVocabulary.find(word => word.term === 'accountant')?.roots?.map(root => root.part) ?? []).not.toContain('ant')
+  })
 })

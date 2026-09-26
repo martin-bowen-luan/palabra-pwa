@@ -4,11 +4,14 @@ import { BackIcon, SearchIcon } from '../components/Icons'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { PronunciationButton } from '../components/PronunciationButton'
 import { WordRelations } from '../components/WordRelations'
+import { SentenceSpeechButton } from '../components/SentenceSpeechButton'
+import { useAi } from '../ai/AiProvider'
 import { useAppState } from '../app/AppState'
 import styles from '../styles/App.module.css'
 
 export function LibraryPage() {
   const { categories, progress, settings, vocabulary } = useAppState()
+  const { settings: aiSettings } = useAi()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('全部')
   const [selected, setSelected] = useState<VocabularyEntry>()
@@ -46,10 +49,11 @@ export function LibraryPage() {
         <div><span>{selected.partOfSpeech}</span><strong>{selected.meaningZh}</strong></div>
         {selected.examples.slice(0, 3).map((example) => <div className={styles.examplePair} key={`${example.text}-${example.translationZh}`}>
           <blockquote lang={selected.language}>{example.text}</blockquote>
+          {aiSettings.enabled && selected.language === 'en' && <SentenceSpeechButton text={example.text} />}
           <p>{example.translationZh}</p>
         </div>)}
-        <WordRelations word={selected} />
-        <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / 5`}</footer>
+        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} onSelectTerm={word => { setSelected(word); window.scrollTo?.(0, 0) }} />
+        <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / ${progress[selected.id]?.scheduleVersion === 1 ? 7 : 5}`}{progress[selected.id]?.reviewPriority === 'skipped' && ' · 拼写跳过，优先复习'}</footer>
       </section>
     </main>
   }

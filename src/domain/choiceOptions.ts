@@ -45,6 +45,7 @@ function lookalikeScore(a: string, b: string): number {
 }
 
 function seededPickDistinctMeanings(words: VocabularyEntry[], count: number, seed: string): VocabularyEntry[] {
+  if (count <= 0) return []
   const picked: VocabularyEntry[] = []
   const meanings = new Set<string>()
   for (const word of seededShuffle(words, seed)) {
@@ -66,8 +67,9 @@ export function buildEnglishChoiceOptions(
   const candidates = vocabulary
     .filter((item) => item.language === 'en' && item.id !== target.id && !excludedIds.has(item.id)
       && item.meaningZh.trim() && item.meaningZh.trim() !== target.meaningZh.trim())
-    .sort((left, right) => lookalikeScore(target.term, left.term) - lookalikeScore(target.term, right.term)
-      || left.term.localeCompare(right.term))
+    .map(word => ({ word, score: lookalikeScore(target.term, word.term) }))
+    .sort((left, right) => left.score - right.score || left.word.term.localeCompare(right.word.term))
+    .map(item => item.word)
   const near = seededPickDistinctMeanings(candidates.slice(0, 8), 3, `${seed}:near`)
   const fallback = seededPickDistinctMeanings(
     candidates.slice(8).filter((item) => !near.some((picked) => picked.meaningZh.trim() === item.meaningZh.trim())),

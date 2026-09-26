@@ -5,7 +5,9 @@ import { buildNextStudyGroup, hasMoreStudyGroups } from '../domain/studyGroups'
 import { advancePractice, createPracticeQueue, currentPracticeWord, removePracticeWord } from '../domain/practiceQueue'
 import { applyReview, createProgress, markFluent } from '../domain/reviewScheduler'
 import { calculateStreak, toLocalDate } from '../domain/stats'
-import type { ActiveSession, LearningLanguage, ReviewRating, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
+import { advanceMemoryRound, buildEnglishGroup } from '../domain/memoryRounds'
+import { scheduleEnglishReview } from '../domain/englishReview'
+import type { ActiveSession, LearningLanguage, ReviewRating, StudyMode, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
 
 interface AppStateValue {
   ready: boolean
@@ -19,11 +21,12 @@ interface AppStateValue {
   dailyPlan: DailyPlan
   streak: number
   moreGroupsToday: boolean
-  startSession: (extraWords?: number) => Promise<ActiveSession | undefined>
-  startNextGroup: () => Promise<ActiveSession | undefined>
+  startSession: (extraWords?: number, mode?: StudyMode) => Promise<ActiveSession | undefined>
+  startNextGroup: (mode?: StudyMode) => Promise<ActiveSession | undefined>
   rateCurrentWord: (rating: ReviewRating) => Promise<void>
   markCurrentWordFluent: () => Promise<boolean>
-  submitQuizAnswer: (correct: boolean, selected: string) => Promise<void>
+  submitQuizAnswer: (correct: boolean, selected: string, selectedWordId?: string) => Promise<void>
+  skipSpellingWord: () => Promise<boolean>
   completeQuizItem: () => Promise<boolean>
   exitSession: () => Promise<void>
   updateSettings: (patch: Partial<UserSettings>) => Promise<void>
@@ -51,6 +54,15 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   const [sessions, setSessions] = useState<StudySession[]>([])
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS)
   const [activeSession, setActiveSession] = useState<ActiveSession>()
+  const [clock, setClock] = useState(() => new Date())
+
+  useEffect(() => {
+    const refreshClock = () => setClock(new Date())
+    const timer = window.setInterval(refreshClock, 60000)
+    window.addEventListener('focus', refreshClock)
+    document.addEventListener('visibilitychange', refreshClock)
+    return () => { window.clearInterval(timer); window.removeEventListener('focus', refreshClock); document.removeEventListener('visibilitychange', refreshClock) }
+  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -84,8 +96,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   }, [settings.theme])
 
   const dailyPlan = useMemo(
-    () => buildDailyPlan(vocabulary, progress, settings.dailyNewWords),
-    [progress, settings.dailyNewWords, vocabulary],
+    () => buildDailyPlan(vocabulary, progress, settings.dailyNewWords, clock),
+    [progress, settings.dailyNewWords, vocabulary, clock],
   )
 
   const categories = useMemo(
@@ -94,8 +106,10 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   )
 
   const moreGroupsToday = useMemo(
-    () => ready && hasMoreStudyGroups(vocabulary, progress, sessions, settings.dailyNewWords),
-    [ready, vocabulary, progress, sessions, settings.dailyNewWords],
+    () => ready && (settings.learningLanguage === 'en'
+      ? buildEnglishGroup(vocabulary, progress, sessions, settings.dailyNewWords, sessions.at(-1)?.mode ?? 'learn', clock).all.length > 0
+      : hasMoreStudyGroups(vocabulary, progress, sessions, settings.dailyNewWords, clock)),
+    [ready, vocabulary, progress, sessions, settings.dailyNewWords, settings.learningLanguage, clock],
   )
 
   const refreshLearningState = async (language: LearningLanguage) => {
@@ -115,18 +129,21 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     return true
   }
 
-  const startSession = async (extraWords = 0) => {
+  const startSession = async (extraWords = 0, mode: StudyMode = 'learn') => {
     if (activeSession) return activeSession
-    const plan = buildNextStudyGroup(vocabulary, progress, sessions, settings.dailyNewWords, new Date(), extraWords)
+    const english = settings.learningLanguage === 'en'
+    const plan = english ? buildEnglishGroup(vocabulary, progress, sessions, settings.dailyNewWords, mode, new Date(), extraWords)
+      : buildNextStudyGroup(vocabulary, progress, sessions, settings.dailyNewWords, new Date(), extraWords)
     if (!plan.all.length) return undefined
     const session: ActiveSession = {
       id: `active-session:${settings.learningLanguage}`,
       language: settings.learningLanguage,
+      ...(english ? { mode, memoryRound: 'choice' as const, skippedWordIds: [] } : {}),
       wordIds: plan.all.map((word) => word.id),
       newWordIds: plan.newWords.map((word) => word.id),
       reviewWordIds: plan.review.map((word) => word.id),
       currentIndex: 0,
-      phase: plan.newWords.length ? 'learn' : 'quiz',
+      phase: english ? 'quiz' : plan.newWords.length ? 'learn' : 'quiz',
       correctCount: 0,
       answeredCount: 0,
       startedAt: new Date().toISOString(),
@@ -142,7 +159,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     return saved
   }
 
-  const startNextGroup = () => startSession()
+  const startNextGroup = (mode?: StudyMode) => startSession(0, mode ?? sessions.at(-1)?.mode ?? 'learn')
 
   const rateCurrentWord = async (rating: ReviewRating) => {
     if (!activeSession) return
@@ -192,6 +209,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       totalCount: session.answeredCount + answers.length,
       durationSeconds: Math.max(1, Math.round((now.getTime() - new Date(session.startedAt).getTime()) / 1000)),
       completed: true,
+      mode: session.mode,
+      skippedCount: session.skippedWordIds?.length ?? 0,
     }
     try {
       await storageClient.completeStudyGroup(completed, session.language, progressUpdate, session)
@@ -226,6 +245,12 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
       revision: (activeSession.revision ?? 0) + 1,
     }
+    if (activeSession.memoryRound) {
+      const result = advanceMemoryRound(nextSession)
+      nextProgress.stage = 6
+      nextProgress.scheduleVersion = 1
+      return persistMemoryStep(result.session, result.finished, nextProgress)
+    }
     if (!nextSession.wordIds.length || (nextSession.phase === 'quiz' && !nextSession.practice?.pendingIds.length && !nextSession.practice?.delayed.length)) {
       return finishSession(nextSession, nextProgress)
     }
@@ -240,14 +265,14 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     return false
   }
 
-  const submitQuizAnswer = async (correct: boolean, selected: string) => {
+  const submitQuizAnswer = async (correct: boolean, selected: string, selectedWordId?: string) => {
     if (!activeSession) return
     const queue = sessionQueue(activeSession)
     const wordId = sessionWordId(activeSession)
     if (!wordId || activeSession.phase !== 'quiz' || activeSession.quizFeedback) return
     const failedBefore = activeSession.failedWordIds?.includes(wordId) ?? false
     let nextProgress: WordProgress | undefined
-    if (!correct && !failedBefore || correct && activeSession.reviewWordIds.includes(wordId) && !failedBefore && !(wordId in queue.firstAnswers)) {
+    if (!activeSession.memoryRound && (!correct && !failedBefore || correct && activeSession.reviewWordIds.includes(wordId) && !failedBefore && !(wordId in queue.firstAnswers))) {
       const now = new Date()
       nextProgress = progress[wordId]
         ? applyReview(progress[wordId], correct ? 'known' : 'forgotten', now)
@@ -256,7 +281,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const advanced = advancePractice(queue, correct)
     const nextSession: ActiveSession = {
       ...activeSession,
-      quizFeedback: { wordId, correct, selected, nextPractice: advanced },
+      quizFeedback: { wordId, correct, selected, selectedWordId, nextPractice: advanced },
       failedWordIds: !correct && !failedBefore ? [...(activeSession.failedWordIds ?? []), wordId] : activeSession.failedWordIds,
       assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
@@ -282,9 +307,17 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       currentIndex: 0,
       revision: (activeSession.revision ?? 0) + 1,
     }
+    if (activeSession.memoryRound) {
+      const wordId = activeSession.quizFeedback.wordId
+      const spellingDone = activeSession.memoryRound === 'spelling' && activeSession.quizFeedback.correct
+        && !advanced.pendingIds.includes(wordId) && !advanced.delayed.some(item => item.wordId === wordId)
+      const nextProgress = spellingDone ? scheduleEnglishReview(progress[wordId], wordId,
+        activeSession.failedWordIds?.includes(wordId) ? 'forgotten' : 'remembered') : undefined
+      const result = advanceMemoryRound(nextSession)
+      return persistMemoryStep(result.session, result.finished, nextProgress)
+    }
     if (!advanced.pendingIds.length && !advanced.delayed.length) {
-      await finishSession(nextSession)
-      return true
+      return finishSession(nextSession)
     }
     try {
       await storageClient.commitStudyStep(undefined, nextSession)
@@ -294,6 +327,31 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     }
     setActiveSession(nextSession)
     return false
+  }
+
+  const persistMemoryStep = async (session: ActiveSession, finished: boolean, nextProgress?: WordProgress): Promise<boolean> => {
+    if (finished) return finishSession(session, nextProgress)
+    try { await storageClient.commitStudyStep(nextProgress, session) }
+    catch (error) { if (await recoverStaleSession(error, session.language)) return false; throw error }
+    if (nextProgress) setProgress(current => ({ ...current, [nextProgress.wordId]: nextProgress }))
+    setActiveSession(session)
+    return false
+  }
+
+  const skipSpellingWord = async () => {
+    if (!activeSession || activeSession.memoryRound !== 'spelling' || activeSession.quizFeedback?.correct) return false
+    const wordId = sessionWordId(activeSession)
+    if (!wordId) return false
+    const queue = activeSession.quizFeedback?.nextPractice ?? sessionQueue(activeSession)
+    const advanced = removePracticeWord(queue, wordId)
+    advanced.firstAnswers = { ...advanced.firstAnswers, [wordId]: false }
+    const nextSession: ActiveSession = {
+      ...activeSession, practice: advanced, quizFeedback: undefined,
+      skippedWordIds: [...new Set([...(activeSession.skippedWordIds ?? []), wordId])],
+      revision: (activeSession.revision ?? 0) + 1,
+    }
+    const result = advanceMemoryRound(nextSession)
+    return persistMemoryStep(result.session, result.finished, scheduleEnglishReview(progress[wordId], wordId, 'skipped'))
   }
 
   const exitSession = async () => {
@@ -348,6 +406,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     markCurrentWordFluent,
     submitQuizAnswer,
     completeQuizItem,
+    skipSpellingWord,
     exitSession,
     updateSettings,
     setLearningLanguage,

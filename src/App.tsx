@@ -9,6 +9,7 @@ import { SettingsPage } from './pages/SettingsPage'
 import { StudyPage } from './pages/StudyPage'
 import { TodayPage } from './pages/TodayPage'
 import styles from './styles/App.module.css'
+import { AiProvider } from './ai/AiProvider'
 
 function AppRoutes() {
   const { loadError, ready } = useAppState()
@@ -35,5 +36,5 @@ function AppRoutes() {
 }
 
 export default function App({ storageClient }: { storageClient?: PalabraStorage }) {
-  return <AppStateProvider storageClient={storageClient}><AppRoutes /></AppStateProvider>
+  return <AppStateProvider storageClient={storageClient}><AiProvider storageClient={storageClient}><AppRoutes /></AiProvider></AppStateProvider>
 }

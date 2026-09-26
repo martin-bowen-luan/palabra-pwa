@@ -2,6 +2,8 @@ export type ReviewRating = 'forgotten' | 'fuzzy' | 'known'
 export type LearningStatus = 'learning' | 'mastered'
 export type ThemeMode = 'system' | 'light' | 'dark'
 export type LearningLanguage = 'es' | 'en'
+export type StudyMode = 'learn' | 'review'
+export type MemoryRound = 'choice' | 'context' | 'recall' | 'spelling'
 
 export interface VocabularyExample {
   text: string
@@ -39,6 +41,9 @@ export interface VocabularyEntry {
   pronunciation?: VocabularyPronunciation
   spellingVariants?: string[]
   relatedTerms?: string[]
+  derivedTerms?: string[]
+  roots?: Array<{ part: string; meaningZh: string; sourceUrl: string }>
+  relationSourceUrls?: string[]
   specialForms?: Array<{ label: string; form: string }>
   source?: VocabularySource
   /** Legacy aliases retained while existing UI migrates to the generic fields. */
@@ -59,9 +64,13 @@ export interface WordProgress {
   correctCount: number
   lastReviewedAt: string
   skipReview?: boolean
+  scheduleVersion?: 1
+  reviewPriority?: 'normal' | 'skipped'
 }
 
 export interface StudySession {
+  mode?: StudyMode
+  skippedCount?: number
   language: LearningLanguage
   id: string
   date: string
@@ -84,6 +93,9 @@ export interface UserSettings {
 }
 
 export interface ActiveSession {
+  mode?: StudyMode
+  memoryRound?: MemoryRound
+  skippedWordIds?: string[]
   id: `active-session:${LearningLanguage}`
   language: LearningLanguage
   wordIds: string[]
@@ -98,7 +110,7 @@ export interface ActiveSession {
   assignedNewCount?: number
   assignedReviewCount?: number
   failedWordIds?: string[]
-  quizFeedback?: { wordId: string; correct: boolean; selected: string; nextPractice: PracticeQueue }
+  quizFeedback?: { wordId: string; correct: boolean; selected: string; selectedWordId?: string; nextPractice: PracticeQueue }
   revision?: number
 }
 
