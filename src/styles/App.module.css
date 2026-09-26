@@ -42,6 +42,12 @@
 .wordIdentity h1, .quizStage h1 { margin: 0; font: 520 clamp(56px, 16vw, 72px)/1.06 'Source Serif 4 Variable', serif; letter-spacing: -.045em; overflow-wrap: anywhere; }
 .annotationLine { display: block; width: 42px; height: 3px; margin: 12px auto 10px; background: var(--blue); transform: rotate(-2deg); }
 .wordIdentity p { margin: 0; color: var(--muted); font-size: 13px; }
+.pronunciationRow { min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--blue); font: 500 17px/1.2 'Source Serif 4 Variable', serif; }
+.pronunciationButton { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; color: var(--blue); background: transparent; cursor: pointer; }
+.pronunciationButton:hover { background: var(--blue-soft); }
+.pronunciationButton:focus-visible { outline: 3px solid color-mix(in srgb, var(--blue) 65%, transparent); outline-offset: 2px; }
+.pronunciationButton svg { width: 21px; height: 21px; }
+.audioError { color: var(--red); font: 500 12px/1.2 sans-serif; }
 .revealButton { min-height: 58px; margin-top: auto; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--blue); background: transparent; cursor: pointer; }
 .definition { padding: 28px 0; border-top: 1px solid var(--line); animation: reveal 220ms ease both; }
 .definition strong { font-size: 24px; }
@@ -91,11 +97,16 @@
 .wordDetail > p:first-child { color: var(--muted); font-size: 13px; }
 .wordDetail h1 { margin: 8px 0 0; font: 520 clamp(58px, 17vw, 78px)/1.05 'Source Serif 4 Variable', serif; letter-spacing: -.045em; }
 .wordDetail .annotationLine { margin-left: 0; }
+.wordDetail > .pronunciationRow { width: fit-content; justify-content: flex-start; gap: 4px; margin-top: 8px; }
 .wordDetail > div { display: flex; align-items: baseline; gap: 12px; margin-top: 38px; }
+.wordDetail > .pronunciationRow, .wordDetail > .examplePair { display: flex; }
 .wordDetail > div span { color: var(--muted); font-size: 13px; }
 .wordDetail > div strong { font-size: 25px; }
 .wordDetail blockquote { margin: 42px 0 8px; padding-left: 18px; border-left: 3px solid var(--blue); font: 450 23px/1.5 'Source Serif 4 Variable', serif; }
 .wordDetail > p { color: var(--muted); }
+.wordDetail .examplePair { display: block; margin-top: 30px; }
+.wordDetail .examplePair blockquote { margin: 0 0 8px; }
+.wordDetail .examplePair p { margin: 0; color: var(--muted); }
 .wordDetail footer { margin-top: 50px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
 
 .emptyState { padding: 90px 0; text-align: center; }
@@ -124,6 +135,16 @@
 .toggleRow strong { font-size: 15px; }
 .toggleRow small { color: var(--muted); font-size: 12px; }
 .toggleRow input { width: 42px; height: 24px; accent-color: var(--blue); }
+.settingDescription, .sourceNote, .inlineNotice { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.audioPackProgress { height: 3px; overflow: hidden; background: var(--line); }
+.audioPackProgress span { display: block; height: 100%; background: var(--blue); transition: width 180ms ease; }
+.audioPackMeta { display: flex; justify-content: space-between; margin: 8px 0 18px; color: var(--muted); font-size: 12px; }
+.audioPackMeta strong { color: var(--ink); }
+.audioPackActions { display: flex; gap: 18px; }
+.audioPackActions button { min-height: 44px; padding: 0; border: 0; color: var(--blue); background: transparent; cursor: pointer; }
+.audioPackActions button:disabled { color: var(--muted); cursor: default; }
+.audioPackActions button:last-child:not(:first-child) { color: var(--red); }
+.sourceNote { margin: 18px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 11px; }
 .themeOptions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .themeOptions label { position: relative; }
 .themeOptions input { position: absolute; opacity: 0; }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
 import type { ReviewRating } from '../types'
+import { PronunciationButton } from '../components/PronunciationButton'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
@@ -72,6 +73,10 @@ export function StudyPage() {
       <section className={styles.wordStage}>
         <div className={styles.wordIdentity}>
           <h1>{word.term}</h1>
+          {word.language === 'en' && <div className={styles.pronunciationRow}>
+            <span>{word.pronunciation?.ipa || '美式发音'}</span>
+            <PronunciationButton word={word} />
+          </div>}
           <span className={styles.annotationLine} />
           <p>{word.partOfSpeech}</p>
         </div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { VocabularyEntry } from '../types'
 import { BackIcon, SearchIcon } from '../components/Icons'
 import { LanguageSwitch } from '../components/LanguageSwitch'
+import { PronunciationButton } from '../components/PronunciationButton'
 import { useAppState } from '../app/AppState'
 import styles from '../styles/App.module.css'
 
@@ -33,10 +34,16 @@ export function LibraryPage() {
       <section className={styles.wordDetail}>
         <p>{selected.category}</p>
         <h1>{selected.term}</h1>
+        {selected.language === 'en' && <div className={styles.pronunciationRow}>
+          <span>{selected.pronunciation?.ipa || '美式发音'}</span>
+          <PronunciationButton word={selected} />
+        </div>}
         <span className={styles.annotationLine} />
         <div><span>{selected.partOfSpeech}</span><strong>{selected.meaningZh}</strong></div>
-        <blockquote lang={selected.language}>{selected.examples[0]?.text}</blockquote>
-        <p>{selected.examples[0]?.translationZh}</p>
+        {selected.examples.slice(0, 3).map((example) => <div className={styles.examplePair} key={`${example.text}-${example.translationZh}`}>
+          <blockquote lang={selected.language}>{example.text}</blockquote>
+          <p>{example.translationZh}</p>
+        </div>)}
         <footer>{stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / 5`}</footer>
       </section>
     </main>

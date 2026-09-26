@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAppState } from '../app/AppState'
 import { LanguageSwitch } from '../components/LanguageSwitch'
+import { AudioPackSettings } from '../components/AudioPackSettings'
 import type { ThemeMode, UserSettings } from '../types'
 import styles from '../styles/App.module.css'
 
@@ -22,6 +23,7 @@ export function SettingsPage() {
         {goals.map((goal) => <button key={goal} className={settings.dailyNewWords === goal ? styles.segmentActive : ''} onClick={() => void updateSettings({ dailyNewWords: goal })}>{goal}</button>)}
       </div>
     </section>
+    {settings.learningLanguage === 'en' && <AudioPackSettings />}
     <section className={styles.settingsSection}>
       <div className={styles.settingTitle}><h2>测试题型</h2><span>至少保留一种</span></div>
       <label className={styles.toggleRow}><span><strong>{settings.learningLanguage === 'en' ? '中英互选' : '中西互选'}</strong><small>识别词义</small></span><input type="checkbox" checked={settings.enableChoice} disabled={settings.enableChoice && !settings.enableSpelling} onChange={(event) => void updateSettings({ enableChoice: event.target.checked })} /></label>
