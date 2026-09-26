@@ -98,6 +98,8 @@ export interface ActiveSession {
   assignedNewCount?: number
   assignedReviewCount?: number
   failedWordIds?: string[]
+  quizFeedback?: { wordId: string; correct: boolean; selected: string; nextPractice: PracticeQueue }
+  revision?: number
 }
 
 export interface PracticeQueue {

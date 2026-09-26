@@ -56,6 +56,76 @@ async function renderApp(
 }
 
 describe('Palabra app', () => {
+  it('completes two English groups with immediate retry, delayed revisit, and resume', async () => {
+    const user = userEvent.setup()
+    const words = Array.from({ length: 20 }, (_, index): VocabularyEntry => ({
+      id: `en:word${index}`, language: 'en', term: `word${index}`, meaningZh: `释义${index}`,
+      partOfSpeech: 'n.', category: '高考 3500', examples: [],
+    }))
+    const storage = await renderApp('/today', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, learningLanguage: 'en', dailyNewWords: 20, enableChoice: false })
+    }, { vocabularySeeds: { en: words } })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect((await storage.getActiveSession('en'))?.wordIds).toHaveLength(10)
+    expect(await screen.findByRole('heading', { name: 'word0' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '忘记' }))
+    expect(await screen.findByRole('button', { name: '点击查看释义' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '认识' }))
+    for (const term of ['word1', 'word2', 'word3']) {
+      expect(await screen.findByRole('heading', { name: term })).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+      await user.click(screen.getByRole('button', { name: '认识' }))
+    }
+    expect(await screen.findByRole('heading', { name: 'word0' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '结束' }))
+    cleanup()
+    render(<MemoryRouter initialEntries={['/today']}><App storageClient={storage} /></MemoryRouter>)
+    await user.click(await screen.findByRole('button', { name: '继续今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'word0' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+    for (let index = 4; index < 10; index += 1) {
+      expect(await screen.findByRole('heading', { name: `word${index}` })).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: '标为熟练' }))
+    }
+    for (const term of ['word1', 'word2', 'word3']) {
+      await user.type(await screen.findByLabelText('英语'), term)
+      await user.click(screen.getByRole('button', { name: '检查答案' }))
+      await user.click(screen.getByRole('button', { name: '继续' }))
+    }
+    expect(await screen.findByRole('heading', { name: '100%' })).toBeInTheDocument()
+    expect(screen.getByText('本组完成了')).toBeInTheDocument()
+    expect((await storage.getSessions('en'))[0].newCount).toBe(10)
+    expect((await storage.getAllProgress('en')).find((item) => item.wordId === 'en:word0')?.skipReview).toBe(true)
+    await user.click(screen.getByRole('button', { name: '开始下一组' }))
+    expect((await storage.getActiveSession('en'))?.wordIds).toEqual(words.slice(10).map((word) => word.id))
+    for (let index = 10; index < 20; index += 1) {
+      expect(await screen.findByRole('heading', { name: `word${index}` })).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: '标为熟练' }))
+    }
+    expect(await screen.findByText('无需测试')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '回到今日' }))
+    expect(await screen.findByRole('button', { name: '今日已完成' })).toBeDisabled()
+    expect((await storage.getSessions('en')).map((session) => session.newCount)).toEqual([10, 10])
+  })
+
+  it('keeps the learned-word list separate across English and Spanish', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/library', async (client) => {
+      await client.putProgress({
+        wordId: 'en:altitude', language: 'en', stage: 1, status: 'learning',
+        nextReviewAt: '2026-10-01T00:00:00.000Z', reviewCount: 1,
+        correctCount: 1, lastReviewedAt: new Date().toISOString(),
+      })
+    })
+    await user.click(await screen.findByRole('button', { name: '已背' }))
+    expect(screen.getByText('还没有背过单词')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '英语' }))
+    await user.click(screen.getByRole('button', { name: '已背' }))
+    expect(await screen.findByText('altitude')).toBeInTheDocument()
+    expect((await storage.getAllProgress('es'))).toHaveLength(0)
+  })
   it('shows four stable English choices, autoplays once, and allows manual replay', async () => {
     const user = userEvent.setup()
     const play = vi.spyOn(pronunciationPlayer, 'play').mockResolvedValue(undefined)
@@ -178,17 +248,21 @@ describe('Palabra app', () => {
     const user = userEvent.setup()
     const go: VocabularyEntry = {
       id: 'en:go', language: 'en', term: 'go', partOfSpeech: 'v.', meaningZh: '去',
-      category: '高考 3500', examples: [], relatedTerms: ['move'],
+      category: '高考 3500', examples: [{ text: 'Go home.', translationZh: '回家。' }], relatedTerms: ['move'],
       specialForms: [{ label: '过去式', form: 'went' }],
+      source: { provider: '词典', url: 'https://example.test/go' },
     }
     await renderApp('/today', async (client) => {
       await client.saveSettings({ ...DEFAULT_SETTINGS, learningLanguage: 'en' })
     }, { vocabularySeeds: { en: [go] } })
     await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'go' })).toHaveAttribute('lang', 'en')
     expect(screen.queryByText(/近义词/)).not.toBeInTheDocument()
     await user.click(await screen.findByRole('button', { name: '点击查看释义' }))
     expect(screen.getByText('近义词：move')).toBeInTheDocument()
     expect(screen.getByText('特殊变形：过去式 went')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '词形资料来源' })).toHaveAttribute('href', 'https://example.test/go')
+    expect(screen.getByText('Go home.').compareDocumentPosition(screen.getByText('近义词：move')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
   it('splits a twenty-word target into two manually started groups', async () => {
     const user = userEvent.setup()
@@ -268,6 +342,67 @@ describe('Palabra app', () => {
     await user.click(screen.getByRole('button', { name: '继续' }))
     expect(await screen.findByText('0%')).toBeInTheDocument()
     expect((await storage.getAllProgress('es'))[0].stage).toBe(0)
+  })
+
+  it('keeps a first wrong answer in accuracy when its word is later marked fluent', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, enableChoice: false })
+      await client.putProgress({
+        wordId: databaseWord.id, language: 'es', stage: 1, status: 'learning',
+        nextReviewAt: '2020-01-01T00:00:00.000Z', reviewCount: 1,
+        correctCount: 1, lastReviewedAt: '2020-01-01T00:00:00.000Z',
+      })
+    }, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    await user.type(await screen.findByLabelText('西班牙语'), 'wrong')
+    await user.click(screen.getByRole('button', { name: '检查答案' }))
+    await user.click(screen.getByRole('button', { name: '继续' }))
+    await user.click(await screen.findByRole('button', { name: '标为熟练' }))
+    expect(await screen.findByRole('heading', { name: '0%' })).toBeInTheDocument()
+    expect((await storage.getSessions('es'))[0]).toMatchObject({ correctCount: 0, totalCount: 1 })
+  })
+
+  it('saves quiz feedback before Continue and restores it after a restart', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, enableChoice: false })
+      await client.putProgress({
+        wordId: databaseWord.id, language: 'es', stage: 2, status: 'learning',
+        nextReviewAt: '2020-01-01T00:00:00.000Z', reviewCount: 1,
+        correctCount: 1, lastReviewedAt: '2020-01-01T00:00:00.000Z',
+      })
+    }, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    await user.type(await screen.findByLabelText('西班牙语'), 'wrong')
+    await user.click(screen.getByRole('button', { name: '检查答案' }))
+    expect(await screen.findByRole('status')).toHaveTextContent('再记一次')
+    await waitFor(async () => expect((await storage.getActiveSession('es'))?.quizFeedback).toMatchObject({ correct: false, selected: 'wrong' }))
+    expect((await storage.getAllProgress('es'))[0].stage).toBe(0)
+    cleanup()
+    render(<MemoryRouter initialEntries={['/study']}><App storageClient={storage} /></MemoryRouter>)
+    expect(await screen.findByRole('status')).toHaveTextContent('再记一次')
+    expect(screen.getByLabelText('西班牙语')).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: '继续' }))
+    expect(await screen.findByLabelText('西班牙语')).toHaveValue('')
+    expect((await storage.getActiveSession('es'))?.practice?.firstAnswers[databaseWord.id]).toBe(false)
+  })
+
+  it('reloads newer study state instead of overwriting a second tab', async () => {
+    const user = userEvent.setup()
+    const secondWord = { ...databaseWord, id: 'database-02', term: 'continuar', spanish: 'continuar', meaningZh: '继续', chinese: '继续' }
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord, secondWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    const active = (await storage.getActiveSession('es'))!
+    await storage.saveActiveSession({
+      ...active,
+      revision: 1,
+      practice: { ...active.practice!, pendingIds: [secondWord.id] },
+    })
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+    expect(await screen.findByRole('heading', { name: 'continuar' })).toBeInTheDocument()
+    expect((await storage.getActiveSession('es'))?.practice?.pendingIds).toEqual([secondWord.id])
+    expect((await storage.getAllProgress('es')).find((item) => item.wordId === databaseWord.id)).toBeUndefined()
   })
   it('shows a concrete recovery message when local data cannot be opened', async () => {
     class FailingStorage extends PalabraStorage {

@@ -12,17 +12,17 @@ import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
-  const { activeSession, settings, vocabulary, progress, rateCurrentWord, markCurrentWordFluent, completeQuizItem, exitSession } = useAppState()
+  const { activeSession, settings, vocabulary, progress, rateCurrentWord, markCurrentWordFluent, submitQuizAnswer, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
   const [revealed, setRevealed] = useState(false)
   const [answer, setAnswer] = useState('')
-  const [feedback, setFeedback] = useState<{ correct: boolean; selected: string }>()
   const [busy, setBusy] = useState(false)
   const actionPending = useRef(false)
 
   const phaseWordIds = activeSession?.phase === 'learn' ? activeSession.newWordIds : activeSession?.wordIds
   const queue = activeSession?.practice ?? createPracticeQueue(phaseWordIds?.slice(activeSession?.currentIndex ?? 0) ?? [])
   const word = activeSession ? vocabulary.find((item) => item.id === currentPracticeWord(queue)) : undefined
+  const feedback = activeSession?.quizFeedback
   const phaseTotal = activeSession?.phase === 'learn'
     ? activeSession.assignedNewCount ?? activeSession.newWordIds.length
     : (activeSession?.assignedNewCount ?? activeSession?.newWordIds.length ?? 0) + (activeSession?.assignedReviewCount ?? activeSession?.reviewWordIds.length ?? 0)
@@ -62,7 +62,6 @@ export function StudyPage() {
   useEffect(() => {
     setRevealed(false)
     setAnswer('')
-    setFeedback(undefined)
   }, [activeSession?.practice?.promptNumber, activeSession?.currentIndex, activeSession?.phase, word?.id])
 
   if (!activeSession || !word) {
@@ -96,16 +95,16 @@ export function StudyPage() {
     })
   }
 
-  const submit = (selected: string) => {
+  const submit = async (selected: string) => {
     if (feedback || actionPending.current) return
     const correct = mode === 'spelling' ? isCorrectSpelling(selected, word.term, word.spellingVariants) : selected === word.meaningZh
-    setFeedback({ correct, selected })
+    await runAction(() => submitQuizAnswer(correct, selected))
   }
 
   const next = async () => {
     if (!feedback) return
     await runAction(async () => {
-      if (await completeQuizItem(feedback.correct)) navigate('/result')
+      if (await completeQuizItem()) navigate('/result')
     })
   }
 
@@ -124,7 +123,7 @@ export function StudyPage() {
     {activeSession.phase === 'learn' ? (
       <section className={styles.wordStage}>
         <div className={styles.wordIdentity}>
-          <h1>{word.term}</h1>
+          <h1 lang={word.language}>{word.term}</h1>
           {word.language === 'en' && <div className={styles.pronunciationRow}>
             <span>{word.pronunciation?.ipa || '美式发音'}</span>
             <PronunciationButton word={word} />
@@ -137,9 +136,9 @@ export function StudyPage() {
         ) : (
           <div className={styles.definition}>
             <strong>{word.meaningZh}</strong>
-            <WordRelations word={word} />
             <p lang={word.language}>{word.examples[0]?.text}</p>
             <span>{word.examples[0]?.translationZh}</span>
+            <WordRelations word={word} />
           </div>
         )}
         {revealed && <div className={styles.ratingBar} aria-label="记忆程度">
@@ -151,19 +150,19 @@ export function StudyPage() {
     ) : (
       <section className={styles.quizStage}>
         <p className={styles.quizPrompt}>{mode === 'choice' ? '选择正确的中文意思' : `写出这个${word.language === 'en' ? '英语' : '西班牙语'}单词`}</p>
-        <h1>{mode === 'choice' ? word.term : word.meaningZh}</h1>
+        <h1 lang={mode === 'choice' ? word.language : 'zh-CN'}>{mode === 'choice' ? word.term : word.meaningZh}</h1>
         {word.language === 'en' && mode === 'choice' && <div className={styles.quizPronunciation}><PronunciationButton word={word} /></div>}
         {mode === 'choice' ? (
           <div className={styles.choiceList} role="group" aria-label="选择释义">
             {options.map((option) => <button
               key={option}
               className={feedback?.selected === option ? (feedback.correct ? styles.correctChoice : styles.wrongChoice) : ''}
-              onClick={() => submit(option)}
+              onClick={() => void submit(option)}
               disabled={Boolean(feedback) || busy}
             >{option}</button>)}
           </div>
         ) : (
-          <form className={`${styles.spellingForm} ${feedback && !feedback.correct ? styles.shake : ''}`} onSubmit={(event) => { event.preventDefault(); submit(answer) }}>
+          <form className={`${styles.spellingForm} ${feedback && !feedback.correct ? styles.shake : ''}`} onSubmit={(event) => { event.preventDefault(); void submit(answer) }}>
             <label htmlFor="spelling">{word.language === 'en' ? '英语' : '西班牙语'}</label>
             <input id="spelling" value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" autoCapitalize="none" disabled={Boolean(feedback) || busy} />
             {!feedback && <button className={styles.primaryButton} type="submit" disabled={!answer.trim() || busy}>检查答案</button>}

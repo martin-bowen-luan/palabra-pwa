@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { DEFAULT_SETTINGS, storage as defaultStorage, type PalabraStorage } from '../data/storage'
+import { DEFAULT_SETTINGS, StaleStudySessionError, storage as defaultStorage, type PalabraStorage } from '../data/storage'
 import { buildDailyPlan, type DailyPlan } from '../domain/dailyPlan'
 import { buildNextStudyGroup, hasMoreStudyGroups } from '../domain/studyGroups'
 import { advancePractice, createPracticeQueue, currentPracticeWord, removePracticeWord } from '../domain/practiceQueue'
@@ -23,7 +23,8 @@ interface AppStateValue {
   startNextGroup: () => Promise<ActiveSession | undefined>
   rateCurrentWord: (rating: ReviewRating) => Promise<void>
   markCurrentWordFluent: () => Promise<boolean>
-  completeQuizItem: (correct: boolean) => Promise<boolean>
+  submitQuizAnswer: (correct: boolean, selected: string) => Promise<void>
+  completeQuizItem: () => Promise<boolean>
   exitSession: () => Promise<void>
   updateSettings: (patch: Partial<UserSettings>) => Promise<void>
   setLearningLanguage: (language: LearningLanguage) => Promise<void>
@@ -97,6 +98,23 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     [ready, vocabulary, progress, sessions, settings.dailyNewWords],
   )
 
+  const refreshLearningState = async (language: LearningLanguage) => {
+    const [savedProgress, savedSessions, savedActive] = await Promise.all([
+      storageClient.getAllProgress(language),
+      storageClient.getSessions(language),
+      storageClient.getActiveSession(language),
+    ])
+    setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
+    setSessions(savedSessions)
+    setActiveSession(savedActive)
+  }
+
+  const recoverStaleSession = async (error: unknown, language: LearningLanguage): Promise<boolean> => {
+    if (!(error instanceof StaleStudySessionError)) return false
+    await refreshLearningState(language)
+    return true
+  }
+
   const startSession = async (extraWords = 0) => {
     if (activeSession) return activeSession
     const plan = buildNextStudyGroup(vocabulary, progress, sessions, settings.dailyNewWords, new Date(), extraWords)
@@ -116,10 +134,12 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       assignedNewCount: plan.newWords.length,
       assignedReviewCount: plan.review.length,
       failedWordIds: [],
+      revision: 0,
     }
-    await storageClient.saveActiveSession(session)
-    setActiveSession(session)
-    return session
+    const saved = await storageClient.createActiveSession(session)
+    if (saved.startedAt !== session.startedAt) await refreshLearningState(saved.language)
+    else setActiveSession(saved)
+    return saved
   }
 
   const startNextGroup = () => startSession()
@@ -147,8 +167,14 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       failedWordIds,
       assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
+      revision: (activeSession.revision ?? 0) + 1,
     }
-    await storageClient.commitStudyStep(nextProgress, nextSession)
+    try {
+      await storageClient.commitStudyStep(nextProgress, nextSession)
+    } catch (error) {
+      if (await recoverStaleSession(error, activeSession.language)) return
+      throw error
+    }
     if (nextProgress) setProgress((current) => ({ ...current, [wordId]: nextProgress }))
     setActiveSession(nextSession)
   }
@@ -167,10 +193,16 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       durationSeconds: Math.max(1, Math.round((now.getTime() - new Date(session.startedAt).getTime()) / 1000)),
       completed: true,
     }
-    await storageClient.completeStudyGroup(completed, session.language, progressUpdate)
+    try {
+      await storageClient.completeStudyGroup(completed, session.language, progressUpdate, session)
+    } catch (error) {
+      if (await recoverStaleSession(error, session.language)) return false
+      throw error
+    }
     if (progressUpdate) setProgress((current) => ({ ...current, [progressUpdate.wordId]: progressUpdate }))
     setSessions((current) => [...current, completed])
     setActiveSession(undefined)
+    return true
   }
 
   const markCurrentWordFluent = async () => {
@@ -192,22 +224,27 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       currentIndex: 0,
       assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
+      revision: (activeSession.revision ?? 0) + 1,
     }
     if (!nextSession.wordIds.length || (nextSession.phase === 'quiz' && !nextSession.practice?.pendingIds.length && !nextSession.practice?.delayed.length)) {
-      await finishSession(nextSession, nextProgress)
-      return true
+      return finishSession(nextSession, nextProgress)
     }
-    await storageClient.commitStudyStep(nextProgress, nextSession)
+    try {
+      await storageClient.commitStudyStep(nextProgress, nextSession)
+    } catch (error) {
+      if (await recoverStaleSession(error, activeSession.language)) return false
+      throw error
+    }
     setProgress((current) => ({ ...current, [wordId]: nextProgress }))
     setActiveSession(nextSession)
     return false
   }
 
-  const completeQuizItem = async (correct: boolean) => {
-    if (!activeSession) return false
+  const submitQuizAnswer = async (correct: boolean, selected: string) => {
+    if (!activeSession) return
     const queue = sessionQueue(activeSession)
     const wordId = sessionWordId(activeSession)
-    if (!wordId || activeSession.phase !== 'quiz') return false
+    if (!wordId || activeSession.phase !== 'quiz' || activeSession.quizFeedback) return
     const failedBefore = activeSession.failedWordIds?.includes(wordId) ?? false
     let nextProgress: WordProgress | undefined
     if (!correct && !failedBefore || correct && activeSession.reviewWordIds.includes(wordId) && !failedBefore && !(wordId in queue.firstAnswers)) {
@@ -219,24 +256,48 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const advanced = advancePractice(queue, correct)
     const nextSession: ActiveSession = {
       ...activeSession,
-      practice: advanced,
-      currentIndex: 0,
+      quizFeedback: { wordId, correct, selected, nextPractice: advanced },
       failedWordIds: !correct && !failedBefore ? [...(activeSession.failedWordIds ?? []), wordId] : activeSession.failedWordIds,
       assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
+      revision: (activeSession.revision ?? 0) + 1,
+    }
+    try {
+      await storageClient.commitStudyStep(nextProgress, nextSession)
+    } catch (error) {
+      if (await recoverStaleSession(error, activeSession.language)) return
+      throw error
+    }
+    if (nextProgress) setProgress((current) => ({ ...current, [wordId]: nextProgress }))
+    setActiveSession(nextSession)
+  }
+
+  const completeQuizItem = async () => {
+    if (!activeSession?.quizFeedback) return false
+    const advanced = activeSession.quizFeedback.nextPractice
+    const nextSession: ActiveSession = {
+      ...activeSession,
+      practice: advanced,
+      quizFeedback: undefined,
+      currentIndex: 0,
+      revision: (activeSession.revision ?? 0) + 1,
     }
     if (!advanced.pendingIds.length && !advanced.delayed.length) {
-      await finishSession(nextSession, nextProgress)
+      await finishSession(nextSession)
       return true
     }
-    await storageClient.commitStudyStep(nextProgress, nextSession)
-    if (nextProgress) setProgress((current) => ({ ...current, [wordId]: nextProgress }))
+    try {
+      await storageClient.commitStudyStep(undefined, nextSession)
+    } catch (error) {
+      if (await recoverStaleSession(error, activeSession.language)) return false
+      throw error
+    }
     setActiveSession(nextSession)
     return false
   }
 
   const exitSession = async () => {
-    if (activeSession) await storageClient.saveActiveSession(activeSession)
+    // Each answered step is already durable; leaving must not overwrite another tab's newer state.
   }
 
   const updateSettings = async (patch: Partial<UserSettings>) => {
@@ -285,6 +346,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     startNextGroup,
     rateCurrentWord,
     markCurrentWordFluent,
+    submitQuizAnswer,
     completeQuizItem,
     exitSession,
     updateSettings,

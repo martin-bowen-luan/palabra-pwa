@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { DEFAULT_SETTINGS, PalabraStorage } from './storage'
+import { DEFAULT_SETTINGS, PalabraStorage, StaleStudySessionError } from './storage'
 import { vocabulary } from './vocabulary'
 import type { ActiveSession, StudySession, VocabularyEntry, WordProgress } from '../types'
 
@@ -128,6 +128,31 @@ function openVersionTwoDatabase(name: string): Promise<IDBDatabase> {
 }
 
 describe('PalabraStorage', () => {
+  it('rejects stale writes from another tab without overwriting or reviving a session', async () => {
+    const name = `palabra-test-${crypto.randomUUID()}`
+    databaseNames.push(name)
+    const first = createStorage(name)
+    const second = createStorage(name)
+    const initial: ActiveSession = {
+      id: 'active-session:es', language: 'es', wordIds: ['test-01'], newWordIds: ['test-01'],
+      reviewWordIds: [], currentIndex: 0, phase: 'learn', correctCount: 0,
+      answeredCount: 0, startedAt: '2026-09-25T00:00:00.000Z', revision: 0,
+    }
+    await first.saveActiveSession(initial)
+    expect(await second.createActiveSession({ ...initial, startedAt: '2026-09-26T00:00:00.000Z' })).toEqual(initial)
+    const firstStep = { ...initial, phase: 'quiz' as const, revision: 1 }
+    await first.commitStudyStep(undefined, firstStep)
+    await expect(second.commitStudyStep(undefined, { ...initial, revision: 1 })).rejects.toThrow(StaleStudySessionError)
+    expect(await first.getActiveSession('es')).toEqual(firstStep)
+    const completed: StudySession = {
+      id: 'completed-concurrent', language: 'es', date: '2026-09-25', newCount: 1,
+      reviewCount: 0, correctCount: 1, totalCount: 1, durationSeconds: 10, completed: true,
+    }
+    await first.completeStudyGroup(completed, 'es', undefined, { ...firstStep, revision: 2 })
+    await expect(second.commitStudyStep(undefined, { ...firstStep, revision: 2 })).rejects.toThrow(StaleStudySessionError)
+    expect(await first.getActiveSession('es')).toBeUndefined()
+    expect(await first.getSessions('es')).toEqual([completed])
+  })
   it('commits a study step and group completion with the active state', async () => {
     const name = `palabra-test-${crypto.randomUUID()}`
     databaseNames.push(name)
@@ -142,14 +167,16 @@ describe('PalabraStorage', () => {
       nextReviewAt: '2026-09-28T00:00:00.000Z', reviewCount: 1,
       correctCount: 0, lastReviewedAt: '2026-09-25T00:00:00.000Z',
     }
-    await storage.commitStudyStep(progress, active)
-    expect(await storage.getActiveSession('es')).toEqual(active)
+    await storage.saveActiveSession(active)
+    const stepped = { ...active, revision: 1 }
+    await storage.commitStudyStep(progress, stepped)
+    expect(await storage.getActiveSession('es')).toEqual(stepped)
     expect(await storage.getAllProgress('es')).toEqual([progress])
     const completed: StudySession = {
       id: 'completed-1', language: 'es', date: '2026-09-25', newCount: 1,
       reviewCount: 0, correctCount: 0, totalCount: 1, durationSeconds: 10, completed: true,
     }
-    await storage.completeStudyGroup(completed, 'es')
+    await storage.completeStudyGroup(completed, 'es', undefined, { ...stepped, revision: 2 })
     expect(await storage.getActiveSession('es')).toBeUndefined()
     expect(await storage.getSessions('es')).toEqual([completed])
     expect(await storage.getAllProgress('es')).toEqual([progress])

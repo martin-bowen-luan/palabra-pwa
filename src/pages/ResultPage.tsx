@@ -11,7 +11,7 @@ export function ResultPage() {
   const accuracy = session.totalCount ? Math.round(session.correctCount / session.totalCount * 100) : undefined
   return <main className={styles.resultPage}>
     <div className={styles.completionMark}><span>✓</span></div>
-    <p>今天完成了</p>
+    <p>{moreGroupsToday ? '本组完成了' : '今天完成了'}</p>
     <h1>{accuracy === undefined ? '—' : `${accuracy}%`}</h1>
     <span>{accuracy === undefined ? '无需测试' : '测试正确率'}</span>
     <div className={styles.resultStats}>

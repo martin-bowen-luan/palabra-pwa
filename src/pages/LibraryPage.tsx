@@ -37,18 +37,18 @@ export function LibraryPage() {
       <button className={styles.backButton} onClick={() => setSelected(undefined)}><BackIcon />返回词库</button>
       <section className={styles.wordDetail}>
         <p>{selected.category}</p>
-        <h1>{selected.term}</h1>
+        <h1 lang={selected.language}>{selected.term}</h1>
         {selected.language === 'en' && <div className={styles.pronunciationRow}>
           <span>{selected.pronunciation?.ipa || '美式发音'}</span>
           <PronunciationButton word={selected} />
         </div>}
         <span className={styles.annotationLine} />
         <div><span>{selected.partOfSpeech}</span><strong>{selected.meaningZh}</strong></div>
-        <WordRelations word={selected} />
         {selected.examples.slice(0, 3).map((example) => <div className={styles.examplePair} key={`${example.text}-${example.translationZh}`}>
           <blockquote lang={selected.language}>{example.text}</blockquote>
           <p>{example.translationZh}</p>
         </div>)}
+        <WordRelations word={selected} />
         <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / 5`}</footer>
       </section>
     </main>

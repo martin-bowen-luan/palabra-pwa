@@ -48,7 +48,7 @@ describe('practice queue', () => {
     queue = removePracticeWord(queue, 'a')
     expect(queue.delayed).toEqual([])
     expect(currentPracticeWord(queue)).toBe('b')
-    expect(queue.firstAnswers.a).toBeUndefined()
+    expect(queue.firstAnswers.a).toBe(false)
     expect(currentPracticeWord(removePracticeWord(queue, 'b'))).toBeUndefined()
   })
 

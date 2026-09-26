@@ -47,6 +47,18 @@ export const DEFAULT_SETTINGS: UserSettings = {
   dataVersion: 2,
 }
 
+export class StaleStudySessionError extends Error {
+  constructor() {
+    super('Study session changed in another tab')
+    this.name = 'StaleStudySessionError'
+  }
+}
+
+function isCurrentSession(stored: ActiveSession | undefined, next: ActiveSession): boolean {
+  return Boolean(stored && stored.startedAt === next.startedAt
+    && (stored.revision ?? 0) === (next.revision ?? 0) - 1)
+}
+
 function requestResult<T>(request: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result)
@@ -324,22 +336,69 @@ export class PalabraStorage {
     await this.put(STORE_ACTIVE, { ...session, id: activeSessionId(language), language })
   }
 
+  async createActiveSession(session: ActiveSession): Promise<ActiveSession> {
+    const database = await this.open()
+    const transaction = database.transaction(STORE_ACTIVE, 'readwrite')
+    const store = transaction.objectStore(STORE_ACTIVE)
+    const request = store.get(activeSessionId(session.language)) as IDBRequest<ActiveSession | undefined>
+    let result = session
+    request.onsuccess = () => {
+      if (request.result) result = request.result
+      else store.put({ ...session, id: activeSessionId(session.language), revision: session.revision ?? 0 })
+    }
+    await transactionDone(transaction)
+    return result
+  }
+
   async commitStudyStep(progress: WordProgress | undefined, active: ActiveSession): Promise<void> {
     const database = await this.open()
     const transaction = database.transaction([STORE_PROGRESS, STORE_ACTIVE], 'readwrite')
-    if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
-    transaction.objectStore(STORE_ACTIVE).put({ ...active, id: activeSessionId(active.language) })
-    await transactionDone(transaction)
+    const activeStore = transaction.objectStore(STORE_ACTIVE)
+    const request = activeStore.get(activeSessionId(active.language)) as IDBRequest<ActiveSession | undefined>
+    let stale = false
+    request.onsuccess = () => {
+      if (!isCurrentSession(request.result, active)) {
+        stale = true
+        transaction.abort()
+        return
+      }
+      if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
+      activeStore.put({ ...active, id: activeSessionId(active.language) })
+    }
+    try {
+      await transactionDone(transaction)
+    } catch (error) {
+      if (stale) throw new StaleStudySessionError()
+      throw error
+    }
   }
 
-  async completeStudyGroup(completed: StudySession, language: LearningLanguage, progress?: WordProgress): Promise<void> {
+  async completeStudyGroup(completed: StudySession, language: LearningLanguage, progress?: WordProgress, finalSession?: ActiveSession): Promise<void> {
     const database = await this.open()
     const stores = progress ? [STORE_SESSIONS, STORE_ACTIVE, STORE_PROGRESS] : [STORE_SESSIONS, STORE_ACTIVE]
     const transaction = database.transaction(stores, 'readwrite')
-    if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
-    transaction.objectStore(STORE_SESSIONS).put({ ...completed, language })
-    transaction.objectStore(STORE_ACTIVE).delete(activeSessionId(language))
-    await transactionDone(transaction)
+    const activeStore = transaction.objectStore(STORE_ACTIVE)
+    const commit = () => {
+      if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
+      transaction.objectStore(STORE_SESSIONS).put({ ...completed, language })
+      activeStore.delete(activeSessionId(language))
+    }
+    let stale = false
+    if (finalSession) {
+      const request = activeStore.get(activeSessionId(language)) as IDBRequest<ActiveSession | undefined>
+      request.onsuccess = () => {
+        if (!isCurrentSession(request.result, finalSession)) {
+          stale = true
+          transaction.abort()
+        } else commit()
+      }
+    } else commit()
+    try {
+      await transactionDone(transaction)
+    } catch (error) {
+      if (stale) throw new StaleStudySessionError()
+      throw error
+    }
   }
 
   async clearActiveSession(language: LearningLanguage = 'es'): Promise<void> {

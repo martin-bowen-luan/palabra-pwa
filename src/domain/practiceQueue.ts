@@ -59,12 +59,10 @@ export function advancePractice(queue: PracticeQueue, correct: boolean): Practic
 
 export function removePracticeWord(queue: PracticeQueue, wordId: string): PracticeQueue {
   const stateById = { ...queue.stateById }
-  const firstAnswers = { ...queue.firstAnswers }
   delete stateById[wordId]
-  delete firstAnswers[wordId]
   const remaining = promoteDue(
     queue.pendingIds.filter((id) => id !== wordId),
     queue.delayed.filter((item) => item.wordId !== wordId),
   )
-  return { ...queue, ...remaining, stateById, firstAnswers, promptNumber: queue.promptNumber + 1 }
+  return { ...queue, ...remaining, stateById, promptNumber: queue.promptNumber + 1 }
 }
