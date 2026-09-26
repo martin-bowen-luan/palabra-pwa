@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { DEFAULT_SETTINGS, storage as defaultStorage, type PalabraStorage } from '../data/storage'
 import { buildDailyPlan, type DailyPlan } from '../domain/dailyPlan'
-import { applyReview, createProgress } from '../domain/reviewScheduler'
+import { applyReview, createProgress, markFluent } from '../domain/reviewScheduler'
 import { calculateStreak, toLocalDate } from '../domain/stats'
 import type { ActiveSession, LearningLanguage, ReviewRating, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
 
@@ -18,6 +18,7 @@ interface AppStateValue {
   streak: number
   startSession: (extraWords?: number) => Promise<ActiveSession | undefined>
   rateCurrentWord: (rating: ReviewRating) => Promise<void>
+  markCurrentWordFluent: () => Promise<boolean>
   completeQuizItem: (correct: boolean) => Promise<boolean>
   exitSession: () => Promise<void>
   updateSettings: (patch: Partial<UserSettings>) => Promise<void>
@@ -116,6 +117,53 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     setActiveSession(nextSession)
   }
 
+  const finishSession = async (session: ActiveSession, correctCount: number, answeredCount: number) => {
+    const now = new Date()
+    const completed: StudySession = {
+      id: `${toLocalDate(now)}-${now.getTime()}`,
+      language: session.language,
+      date: toLocalDate(now),
+      newCount: session.newWordIds.length,
+      reviewCount: session.reviewWordIds.length,
+      correctCount,
+      totalCount: answeredCount,
+      durationSeconds: Math.max(1, Math.round((now.getTime() - new Date(session.startedAt).getTime()) / 1000)),
+      completed: true,
+    }
+    await storageClient.putSession(completed)
+    await storageClient.clearActiveSession(session.language)
+    setSessions((current) => [...current, completed])
+    setActiveSession(undefined)
+  }
+
+  const markCurrentWordFluent = async () => {
+    if (!activeSession) return false
+    const phaseIds = activeSession.phase === 'learn' ? activeSession.newWordIds : activeSession.wordIds
+    const wordId = phaseIds[activeSession.currentIndex]
+    if (!wordId) return false
+    const nextProgress = markFluent(progress[wordId], wordId, activeSession.language)
+    await storageClient.putProgress(nextProgress)
+    setProgress((current) => ({ ...current, [wordId]: nextProgress }))
+
+    const nextSession: ActiveSession = {
+      ...activeSession,
+      wordIds: activeSession.wordIds.filter((id) => id !== wordId),
+      newWordIds: activeSession.newWordIds.filter((id) => id !== wordId),
+      reviewWordIds: activeSession.reviewWordIds.filter((id) => id !== wordId),
+    }
+    if (!nextSession.wordIds.length || (nextSession.phase === 'quiz' && activeSession.currentIndex >= nextSession.wordIds.length)) {
+      await finishSession(nextSession, nextSession.correctCount, nextSession.answeredCount)
+      return true
+    }
+    if (nextSession.phase === 'learn' && activeSession.currentIndex >= nextSession.newWordIds.length) {
+      nextSession.phase = 'quiz'
+      nextSession.currentIndex = 0
+    }
+    await storageClient.saveActiveSession(nextSession)
+    setActiveSession(nextSession)
+    return false
+  }
+
   const completeQuizItem = async (correct: boolean) => {
     if (!activeSession) return false
     const wordId = activeSession.wordIds[activeSession.currentIndex]
@@ -137,22 +185,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       return false
     }
 
-    const now = new Date()
-    const completed: StudySession = {
-      id: `${toLocalDate(now)}-${now.getTime()}`,
-      language: activeSession.language,
-      date: toLocalDate(now),
-      newCount: activeSession.newWordIds.length,
-      reviewCount: activeSession.reviewWordIds.length,
-      correctCount,
-      totalCount: answeredCount,
-      durationSeconds: Math.max(1, Math.round((now.getTime() - new Date(activeSession.startedAt).getTime()) / 1000)),
-      completed: true,
-    }
-    await storageClient.putSession(completed)
-    await storageClient.clearActiveSession(activeSession.language)
-    setSessions((current) => [...current, completed])
-    setActiveSession(undefined)
+    await finishSession(activeSession, correctCount, answeredCount)
     return true
   }
 
@@ -203,6 +236,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     streak: calculateStreak(sessions),
     startSession,
     rateCurrentWord,
+    markCurrentWordFluent,
     completeQuizItem,
     exitSession,
     updateSettings,

@@ -79,6 +79,39 @@ describe('Palabra app', () => {
     expect(screen.getByRole('button', { name: '认识' })).toBeInTheDocument()
   })
 
+  it('marks a word fluent from the study header, skips its quiz, and keeps it out of future sessions', async () => {
+    const user = userEvent.setup()
+    const secondWord = { ...databaseWord, id: 'database-02', term: 'continuar', spanish: 'continuar' }
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord, secondWord], vocabularyRevision: 42 })
+
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+
+    expect(await screen.findByRole('heading', { name: 'continuar' })).toBeInTheDocument()
+    await waitFor(async () => expect((await storage.getAllProgress('es')).find((item) => item.wordId === 'database-01')?.skipReview).toBe(true))
+    await user.click(screen.getByRole('button', { name: '结束' }))
+    await waitFor(async () => expect(await storage.getActiveSession('es')).toMatchObject({ wordIds: ['database-02'] }))
+
+    cleanup()
+    render(<MemoryRouter initialEntries={['/today']}><App storageClient={storage} /></MemoryRouter>)
+    await user.click(await screen.findByRole('button', { name: '继续今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'continuar' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'persistir' })).not.toBeInTheDocument()
+  })
+
+  it('finishes the session when its only word is marked fluent', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+
+    expect(await screen.findByText('无需测试')).toBeInTheDocument()
+    await expect(storage.getActiveSession('es')).resolves.toBeUndefined()
+    expect((await storage.getAllProgress('es'))[0].skipReview).toBe(true)
+  })
+
   it('keeps due reviews out of the new-word phase and reschedules them after a correct quiz', async () => {
     const user = userEvent.setup()
     const storage = await renderApp('/today', async (client) => {

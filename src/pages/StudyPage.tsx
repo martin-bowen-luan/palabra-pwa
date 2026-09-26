@@ -7,11 +7,12 @@ import { PronunciationButton } from '../components/PronunciationButton'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
-  const { activeSession, settings, vocabulary, rateCurrentWord, completeQuizItem, exitSession } = useAppState()
+  const { activeSession, settings, vocabulary, rateCurrentWord, markCurrentWordFluent, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
   const [revealed, setRevealed] = useState(false)
   const [answer, setAnswer] = useState('')
   const [feedback, setFeedback] = useState<{ correct: boolean; selected: string }>()
+  const [marking, setMarking] = useState(false)
 
   const phaseWordIds = activeSession?.phase === 'learn' ? activeSession.newWordIds : activeSession?.wordIds
   const word = activeSession && phaseWordIds ? vocabulary.find((item) => item.id === phaseWordIds[activeSession.currentIndex]) : undefined
@@ -32,7 +33,7 @@ export function StudyPage() {
     setRevealed(false)
     setAnswer('')
     setFeedback(undefined)
-  }, [activeSession?.currentIndex, activeSession?.phase])
+  }, [activeSession?.currentIndex, activeSession?.phase, word?.id])
 
   if (!activeSession || !word) {
     return <main className={styles.studyPage}><div className={styles.emptyState}><h1>没有进行中的学习</h1><button className={styles.primaryButton} onClick={() => navigate('/today')}>回到今日</button></div></main>
@@ -45,6 +46,15 @@ export function StudyPage() {
 
   const rate = async (rating: ReviewRating) => {
     await rateCurrentWord(rating)
+  }
+
+  const markAsFluent = async () => {
+    setMarking(true)
+    try {
+      if (await markCurrentWordFluent()) navigate('/result')
+    } finally {
+      setMarking(false)
+    }
   }
 
   const submit = (selected: string) => {
@@ -65,7 +75,10 @@ export function StudyPage() {
   return <main className={styles.studyPage}>
     <header className={styles.studyHeader}>
       <button className={styles.quietButton} onClick={() => void leave()}>结束</button>
-      <span>{activeSession.currentIndex + 1} / {phaseTotal}</span>
+      <div className={styles.studyHeaderActions}>
+        <span>{activeSession.currentIndex + 1} / {phaseTotal}</span>
+        {!feedback && <button className={styles.fluentButton} type="button" disabled={marking} onClick={() => void markAsFluent()}>标为熟练</button>}
+      </div>
     </header>
     <div className={styles.studyProgress}><span style={{ width: `${percent}%` }} /></div>
 

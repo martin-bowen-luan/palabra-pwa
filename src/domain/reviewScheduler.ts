@@ -50,7 +50,26 @@ export function createProgress(
 }
 
 export function isDue(progress: WordProgress, now = new Date()): boolean {
-  return new Date(progress.nextReviewAt).getTime() <= now.getTime()
+  return !progress.skipReview && new Date(progress.nextReviewAt).getTime() <= now.getTime()
+}
+
+export function markFluent(
+  current: WordProgress | undefined,
+  wordId: string,
+  language: LearningLanguage,
+  now = new Date(),
+): WordProgress {
+  return {
+    wordId,
+    language,
+    stage: REVIEW_INTERVALS.length - 1,
+    status: 'mastered',
+    nextReviewAt: current?.nextReviewAt ?? now.toISOString(),
+    reviewCount: current?.reviewCount ?? 0,
+    correctCount: current?.correctCount ?? 0,
+    lastReviewedAt: now.toISOString(),
+    skipReview: true,
+  }
 }
 
 export function normalizeSpelling(value: string): string {

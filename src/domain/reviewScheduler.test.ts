@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { applyReview, isCorrectSpelling, isDue, normalizeSpelling } from './reviewScheduler'
+import { applyReview, isCorrectSpelling, isDue, markFluent, normalizeSpelling } from './reviewScheduler'
 import type { WordProgress } from '../types'
 
 const baseProgress: WordProgress = {
@@ -35,6 +35,13 @@ describe('review scheduling', () => {
 
   it('treats a review scheduled earlier today as due', () => {
     expect(isDue(baseProgress, new Date('2026-09-25T08:00:00.000Z'))).toBe(true)
+  })
+
+  it('keeps a manually fluent word out of review even after its old due date', () => {
+    const fluent = markFluent(baseProgress, 'hola', 'es', new Date('2026-09-25T08:00:00.000Z'))
+
+    expect(fluent).toMatchObject({ wordId: 'hola', status: 'mastered', stage: 4, skipReview: true })
+    expect(isDue(fluent, new Date('2027-09-25T08:00:00.000Z'))).toBe(false)
   })
 })
 
