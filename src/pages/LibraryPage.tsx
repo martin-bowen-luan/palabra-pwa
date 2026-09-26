@@ -1,21 +1,30 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { VocabularyEntry } from '../types'
 import { BackIcon, SearchIcon } from '../components/Icons'
+import { LanguageSwitch } from '../components/LanguageSwitch'
 import { useAppState } from '../app/AppState'
 import styles from '../styles/App.module.css'
 
 export function LibraryPage() {
-  const { categories, progress, vocabulary } = useAppState()
+  const { categories, progress, settings, vocabulary } = useAppState()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('全部')
   const [selected, setSelected] = useState<VocabularyEntry>()
+  const [visibleCount, setVisibleCount] = useState(80)
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase('es')
     return vocabulary.filter((word) =>
       (category === '全部' || word.category === category) &&
-      (!needle || word.term.toLocaleLowerCase(word.language).includes(needle) || word.meaningZh.includes(needle)),
+      (!needle || word.term.toLocaleLowerCase(word.language).includes(needle) || word.meaningZh.includes(needle) || word.spellingVariants?.some((variant) => variant.toLocaleLowerCase('en').includes(needle))),
     )
-  }, [category, query])
+  }, [category, query, vocabulary])
+  useEffect(() => {
+    setVisibleCount(80)
+    setCategory('全部')
+    setSelected(undefined)
+  }, [settings.learningLanguage])
+  useEffect(() => setVisibleCount(80), [category, query])
+  const visibleWords = filtered.slice(0, visibleCount)
 
   if (selected) {
     const stage = progress[selected.id]?.stage
@@ -35,18 +44,20 @@ export function LibraryPage() {
 
   return <main className={styles.page}>
     <header className={styles.pageHeader}><h1>词库</h1><span>{vocabulary.length} 个词</span></header>
+    <LanguageSwitch />
     <label className={styles.searchBox}>
       <SearchIcon />
-      <input type="search" aria-label="搜索词库" placeholder="搜索西语或中文" value={query} onChange={(event) => setQuery(event.target.value)} />
+      <input type="search" aria-label="搜索词库" placeholder={settings.learningLanguage === 'en' ? '搜索英语或中文' : '搜索西语或中文'} value={query} onChange={(event) => setQuery(event.target.value)} />
     </label>
     <div className={styles.categoryRail} aria-label="词库分类">
       {categories.map((item) => <button key={item} className={category === item ? styles.categoryActive : ''} onClick={() => setCategory(item)}>{item}</button>)}
     </div>
     <div className={styles.dictionaryList}>
-      {filtered.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSelected(word)}>
+      {visibleWords.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSelected(word)}>
         <span><strong>{word.term}</strong><small>{word.partOfSpeech}</small></span>
         <span>{word.meaningZh}</span>
       </button>)}
+      {visibleCount < filtered.length && <button className={styles.loadMoreButton} onClick={() => setVisibleCount((count) => count + 80)}>显示更多</button>}
       {!filtered.length && <div className={styles.emptyState}><h2>没有找到这个词</h2><p>换一个西语或中文关键词试试。</p></div>}
     </div>
   </main>

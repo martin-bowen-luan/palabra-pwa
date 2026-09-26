@@ -117,6 +117,34 @@ describe('Palabra app', () => {
     expect(screen.queryByText('aeropuerto')).not.toBeInTheDocument()
   })
 
+  it('switches to the English database and keeps active sessions isolated by language', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today')
+
+    await user.click(await screen.findByRole('button', { name: '英语' }))
+    expect(await screen.findByText('altitude')).toBeInTheDocument()
+    await expect(storage.getSettings()).resolves.toMatchObject({ learningLanguage: 'en' })
+
+    await user.click(screen.getByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'altitude' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '结束' }))
+    await user.click(await screen.findByRole('button', { name: '西班牙语' }))
+
+    expect(await screen.findByText('hola')).toBeInTheDocument()
+    await expect(storage.getActiveSession('en')).resolves.toMatchObject({ language: 'en' })
+    await expect(storage.getActiveSession('es')).resolves.toBeUndefined()
+  })
+
+  it('searches English terms, meanings, and configured spelling variants', async () => {
+    const user = userEvent.setup()
+    await renderApp('/library')
+    await user.click(await screen.findByRole('button', { name: '英语' }))
+
+    const search = await screen.findByRole('searchbox', { name: '搜索词库' })
+    await user.type(search, 'color')
+    expect(await screen.findByText('colour')).toBeInTheDocument()
+  })
+
   it('builds the library from vocabulary stored in IndexedDB', async () => {
     await renderApp('/library', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
 

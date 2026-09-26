@@ -57,6 +57,7 @@ export function normalizeSpelling(value: string): string {
   return value.trim().toLocaleLowerCase('es')
 }
 
-export function isCorrectSpelling(input: string, expected: string): boolean {
-  return normalizeSpelling(input) === normalizeSpelling(expected)
+export function isCorrectSpelling(input: string, expected: string, variants: readonly string[] = []): boolean {
+  const normalized = normalizeSpelling(input)
+  return [expected, ...variants].some((candidate) => normalizeSpelling(candidate) === normalized)
 }

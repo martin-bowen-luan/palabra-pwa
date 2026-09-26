@@ -48,7 +48,7 @@ export function StudyPage() {
 
   const submit = (selected: string) => {
     if (feedback) return
-    const correct = mode === 'spelling' ? isCorrectSpelling(selected, word.term) : selected === word.meaningZh
+    const correct = mode === 'spelling' ? isCorrectSpelling(selected, word.term, word.spellingVariants) : selected === word.meaningZh
     setFeedback({ correct, selected })
   }
 
@@ -92,7 +92,7 @@ export function StudyPage() {
       </section>
     ) : (
       <section className={styles.quizStage}>
-        <p className={styles.quizPrompt}>{mode === 'choice' ? '选择正确的中文意思' : '写出这个西班牙语单词'}</p>
+        <p className={styles.quizPrompt}>{mode === 'choice' ? '选择正确的中文意思' : `写出这个${word.language === 'en' ? '英语' : '西班牙语'}单词`}</p>
         <h1>{mode === 'choice' ? word.term : word.meaningZh}</h1>
         {mode === 'choice' ? (
           <div className={styles.choiceList}>
@@ -105,7 +105,7 @@ export function StudyPage() {
           </div>
         ) : (
           <form className={`${styles.spellingForm} ${feedback && !feedback.correct ? styles.shake : ''}`} onSubmit={(event) => { event.preventDefault(); submit(answer) }}>
-            <label htmlFor="spelling">西班牙语</label>
+            <label htmlFor="spelling">{word.language === 'en' ? '英语' : '西班牙语'}</label>
             <input id="spelling" value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" autoCapitalize="none" disabled={Boolean(feedback)} />
             {!feedback && <button className={styles.primaryButton} type="submit" disabled={!answer.trim()}>检查答案</button>}
           </form>

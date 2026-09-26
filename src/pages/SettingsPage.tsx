@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAppState } from '../app/AppState'
+import { LanguageSwitch } from '../components/LanguageSwitch'
 import type { ThemeMode, UserSettings } from '../types'
 import styles from '../styles/App.module.css'
 
@@ -14,6 +15,7 @@ export function SettingsPage() {
 
   return <main className={styles.page}>
     <header className={styles.pageHeader}><h1>设置</h1></header>
+    <LanguageSwitch />
     <section className={styles.settingsSection}>
       <div className={styles.settingTitle}><h2>每日新词</h2><span>按自己的节奏学习</span></div>
       <div className={styles.segmented}>
@@ -22,8 +24,8 @@ export function SettingsPage() {
     </section>
     <section className={styles.settingsSection}>
       <div className={styles.settingTitle}><h2>测试题型</h2><span>至少保留一种</span></div>
-      <label className={styles.toggleRow}><span><strong>中西互选</strong><small>识别词义</small></span><input type="checkbox" checked={settings.enableChoice} disabled={settings.enableChoice && !settings.enableSpelling} onChange={(event) => void updateSettings({ enableChoice: event.target.checked })} /></label>
-      <label className={styles.toggleRow}><span><strong>西语拼写</strong><small>主动回忆</small></span><input type="checkbox" checked={settings.enableSpelling} disabled={settings.enableSpelling && !settings.enableChoice} onChange={(event) => void updateSettings({ enableSpelling: event.target.checked })} /></label>
+      <label className={styles.toggleRow}><span><strong>{settings.learningLanguage === 'en' ? '中英互选' : '中西互选'}</strong><small>识别词义</small></span><input type="checkbox" checked={settings.enableChoice} disabled={settings.enableChoice && !settings.enableSpelling} onChange={(event) => void updateSettings({ enableChoice: event.target.checked })} /></label>
+      <label className={styles.toggleRow}><span><strong>{settings.learningLanguage === 'en' ? '英语拼写' : '西语拼写'}</strong><small>主动回忆</small></span><input type="checkbox" checked={settings.enableSpelling} disabled={settings.enableSpelling && !settings.enableChoice} onChange={(event) => void updateSettings({ enableSpelling: event.target.checked })} /></label>
     </section>
     <section className={styles.settingsSection}>
       <div className={styles.settingTitle}><h2>界面主题</h2></div>

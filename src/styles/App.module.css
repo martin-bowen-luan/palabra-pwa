@@ -22,6 +22,12 @@
 .wordPreview strong { display: block; margin-bottom: 4px; font: 540 34px/1.15 'Source Serif 4 Variable', serif; letter-spacing: -.025em; }
 .wordPreview span { display: block; }
 
+.languageSwitch { min-height: 52px; display: flex; align-items: stretch; gap: 26px; border-bottom: 1px solid var(--line); }
+.languageSwitch button { position: relative; min-height: 52px; padding: 0; border: 0; color: var(--muted); background: transparent; font-size: 14px; cursor: pointer; }
+.languageSwitch button::after { content: ''; position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: transparent; transform: rotate(-1deg); }
+.languageSwitch .languageActive { color: var(--ink); font-weight: 600; }
+.languageSwitch .languageActive::after { background: var(--blue); }
+
 .bottomNav { position: fixed; z-index: 20; bottom: 0; left: 50%; display: grid; grid-template-columns: repeat(4, 1fr); width: min(100%, 480px); padding: 9px 12px calc(9px + var(--safe-bottom)); transform: translateX(-50%); border-top: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 94%, transparent); backdrop-filter: blur(16px); }
 .navItem { min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); text-decoration: none; font-size: 11px; }
 .navItemActive { color: var(--blue); }
@@ -79,6 +85,7 @@
 .dictionaryRow strong { font: 540 23px/1.2 'Source Serif 4 Variable', serif; }
 .dictionaryRow small, .dictionaryRow > span:last-child { color: var(--muted); font-size: 12px; }
 .dictionaryRow > span:last-child { text-align: right; font-size: 14px; }
+.loadMoreButton { width: 100%; min-height: 52px; border: 0; border-bottom: 1px solid var(--line); color: var(--blue); background: transparent; cursor: pointer; }
 .backButton { display: flex; align-items: center; gap: 6px; padding-top: 20px; }
 .wordDetail { padding: 64px 0 0; }
 .wordDetail > p:first-child { color: var(--muted); font-size: 13px; }

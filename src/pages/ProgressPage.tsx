@@ -1,4 +1,5 @@
 import { useAppState } from '../app/AppState'
+import { LanguageSwitch } from '../components/LanguageSwitch'
 import { recentSevenDays, summarizeStages } from '../domain/stats'
 import styles from '../styles/App.module.css'
 
@@ -11,6 +12,7 @@ export function ProgressPage() {
 
   return <main className={styles.page}>
     <header className={styles.pageHeader}><h1>进度</h1><span>连续 {streak} 天</span></header>
+    <LanguageSwitch />
     {!sessions.length ? <div className={styles.emptyState}><h2>完成第一次学习后，<br />这里会出现趋势</h2><p>每天几分钟，就能让记忆慢慢留下来。</p></div> : <>
       <section className={styles.chartSection}>
         <div className={styles.sectionHeading}><h2>最近 7 天</h2><span>共学习 {days.reduce((sum, day) => sum + day.count, 0)} 次</span></div>

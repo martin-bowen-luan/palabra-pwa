@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
+import { LanguageSwitch } from '../components/LanguageSwitch'
 import { toLocalDate } from '../domain/stats'
 import styles from '../styles/App.module.css'
 
@@ -21,6 +22,7 @@ export function TodayPage() {
       <span className={styles.brand}>palabra</span>
       <span className={styles.streak}><i />连续 {streak} 天</span>
     </header>
+    <LanguageSwitch />
 
     <section className={styles.todayHero}>
       <p className={styles.date}>{new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' }).format(new Date())}</p>
@@ -47,8 +49,8 @@ export function TodayPage() {
 
     {preview && <section className={styles.wordPreview} aria-label="今天会遇见的词">
       <p>今天会遇见的一个词</p>
-      <strong>{preview.spanish}</strong>
-      <span>{preview.partOfSpeech} · {preview.chinese}</span>
+      <strong>{preview.term}</strong>
+      <span>{preview.partOfSpeech} · {preview.meaningZh}</span>
     </section>}
   </main>
 }
