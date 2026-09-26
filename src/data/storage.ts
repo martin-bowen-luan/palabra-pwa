@@ -7,6 +7,7 @@ import type {
   WordProgress,
 } from '../types'
 import { vocabulary } from './vocabulary'
+import { englishVocabulary } from './englishVocabulary'
 
 const DB_VERSION = 3
 const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 1, en: 1 }
@@ -163,7 +164,7 @@ export class PalabraStorage {
     const legacySpanishSeed = options.vocabularySeed ?? vocabulary
     this.vocabularySeeds = {
       es: options.vocabularySeeds?.es ?? legacySpanishSeed,
-      en: options.vocabularySeeds?.en ?? [],
+      en: options.vocabularySeeds?.en ?? englishVocabulary,
     }
     this.vocabularyRevisions = {
       es: options.vocabularyRevisions?.es ?? options.vocabularyRevision ?? DEFAULT_VOCABULARY_REVISIONS.es,

@@ -7,6 +7,9 @@ export interface VocabularyExample {
   text: string
   translationZh: string
   sourceId?: string
+  sourceUrl?: string
+  author?: string
+  license?: string
 }
 
 export interface VocabularyPronunciation {
