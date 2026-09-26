@@ -38,6 +38,8 @@ export interface VocabularyEntry {
   examples: VocabularyExample[]
   pronunciation?: VocabularyPronunciation
   spellingVariants?: string[]
+  relatedTerms?: string[]
+  specialForms?: Array<{ label: string; form: string }>
   source?: VocabularySource
   /** Legacy aliases retained while existing UI migrates to the generic fields. */
   spanish?: string

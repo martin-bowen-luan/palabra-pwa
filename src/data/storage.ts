@@ -10,7 +10,7 @@ import { vocabulary } from './vocabulary'
 import { englishVocabulary } from './englishVocabulary'
 
 const DB_VERSION = 3
-const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 1, en: 2 }
+const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 1, en: 3 }
 const STORE_PROGRESS = 'wordProgress'
 const STORE_SESSIONS = 'sessions'
 const STORE_SETTINGS = 'settings'

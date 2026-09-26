@@ -212,6 +212,41 @@ describe('PalabraStorage', () => {
     updated.close()
   })
 
+  it('refreshes English lexical notes while preserving personal records', async () => {
+    const name = `palabra-test-${crypto.randomUUID()}`
+    databaseNames.push(name)
+    const initial = createStorage(name, {
+      vocabularySeeds: { en: [englishWord] },
+      vocabularyRevisions: { en: 2 },
+    })
+    await initial.getVocabulary('en')
+    await initial.putProgress({
+      wordId: englishWord.id, language: 'en', stage: 1, status: 'learning',
+      nextReviewAt: '2026-09-28T00:00:00.000Z', reviewCount: 2, correctCount: 1,
+      lastReviewedAt: '2026-09-25T00:00:00.000Z',
+    })
+    await initial.putSession({
+      id: 'en-history', language: 'en', date: '2026-09-25', newCount: 1,
+      reviewCount: 0, correctCount: 1, totalCount: 1, durationSeconds: 20, completed: true,
+    })
+    await initial.saveActiveSession({
+      id: 'active-session:en', language: 'en', wordIds: [englishWord.id], newWordIds: [englishWord.id],
+      reviewWordIds: [], currentIndex: 0, phase: 'learn', correctCount: 0, answeredCount: 0,
+      startedAt: '2026-09-25T00:00:00.000Z',
+    })
+    await initial.saveSettings({ ...DEFAULT_SETTINGS, dailyNewWords: 20 })
+    initial.close()
+
+    const refreshed = createStorage(name, {
+      vocabularySeeds: { en: [{ ...englishWord, relatedTerms: ['hi'], specialForms: [{ label: '复数', form: 'helloes' }] }] },
+    })
+    await expect(refreshed.getVocabulary('en')).resolves.toMatchObject([{ relatedTerms: ['hi'] }])
+    await expect(refreshed.getAllProgress('en')).resolves.toMatchObject([{ wordId: englishWord.id, stage: 1 }])
+    await expect(refreshed.getSessions('en')).resolves.toMatchObject([{ id: 'en-history' }])
+    await expect(refreshed.getActiveSession('en')).resolves.toMatchObject({ wordIds: [englishWord.id] })
+    await expect(refreshed.getSettings()).resolves.toMatchObject({ dailyNewWords: 20 })
+  })
+
   it('upgrades a version-one database while preserving every learner store', async () => {
     const name = `palabra-test-${crypto.randomUUID()}`
     databaseNames.push(name)

@@ -121,6 +121,63 @@ function parseUsPronunciation(pronunciations) {
   }
 }
 
+const formLabels = new Set(['复数', '过去式', '过去分词', '现在分词', '第三人称单数', '比较级', '最高级'])
+
+function isRegularForm(term, label, form) {
+  if (label === '复数' || label === '第三人称单数') {
+    return form === `${term}s` || (term.endsWith('s') && form === `${term}es`)
+  }
+  if (label === '过去式' || label === '过去分词') {
+    return form === `${term}ed` || (term.endsWith('e') && form === `${term}d`)
+      || (term.endsWith('y') && form === `${term.slice(0, -1)}ied`)
+  }
+  if (label === '现在分词') {
+    return form === `${term}ing` || (term.endsWith('e') && form === `${term.slice(0, -1)}ing`)
+  }
+  if (label === '比较级') return form === `${term}er`
+  if (label === '最高级') return form === `${term}est`
+  return false
+}
+
+function parseSpecialForms(sections, term) {
+  const section = sections.find((item) => item?.title === '变形')
+  if (!section?.text) return []
+  const forms = []
+  const seen = new Set()
+  for (const line of String(section.text).split(/\r?\n/u)) {
+    const match = cleanText(line).match(/^([^：:]+)[：:]\s*([A-Za-z][A-Za-z'-]*)$/u)
+    if (!match) continue
+    const label = match[1].trim()
+    const form = match[2].toLocaleLowerCase('en-US')
+    if (!formLabels.has(label) || form === term || isRegularForm(term, label, form) || seen.has(form)) continue
+    forms.push({ label, form })
+    seen.add(form)
+    if (forms.length === 4) break
+  }
+  return forms
+}
+
+function parseRelatedTerms(sections, term) {
+  const candidates = []
+  for (const section of sections) {
+    if (!['英英释义', '同近义词辨析'].includes(section?.title)) continue
+    const lines = String(section.text ?? '').split(/\r?\n/u)
+    for (const line of lines) {
+      const explicit = line.match(/同义词[：:]\s*(.*)$/u)
+      const comparison = section.title === '同近义词辨析' && /^[A-Za-z][A-Za-z\s,-]*$/u.test(line) && line.includes(',')
+      if (!explicit && !comparison) continue
+      const terms = (explicit ? explicit[1] : line).split(/[,，、;；]/u)
+      for (const value of terms) {
+        const candidate = cleanText(value).toLocaleLowerCase('en-US')
+        if (!/^[a-z][a-z'-]*(?: [a-z][a-z'-]*)?$/u.test(candidate) || candidate === term || candidates.includes(candidate)) continue
+        candidates.push(candidate)
+        if (candidates.length === 3) return candidates
+      }
+    }
+  }
+  return candidates
+}
+
 export function normalizeEnglishRecord(record, index) {
   if (record?.schema_version !== 2) throw new Error(`Record ${index + 1} has invalid schema_version`)
   const term = cleanText(record.word).toLocaleLowerCase('en-US')
@@ -134,6 +191,9 @@ export function normalizeEnglishRecord(record, index) {
     : (definitionOverrides.get(term) ?? extractedDefinition)
   if (!meaningZh) throw new Error(`Record ${index + 1} (${term}) is missing definition`)
   const sourceExamples = parseExamples(record.sections)
+  const sections = Array.isArray(record.sections) ? record.sections : []
+  const specialForms = parseSpecialForms(sections, term)
+  const relatedTerms = parseRelatedTerms(sections, term)
   return {
     id: `en:${term}`,
     language: 'en',
@@ -144,6 +204,8 @@ export function normalizeEnglishRecord(record, index) {
     examples: sourceExamples.length ? sourceExamples : (exampleSupplements.has(term) ? [exampleSupplements.get(term)] : []),
     pronunciation: parseUsPronunciation(record.pronunciations),
     spellingVariants: spellingVariants.get(term) ?? [],
+    ...(specialForms.length ? { specialForms } : {}),
+    ...(relatedTerms.length ? { relatedTerms } : {}),
     source: {
       provider: '新东方在线词典',
       url: cleanText(record.url || record.source_page),
@@ -161,7 +223,10 @@ export function validateCorpus(records, expectedCount = EXPECTED_COUNT) {
     if (seen.has(entry.term)) throw new Error(`Vocabulary corpus contains duplicate term: ${entry.term}`)
     seen.add(entry.term)
   }
-  return normalized
+  return normalized.map((entry) => {
+    const relatedTerms = entry.relatedTerms?.filter((term) => term !== entry.term && seen.has(term))
+    return { ...entry, ...(relatedTerms?.length ? { relatedTerms } : { relatedTerms: undefined }) }
+  })
 }
 
 export function validateErrorReport(csv) {
