@@ -3,13 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
 import { createPracticeQueue, currentPracticeWord } from '../domain/practiceQueue'
+import { buildEnglishChoiceOptions } from '../domain/choiceOptions'
+import { toLocalDate } from '../domain/stats'
 import type { ReviewRating } from '../types'
 import { PronunciationButton } from '../components/PronunciationButton'
 import { WordRelations } from '../components/WordRelations'
+import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
-  const { activeSession, settings, vocabulary, rateCurrentWord, markCurrentWordFluent, completeQuizItem, exitSession } = useAppState()
+  const { activeSession, settings, vocabulary, progress, rateCurrentWord, markCurrentWordFluent, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
   const [revealed, setRevealed] = useState(false)
   const [answer, setAnswer] = useState('')
@@ -25,18 +28,36 @@ export function StudyPage() {
     : (activeSession?.assignedNewCount ?? activeSession?.newWordIds.length ?? 0) + (activeSession?.assignedReviewCount ?? activeSession?.reviewWordIds.length ?? 0)
   const remainingUnique = new Set([...queue.pendingIds, ...queue.delayed.map((item) => item.wordId)]).size
   const completedUnique = Math.max(0, phaseTotal - remainingUnique)
-  const mode = useMemo(() => {
+  const requestedMode = useMemo(() => {
     if (!activeSession) return 'choice'
     if (!settings.enableSpelling) return 'choice'
     if (!settings.enableChoice) return 'spelling'
     return (phaseTotal - remainingUnique) % 2 === 0 ? 'choice' : 'spelling'
   }, [activeSession, phaseTotal, remainingUnique, settings.enableChoice, settings.enableSpelling])
 
+  const englishOptions = useMemo(() => {
+    if (!word || word.language !== 'en' || !activeSession || requestedMode !== 'choice') return undefined
+    const today = toLocalDate(new Date())
+    const excluded = new Set(activeSession.wordIds)
+    for (const record of Object.values(progress)) {
+      if (toLocalDate(new Date(record.lastReviewedAt)) === today) excluded.add(record.wordId)
+    }
+    return buildEnglishChoiceOptions(word, vocabulary, excluded, `${activeSession.id}:${word.id}:${queue.promptNumber}`)
+  }, [activeSession, progress, queue.promptNumber, requestedMode, vocabulary, word])
+  const mode = requestedMode === 'choice' && word?.language === 'en' && !englishOptions ? 'spelling' : requestedMode
+
   const options = useMemo(() => {
     if (!word) return []
+    if (word.language === 'en') return englishOptions?.map((item) => item.meaningZh) ?? []
     const distractors = vocabulary.filter((item) => item.id !== word.id && item.category === word.category).slice(0, 3)
     return [word, ...distractors].sort((a, b) => a.id.localeCompare(b.id)).map((item) => item.meaningZh)
-  }, [word])
+  }, [englishOptions, vocabulary, word])
+
+  useEffect(() => {
+    if (activeSession?.phase !== 'quiz' || word?.language !== 'en' || mode !== 'choice') return
+    void pronunciationPlayer.play(word).catch(() => undefined)
+    return () => pronunciationPlayer.stop()
+  }, [activeSession?.id, activeSession?.phase, activeSession?.practice?.promptNumber, mode, word])
 
   useEffect(() => {
     setRevealed(false)
@@ -131,8 +152,9 @@ export function StudyPage() {
       <section className={styles.quizStage}>
         <p className={styles.quizPrompt}>{mode === 'choice' ? '选择正确的中文意思' : `写出这个${word.language === 'en' ? '英语' : '西班牙语'}单词`}</p>
         <h1>{mode === 'choice' ? word.term : word.meaningZh}</h1>
+        {word.language === 'en' && mode === 'choice' && <div className={styles.quizPronunciation}><PronunciationButton word={word} /></div>}
         {mode === 'choice' ? (
-          <div className={styles.choiceList}>
+          <div className={styles.choiceList} role="group" aria-label="选择释义">
             {options.map((option) => <button
               key={option}
               className={feedback?.selected === option ? (feedback.correct ? styles.correctChoice : styles.wrongChoice) : ''}

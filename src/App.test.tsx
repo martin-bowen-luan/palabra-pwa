@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from './App'
 import { DEFAULT_SETTINGS, PalabraStorage } from './data/storage'
 import type { VocabularyEntry, WordProgress } from './types'
+import { pronunciationPlayer } from './audio/pronunciation'
 
 const databaseWord: VocabularyEntry = {
   id: 'database-01',
@@ -25,6 +26,7 @@ const storageClients: PalabraStorage[] = []
 
 afterEach(async () => {
   cleanup()
+  vi.restoreAllMocks()
   document.documentElement.removeAttribute('data-theme')
   storageClients.splice(0).forEach((client) => client.close())
   await Promise.all(databaseNames.splice(0).map((name) => new Promise<void>((resolve, reject) => {
@@ -54,6 +56,89 @@ async function renderApp(
 }
 
 describe('Palabra app', () => {
+  it('shows four stable English choices, autoplays once, and allows manual replay', async () => {
+    const user = userEvent.setup()
+    const play = vi.spyOn(pronunciationPlayer, 'play').mockResolvedValue(undefined)
+    const words = ['form', 'from', 'farm', 'foam', 'storm', 'planet'].map((term, index): VocabularyEntry => ({
+      id: `en:${term}`, language: 'en', term, meaningZh: `释义${index}`,
+      partOfSpeech: 'n.', category: '高考 3500', examples: [],
+    }))
+    const storage = await renderApp('/study', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, learningLanguage: 'en', enableSpelling: false })
+      await client.putProgress({
+        wordId: 'en:from', language: 'en', stage: 1, status: 'learning',
+        nextReviewAt: '2026-10-01T00:00:00.000Z', reviewCount: 1,
+        correctCount: 1, lastReviewedAt: new Date().toISOString(),
+      })
+      await client.saveActiveSession({
+        id: 'active-session:en', language: 'en', wordIds: ['en:form'], newWordIds: [],
+        reviewWordIds: ['en:form'], currentIndex: 0, phase: 'quiz', correctCount: 0,
+        answeredCount: 0, startedAt: new Date().toISOString(),
+      })
+    }, { vocabularySeeds: { en: words } })
+    const choices = await screen.findByRole('group', { name: '选择释义' })
+    expect(within(choices).getAllByRole('button')).toHaveLength(4)
+    expect(within(choices).queryByRole('button', { name: '释义1' })).not.toBeInTheDocument()
+    const order = within(choices).getAllByRole('button').map((button) => button.textContent)
+    await waitFor(() => expect(play).toHaveBeenCalledTimes(1))
+    await user.click(screen.getByRole('button', { name: '播放 form 发音' }))
+    await waitFor(() => expect(play).toHaveBeenCalledTimes(2))
+    cleanup()
+    render(<MemoryRouter initialEntries={['/study']}><App storageClient={storage} /></MemoryRouter>)
+    const resumed = await screen.findByRole('group', { name: '选择释义' })
+    expect(within(resumed).getAllByRole('button').map((button) => button.textContent)).toEqual(order)
+  })
+
+  it('uses spelling rather than an incomplete English choice list', async () => {
+    const user = userEvent.setup()
+    const go: VocabularyEntry = { id: 'en:go', language: 'en', term: 'go', meaningZh: '去', partOfSpeech: 'v.', category: '高考 3500', examples: [] }
+    await renderApp('/study', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, learningLanguage: 'en', enableSpelling: false })
+      await client.saveActiveSession({
+        id: 'active-session:en', language: 'en', wordIds: ['en:go'], newWordIds: [],
+        reviewWordIds: ['en:go'], currentIndex: 0, phase: 'quiz', correctCount: 0,
+        answeredCount: 0, startedAt: new Date().toISOString(),
+      })
+    }, { vocabularySeeds: { en: [go] } })
+    await user.type(await screen.findByLabelText('英语'), 'go')
+    await user.click(screen.getByRole('button', { name: '检查答案' }))
+    expect(await screen.findByRole('status')).toHaveTextContent('正确')
+  })
+
+  it('keeps English choices operable when automatic audio is rejected', async () => {
+    const user = userEvent.setup()
+    const play = vi.spyOn(pronunciationPlayer, 'play').mockRejectedValue(new Error('autoplay blocked'))
+    const words = ['form', 'from', 'farm', 'foam'].map((term, index): VocabularyEntry => ({
+      id: `en:${term}`, language: 'en', term, meaningZh: `释义${index}`,
+      partOfSpeech: 'n.', category: '高考 3500', examples: [],
+    }))
+    await renderApp('/study', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, learningLanguage: 'en', enableSpelling: false })
+      await client.saveActiveSession({
+        id: 'active-session:en', language: 'en', wordIds: ['en:form'], newWordIds: [],
+        reviewWordIds: ['en:form'], currentIndex: 0, phase: 'quiz', correctCount: 0,
+        answeredCount: 0, startedAt: new Date().toISOString(),
+      })
+    }, { vocabularySeeds: { en: words } })
+    const choices = await screen.findByRole('group', { name: '选择释义' })
+    await waitFor(() => expect(play).toHaveBeenCalledOnce())
+    expect(within(choices).getAllByRole('button')).toHaveLength(4)
+    await user.click(within(choices).getByRole('button', { name: '释义0' }))
+    expect(await screen.findByRole('status')).toHaveTextContent('正确')
+  })
+
+  it('never autoplays a Spanish quiz prompt', async () => {
+    const play = vi.spyOn(pronunciationPlayer, 'play').mockResolvedValue(undefined)
+    await renderApp('/study', async (client) => {
+      await client.saveActiveSession({
+        id: 'active-session:es', language: 'es', wordIds: [databaseWord.id], newWordIds: [],
+        reviewWordIds: [databaseWord.id], currentIndex: 0, phase: 'quiz', correctCount: 0,
+        answeredCount: 0, startedAt: new Date().toISOString(),
+      })
+    }, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    expect(await screen.findByText('选择正确的中文意思')).toBeInTheDocument()
+    expect(play).not.toHaveBeenCalled()
+  })
   it('filters the learned vocabulary including fluent words and keeps search active', async () => {
     const user = userEvent.setup()
     const go: VocabularyEntry = {
