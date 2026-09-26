@@ -4,10 +4,14 @@ import type { VocabularyEntry, WordProgress } from '../types'
 
 const vocabulary: VocabularyEntry[] = Array.from({ length: 12 }, (_, index) => ({
   id: `word-${index}`,
+  language: 'es',
+  term: `palabra-${index}`,
   spanish: `palabra-${index}`,
   partOfSpeech: '名词',
+  meaningZh: `词-${index}`,
   chinese: `词-${index}`,
   category: '基础',
+  examples: [{ text: `Una palabra ${index}.`, translationZh: `一个词 ${index}。` }],
   example: `Una palabra ${index}.`,
   exampleZh: `一个词 ${index}。`,
 }))
@@ -17,6 +21,7 @@ describe('daily plan', () => {
     const progress: Record<string, WordProgress> = {
       'word-10': {
         wordId: 'word-10',
+        language: 'es',
         stage: 1,
         status: 'learning',
         nextReviewAt: '2026-09-24T00:00:00.000Z',

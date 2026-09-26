@@ -1,19 +1,51 @@
 export type ReviewRating = 'forgotten' | 'fuzzy' | 'known'
 export type LearningStatus = 'learning' | 'mastered'
 export type ThemeMode = 'system' | 'light' | 'dark'
+export type LearningLanguage = 'es' | 'en'
+
+export interface VocabularyExample {
+  text: string
+  translationZh: string
+  sourceId?: string
+}
+
+export interface VocabularyPronunciation {
+  ipa: string
+  accent: 'us' | 'uk'
+  audioPath?: string
+  audioKind?: 'human' | 'tts'
+  sourceUrl?: string
+  license?: string
+}
+
+export interface VocabularySource {
+  provider: string
+  url: string
+  fetchedAt?: string
+  license?: string
+}
 
 export interface VocabularyEntry {
   id: string
-  spanish: string
+  language: LearningLanguage
+  term: string
   partOfSpeech: string
-  chinese: string
+  meaningZh: string
   category: string
-  example: string
-  exampleZh: string
+  examples: VocabularyExample[]
+  pronunciation?: VocabularyPronunciation
+  spellingVariants?: string[]
+  source?: VocabularySource
+  /** Legacy aliases retained while existing UI migrates to the generic fields. */
+  spanish?: string
+  chinese?: string
+  example?: string
+  exampleZh?: string
   regionalNote?: string
 }
 
 export interface WordProgress {
+  language: LearningLanguage
   wordId: string
   stage: number
   status: LearningStatus
@@ -24,6 +56,7 @@ export interface WordProgress {
 }
 
 export interface StudySession {
+  language: LearningLanguage
   id: string
   date: string
   newCount: number
@@ -40,11 +73,13 @@ export interface UserSettings {
   enableChoice: boolean
   enableSpelling: boolean
   theme: ThemeMode
+  learningLanguage: LearningLanguage
   dataVersion: number
 }
 
 export interface ActiveSession {
-  id: 'active-session'
+  id: `active-session:${LearningLanguage}`
+  language: LearningLanguage
   wordIds: string[]
   newWordIds: string[]
   reviewWordIds: string[]
@@ -54,4 +89,3 @@ export interface ActiveSession {
   answeredCount: number
   startedAt: string
 }
-

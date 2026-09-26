@@ -78,7 +78,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const plan = buildDailyPlan(vocabulary, progress, extraWords || settings.dailyNewWords)
     if (!plan.all.length) return undefined
     const session: ActiveSession = {
-      id: 'active-session',
+      id: `active-session:${settings.learningLanguage}`,
+      language: settings.learningLanguage,
       wordIds: plan.all.map((word) => word.id),
       newWordIds: plan.newWords.map((word) => word.id),
       reviewWordIds: plan.review.map((word) => word.id),
@@ -99,7 +100,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const now = new Date()
     const nextProgress = progress[wordId]
       ? applyReview(progress[wordId], rating, now)
-      : createProgress(wordId, rating, now)
+      : createProgress(wordId, rating, now, activeSession.language)
     await storageClient.putProgress(nextProgress)
     setProgress((current) => ({ ...current, [wordId]: nextProgress }))
 
@@ -118,7 +119,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       const now = new Date()
       const nextProgress = progress[wordId]
         ? applyReview(progress[wordId], correct ? 'known' : 'forgotten', now)
-        : createProgress(wordId, correct ? 'known' : 'forgotten', now)
+        : createProgress(wordId, correct ? 'known' : 'forgotten', now, activeSession.language)
       await storageClient.putProgress(nextProgress)
       setProgress((current) => ({ ...current, [wordId]: nextProgress }))
     }
@@ -135,6 +136,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const now = new Date()
     const completed: StudySession = {
       id: `${toLocalDate(now)}-${now.getTime()}`,
+      language: activeSession.language,
       date: toLocalDate(now),
       newCount: activeSession.newWordIds.length,
       reviewCount: activeSession.reviewWordIds.length,

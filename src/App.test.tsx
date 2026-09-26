@@ -8,10 +8,14 @@ import type { VocabularyEntry, WordProgress } from './types'
 
 const databaseWord: VocabularyEntry = {
   id: 'database-01',
+  language: 'es',
+  term: 'persistir',
   spanish: 'persistir',
   partOfSpeech: '动词',
+  meaningZh: '持久保存',
   chinese: '持久保存',
   category: '数据库测试',
+  examples: [{ text: 'Los datos pueden persistir.', translationZh: '数据可以持久保存。' }],
   example: 'Los datos pueden persistir.',
   exampleZh: '数据可以持久保存。',
 }
@@ -80,6 +84,7 @@ describe('Palabra app', () => {
     const storage = await renderApp('/today', async (client) => {
       await client.putProgress({
         wordId: 'basic-01',
+        language: 'es',
         stage: 1,
         status: 'learning',
         nextReviewAt: '2020-01-01T00:00:00.000Z',

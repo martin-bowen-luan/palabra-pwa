@@ -13,7 +13,7 @@ export function LibraryPage() {
     const needle = query.trim().toLocaleLowerCase('es')
     return vocabulary.filter((word) =>
       (category === '全部' || word.category === category) &&
-      (!needle || word.spanish.toLocaleLowerCase('es').includes(needle) || word.chinese.includes(needle)),
+      (!needle || word.term.toLocaleLowerCase(word.language).includes(needle) || word.meaningZh.includes(needle)),
     )
   }, [category, query])
 
@@ -23,11 +23,11 @@ export function LibraryPage() {
       <button className={styles.backButton} onClick={() => setSelected(undefined)}><BackIcon />返回词库</button>
       <section className={styles.wordDetail}>
         <p>{selected.category}</p>
-        <h1>{selected.spanish}</h1>
+        <h1>{selected.term}</h1>
         <span className={styles.annotationLine} />
-        <div><span>{selected.partOfSpeech}</span><strong>{selected.chinese}</strong></div>
-        <blockquote lang="es">{selected.example}</blockquote>
-        <p>{selected.exampleZh}</p>
+        <div><span>{selected.partOfSpeech}</span><strong>{selected.meaningZh}</strong></div>
+        <blockquote lang={selected.language}>{selected.examples[0]?.text}</blockquote>
+        <p>{selected.examples[0]?.translationZh}</p>
         <footer>{stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / 5`}</footer>
       </section>
     </main>
@@ -44,8 +44,8 @@ export function LibraryPage() {
     </div>
     <div className={styles.dictionaryList}>
       {filtered.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSelected(word)}>
-        <span><strong>{word.spanish}</strong><small>{word.partOfSpeech}</small></span>
-        <span>{word.chinese}</span>
+        <span><strong>{word.term}</strong><small>{word.partOfSpeech}</small></span>
+        <span>{word.meaningZh}</span>
       </button>)}
       {!filtered.length && <div className={styles.emptyState}><h2>没有找到这个词</h2><p>换一个西语或中文关键词试试。</p></div>}
     </div>

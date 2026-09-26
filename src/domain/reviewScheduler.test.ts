@@ -4,6 +4,7 @@ import type { WordProgress } from '../types'
 
 const baseProgress: WordProgress = {
   wordId: 'hola',
+  language: 'es',
   stage: 2,
   status: 'learning',
   nextReviewAt: '2026-09-25T00:00:00.000Z',

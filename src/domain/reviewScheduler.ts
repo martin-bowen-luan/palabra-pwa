@@ -1,4 +1,4 @@
-import type { ReviewRating, WordProgress } from '../types'
+import type { LearningLanguage, ReviewRating, WordProgress } from '../types'
 
 export const REVIEW_INTERVALS = [1, 3, 7, 14, 30] as const
 
@@ -30,9 +30,15 @@ export function applyReview(
   }
 }
 
-export function createProgress(wordId: string, rating: ReviewRating, now = new Date()): WordProgress {
+export function createProgress(
+  wordId: string,
+  rating: ReviewRating,
+  now = new Date(),
+  language: LearningLanguage = wordId.startsWith('en:') ? 'en' : 'es',
+): WordProgress {
   const seed: WordProgress = {
     wordId,
+    language,
     stage: 0,
     status: 'learning',
     nextReviewAt: now.toISOString(),
@@ -54,4 +60,3 @@ export function normalizeSpelling(value: string): string {
 export function isCorrectSpelling(input: string, expected: string): boolean {
   return normalizeSpelling(input) === normalizeSpelling(expected)
 }
-

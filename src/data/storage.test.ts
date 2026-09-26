@@ -5,6 +5,10 @@ import type { ActiveSession, StudySession, VocabularyEntry, WordProgress } from 
 
 const firstWord: VocabularyEntry = {
   id: 'test-01',
+  language: 'es',
+  term: 'hola',
+  meaningZh: '你好',
+  examples: [{ text: 'Hola, Ana.', translationZh: '你好，安娜。' }],
   spanish: 'hola',
   partOfSpeech: '感叹词',
   chinese: '你好',
@@ -21,6 +25,19 @@ const secondWord: VocabularyEntry = {
   example: 'Adiós, Ana.',
   exampleZh: '再见，安娜。',
 }
+
+const englishWord = {
+  id: 'en:hello',
+  language: 'en',
+  term: 'hello',
+  meaningZh: '你好；喂',
+  partOfSpeech: '感叹词',
+  category: '高考 3500',
+  examples: [{ text: 'Hello, everyone.', translationZh: '大家好。' }],
+  pronunciation: { ipa: '/həˈloʊ/', accent: 'us', audioPath: '/audio/en/hello.mp3', audioKind: 'human' },
+  spellingVariants: [],
+  source: { provider: 'test', url: 'https://example.test/hello', fetchedAt: '2026-09-26T00:00:00.000Z' },
+} as VocabularyEntry
 
 function openVersionOneDatabase(name: string): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -41,7 +58,7 @@ function openVersionOneDatabase(name: string): Promise<IDBDatabase> {
         reviewCount: 2,
         correctCount: 1,
         lastReviewedAt: '2026-09-25T00:00:00.000Z',
-      } satisfies WordProgress)
+      })
       transaction.objectStore('settings').put({ ...DEFAULT_SETTINGS, dailyNewWords: 20 })
       transaction.objectStore('sessions').put({
         id: 'session-1',
@@ -52,7 +69,7 @@ function openVersionOneDatabase(name: string): Promise<IDBDatabase> {
         totalCount: 5,
         durationSeconds: 60,
         completed: true,
-      } satisfies StudySession)
+      })
       transaction.objectStore('activeSession').put({
         id: 'active-session',
         wordIds: ['hola'],
@@ -63,7 +80,47 @@ function openVersionOneDatabase(name: string): Promise<IDBDatabase> {
         correctCount: 0,
         answeredCount: 0,
         startedAt: '2026-09-25T00:00:00.000Z',
-      } satisfies ActiveSession)
+      })
+    }
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+function openVersionTwoDatabase(name: string): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(name, 2)
+    request.onupgradeneeded = () => {
+      const database = request.result
+      database.createObjectStore('wordProgress', { keyPath: 'wordId' })
+      database.createObjectStore('sessions', { keyPath: 'id' })
+      database.createObjectStore('settings', { keyPath: 'id' })
+      database.createObjectStore('activeSession', { keyPath: 'id' })
+      database.createObjectStore('vocabulary', { keyPath: 'id' })
+      database.createObjectStore('metadata', { keyPath: 'id' })
+      const transaction = request.transaction!
+      transaction.objectStore('wordProgress').put({
+        wordId: 'test-01', stage: 1, status: 'learning',
+        nextReviewAt: '2026-09-28T00:00:00.000Z', reviewCount: 2,
+        correctCount: 1, lastReviewedAt: '2026-09-25T00:00:00.000Z',
+      })
+      transaction.objectStore('sessions').put({
+        id: 'session-v2', date: '2026-09-25', newCount: 1, reviewCount: 0,
+        correctCount: 1, totalCount: 1, durationSeconds: 20, completed: true,
+      })
+      transaction.objectStore('settings').put({ ...DEFAULT_SETTINGS, dailyNewWords: 20 })
+      transaction.objectStore('activeSession').put({
+        id: 'active-session', wordIds: ['test-01'], newWordIds: ['test-01'],
+        reviewWordIds: [], currentIndex: 0, phase: 'learn', correctCount: 0,
+        answeredCount: 0, startedAt: '2026-09-25T00:00:00.000Z',
+      })
+      transaction.objectStore('vocabulary').put({
+        id: 'test-01', spanish: 'hola', chinese: '你好', partOfSpeech: '感叹词',
+        category: '测试', example: 'Hola.', exampleZh: '你好。', order: 0,
+      })
+      transaction.objectStore('metadata').put({
+        id: 'vocabulary', revision: 1, count: 1, updatedAt: '2026-09-25T00:00:00.000Z',
+      })
     }
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
@@ -94,7 +151,27 @@ describe('PalabraStorage', () => {
     databaseNames.push(name)
     const storage = createStorage(name)
     await expect(storage.getSettings()).resolves.toEqual(DEFAULT_SETTINGS)
+    await expect(storage.getSettings()).resolves.toMatchObject({ learningLanguage: 'es', dataVersion: 2 })
     storage.close()
+  })
+
+  it('seeds and reads Spanish and English vocabulary independently', async () => {
+    const name = `palabra-test-${crypto.randomUUID()}`
+    databaseNames.push(name)
+    const storage = createStorage(name, {
+      vocabularySeeds: { es: [firstWord], en: [englishWord] },
+      vocabularyRevisions: { es: 1, en: 1 },
+    })
+
+    await expect(storage.getVocabulary('es')).resolves.toEqual([firstWord])
+    await expect(storage.getVocabulary('en')).resolves.toEqual([englishWord])
+    storage.close()
+
+    const reopened = createStorage(name, {
+      vocabularySeeds: { es: [firstWord], en: [englishWord] },
+      vocabularyRevisions: { es: 1, en: 1 },
+    })
+    await expect(reopened.getVocabulary('en')).resolves.toEqual([englishWord])
   })
 
   it('seeds all built-in vocabulary on first open and reads it after reopening', async () => {
@@ -119,6 +196,7 @@ describe('PalabraStorage', () => {
     await initial.getVocabulary()
     await initial.putProgress({
       wordId: firstWord.id,
+      language: 'es',
       stage: 1,
       status: 'learning',
       nextReviewAt: '2026-09-28T00:00:00.000Z',
@@ -145,8 +223,77 @@ describe('PalabraStorage', () => {
     await expect(storage.getAllProgress()).resolves.toMatchObject([{ wordId: 'hola', reviewCount: 2 }])
     await expect(storage.getSettings()).resolves.toMatchObject({ dailyNewWords: 20 })
     await expect(storage.getSessions()).resolves.toMatchObject([{ id: 'session-1', completed: true }])
-    await expect(storage.getActiveSession()).resolves.toMatchObject({ id: 'active-session', phase: 'learn' })
+    await expect(storage.getActiveSession()).resolves.toMatchObject({ id: 'active-session:es', language: 'es', phase: 'learn' })
     storage.close()
+  })
+
+  it('upgrades a version-two database and namespaces Spanish learner state', async () => {
+    const name = `palabra-test-${crypto.randomUUID()}`
+    databaseNames.push(name)
+    const versionTwo = await openVersionTwoDatabase(name)
+    versionTwo.close()
+
+    const storage = createStorage(name, {
+      vocabularySeeds: { es: [firstWord], en: [englishWord] },
+      vocabularyRevisions: { es: 1, en: 1 },
+    })
+    await expect(storage.getVocabulary('es')).resolves.toMatchObject([{
+      id: 'test-01', language: 'es', term: 'hola', meaningZh: '你好',
+      examples: [{ text: 'Hola.', translationZh: '你好。' }],
+    }])
+    await expect(storage.getAllProgress('es')).resolves.toMatchObject([{ wordId: 'test-01', language: 'es' }])
+    await expect(storage.getSessions('es')).resolves.toMatchObject([{ id: 'session-v2', language: 'es' }])
+    await expect(storage.getActiveSession('es')).resolves.toMatchObject({ id: 'active-session:es', language: 'es' })
+    await expect(storage.getSettings()).resolves.toMatchObject({ learningLanguage: 'es', dataVersion: 2 })
+  })
+
+  it('keeps progress, sessions and active sessions isolated by language', async () => {
+    const name = `palabra-test-${crypto.randomUUID()}`
+    databaseNames.push(name)
+    const storage = createStorage(name, {
+      vocabularySeeds: { es: [firstWord], en: [englishWord] },
+      vocabularyRevisions: { es: 1, en: 1 },
+    })
+    await storage.putProgress({
+      language: 'es', wordId: firstWord.id, stage: 1, status: 'learning',
+      nextReviewAt: '2026-09-28T00:00:00.000Z', reviewCount: 1,
+      correctCount: 1, lastReviewedAt: '2026-09-25T00:00:00.000Z',
+    })
+    await storage.putProgress({
+      language: 'en', wordId: englishWord.id, stage: 1, status: 'learning',
+      nextReviewAt: '2026-09-28T00:00:00.000Z', reviewCount: 1,
+      correctCount: 0, lastReviewedAt: '2026-09-25T00:00:00.000Z',
+    })
+    await storage.putSession({
+      language: 'es', id: 'es-session', date: '2026-09-25', newCount: 1,
+      reviewCount: 0, correctCount: 1, totalCount: 1, durationSeconds: 10, completed: true,
+    })
+    await storage.putSession({
+      language: 'en', id: 'en-session', date: '2026-09-25', newCount: 1,
+      reviewCount: 0, correctCount: 0, totalCount: 1, durationSeconds: 10, completed: true,
+    })
+    await storage.saveActiveSession({
+      id: 'active-session:es', language: 'es', wordIds: [firstWord.id], newWordIds: [firstWord.id],
+      reviewWordIds: [], currentIndex: 0, phase: 'learn', correctCount: 0,
+      answeredCount: 0, startedAt: '2026-09-25T00:00:00.000Z',
+    })
+    await storage.saveActiveSession({
+      id: 'active-session:en', language: 'en', wordIds: [englishWord.id], newWordIds: [englishWord.id],
+      reviewWordIds: [], currentIndex: 0, phase: 'learn', correctCount: 0,
+      answeredCount: 0, startedAt: '2026-09-25T00:00:00.000Z',
+    })
+
+    await expect(storage.getAllProgress('en')).resolves.toMatchObject([{ wordId: englishWord.id }])
+    await expect(storage.getSessions('es')).resolves.toMatchObject([{ id: 'es-session' }])
+    await expect(storage.getActiveSession('en')).resolves.toMatchObject({ id: 'active-session:en' })
+
+    await storage.clearLearningData('en')
+    await expect(storage.getAllProgress('en')).resolves.toEqual([])
+    await expect(storage.getSessions('en')).resolves.toEqual([])
+    await expect(storage.getActiveSession('en')).resolves.toBeUndefined()
+    await expect(storage.getAllProgress('es')).resolves.toHaveLength(1)
+    await expect(storage.getSessions('es')).resolves.toHaveLength(1)
+    await expect(storage.getActiveSession('es')).resolves.toBeDefined()
   })
 
   it('rejects a blocked database upgrade instead of loading forever', async () => {
@@ -172,6 +319,7 @@ describe('PalabraStorage', () => {
     const storage = createStorage(name)
     const progress: WordProgress = {
       wordId: 'hola',
+      language: 'es',
       stage: 1,
       status: 'learning',
       nextReviewAt: '2026-09-28T00:00:00.000Z',
@@ -181,7 +329,7 @@ describe('PalabraStorage', () => {
     }
     await storage.putProgress(progress)
     await storage.saveSettings({ ...DEFAULT_SETTINGS, dailyNewWords: 20 })
-    expect(await storage.getAllProgress()).toEqual([progress])
+    expect(await storage.getAllProgress()).toEqual([{ ...progress, language: 'es' }])
 
     await storage.clearLearningData()
     expect(await storage.getAllProgress()).toEqual([])
