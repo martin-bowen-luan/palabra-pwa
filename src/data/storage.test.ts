@@ -128,6 +128,32 @@ function openVersionTwoDatabase(name: string): Promise<IDBDatabase> {
 }
 
 describe('PalabraStorage', () => {
+  it('commits a study step and group completion with the active state', async () => {
+    const name = `palabra-test-${crypto.randomUUID()}`
+    databaseNames.push(name)
+    const storage = createStorage(name)
+    const active: ActiveSession = {
+      id: 'active-session:es', language: 'es', wordIds: ['test-01'], newWordIds: ['test-01'],
+      reviewWordIds: [], currentIndex: 0, phase: 'learn', correctCount: 0,
+      answeredCount: 0, startedAt: '2026-09-25T00:00:00.000Z',
+    }
+    const progress: WordProgress = {
+      wordId: 'test-01', language: 'es', stage: 0, status: 'learning',
+      nextReviewAt: '2026-09-28T00:00:00.000Z', reviewCount: 1,
+      correctCount: 0, lastReviewedAt: '2026-09-25T00:00:00.000Z',
+    }
+    await storage.commitStudyStep(progress, active)
+    expect(await storage.getActiveSession('es')).toEqual(active)
+    expect(await storage.getAllProgress('es')).toEqual([progress])
+    const completed: StudySession = {
+      id: 'completed-1', language: 'es', date: '2026-09-25', newCount: 1,
+      reviewCount: 0, correctCount: 0, totalCount: 1, durationSeconds: 10, completed: true,
+    }
+    await storage.completeStudyGroup(completed, 'es')
+    expect(await storage.getActiveSession('es')).toBeUndefined()
+    expect(await storage.getSessions('es')).toEqual([completed])
+    expect(await storage.getAllProgress('es')).toEqual([progress])
+  })
   const databaseNames: string[] = []
   const storageClients: PalabraStorage[] = []
 

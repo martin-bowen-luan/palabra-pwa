@@ -54,6 +54,85 @@ async function renderApp(
 }
 
 describe('Palabra app', () => {
+  it('splits a twenty-word target into two manually started groups', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, dailyNewWords: 20 })
+    })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect((await storage.getActiveSession('es'))?.wordIds).toHaveLength(10)
+    for (let index = 0; index < 10; index += 1) {
+      await user.click(await screen.findByRole('button', { name: '标为熟练' }))
+    }
+    expect(await screen.findByRole('button', { name: '开始下一组' })).toBeInTheDocument()
+    expect((await storage.getSessions('es'))[0].newCount).toBe(10)
+    await user.click(screen.getByRole('button', { name: '开始下一组' }))
+    await waitFor(async () => expect((await storage.getActiveSession('es'))?.wordIds).toHaveLength(10))
+  })
+
+  it('repeats failed new words immediately and resumes a delayed revisit', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    await user.click(await screen.findByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '忘记' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '点击查看释义' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '认识' }))
+    expect((await storage.getActiveSession('es'))?.phase).toBe('learn')
+    await user.click(screen.getByRole('button', { name: '结束' }))
+    cleanup()
+    render(<MemoryRouter initialEntries={['/today']}><App storageClient={storage} /></MemoryRouter>)
+    await user.click(await screen.findByRole('button', { name: '继续今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '认识' }))
+    expect(await screen.findByText('选择正确的中文意思')).toBeInTheDocument()
+  })
+
+  it('resumes a legacy in-progress session without a practice queue', async () => {
+    const user = userEvent.setup()
+    const secondWord = { ...databaseWord, id: 'database-02', term: 'continuar', spanish: 'continuar', meaningZh: '继续', chinese: '继续' }
+    const storage = await renderApp('/today', async (client) => {
+      await client.saveActiveSession({
+        id: 'active-session:es', language: 'es', wordIds: [databaseWord.id, secondWord.id],
+        newWordIds: [databaseWord.id, secondWord.id], reviewWordIds: [], currentIndex: 1,
+        phase: 'learn', correctCount: 0, answeredCount: 0, startedAt: new Date().toISOString(),
+      })
+    }, { vocabularySeed: [databaseWord, secondWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '继续今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'continuar' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '认识' }))
+    expect((await storage.getActiveSession('es'))?.practice?.pendingIds).toEqual([databaseWord.id, secondWord.id])
+  })
+
+  it('does not promote a failed due review after later successful attempts', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', async (client) => {
+      await client.saveSettings({ ...DEFAULT_SETTINGS, dailyNewWords: 5, enableChoice: false })
+      await client.putProgress({
+        wordId: databaseWord.id, language: 'es', stage: 2, status: 'learning',
+        nextReviewAt: '2020-01-01T00:00:00.000Z', reviewCount: 1,
+        correctCount: 1, lastReviewedAt: '2020-01-01T00:00:00.000Z',
+      })
+    }, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    await user.type(await screen.findByLabelText('西班牙语'), 'incorrecto')
+    await user.click(screen.getByRole('button', { name: '检查答案' }))
+    await user.click(screen.getByRole('button', { name: '继续' }))
+    expect(await screen.findByLabelText('西班牙语')).toHaveValue('')
+    await user.type(screen.getByLabelText('西班牙语'), 'persistir')
+    await user.click(screen.getByRole('button', { name: '检查答案' }))
+    await user.click(screen.getByRole('button', { name: '继续' }))
+    expect(await screen.findByLabelText('西班牙语')).toHaveValue('')
+    await user.type(screen.getByLabelText('西班牙语'), 'persistir')
+    await user.click(screen.getByRole('button', { name: '检查答案' }))
+    await user.click(screen.getByRole('button', { name: '继续' }))
+    expect(await screen.findByText('0%')).toBeInTheDocument()
+    expect((await storage.getAllProgress('es'))[0].stage).toBe(0)
+  })
   it('shows a concrete recovery message when local data cannot be opened', async () => {
     class FailingStorage extends PalabraStorage {
       override async getAllProgress(): Promise<WordProgress[]> { throw new Error('IndexedDB unavailable') }
@@ -81,7 +160,7 @@ describe('Palabra app', () => {
 
   it('marks a word fluent from the study header, skips its quiz, and keeps it out of future sessions', async () => {
     const user = userEvent.setup()
-    const secondWord = { ...databaseWord, id: 'database-02', term: 'continuar', spanish: 'continuar' }
+    const secondWord = { ...databaseWord, id: 'database-02', term: 'continuar', spanish: 'continuar', meaningZh: '继续', chinese: '继续' }
     const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord, secondWord], vocabularyRevision: 42 })
 
     await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
@@ -130,12 +209,12 @@ describe('Palabra app', () => {
   it('blocks competing study controls while the fluent mark is being saved', async () => {
     const user = userEvent.setup()
     const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
-    const originalPut = storage.putProgress.bind(storage)
+    const originalComplete = storage.completeStudyGroup.bind(storage)
     let releaseWrite = () => {}
     const pendingWrite = new Promise<void>((resolve) => { releaseWrite = resolve })
-    const putSpy = vi.spyOn(storage, 'putProgress').mockImplementation(async (record) => {
-      if (record.skipReview) await pendingWrite
-      await originalPut(record)
+    const completeSpy = vi.spyOn(storage, 'completeStudyGroup').mockImplementation(async (completed, language, record) => {
+      if (record?.skipReview) await pendingWrite
+      await originalComplete(completed, language, record)
     })
     await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
     expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
@@ -147,7 +226,7 @@ describe('Palabra app', () => {
       expect(screen.getByRole('button', { name: '结束' })).toBeDisabled()
     } finally {
       releaseWrite()
-      putSpy.mockRestore()
+      completeSpy.mockRestore()
     }
     expect(await screen.findByText('无需测试')).toBeInTheDocument()
     expect((await storage.getAllProgress('es'))[0].skipReview).toBe(true)

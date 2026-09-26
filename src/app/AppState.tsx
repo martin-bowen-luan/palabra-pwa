@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { DEFAULT_SETTINGS, storage as defaultStorage, type PalabraStorage } from '../data/storage'
 import { buildDailyPlan, type DailyPlan } from '../domain/dailyPlan'
+import { buildNextStudyGroup, hasMoreStudyGroups } from '../domain/studyGroups'
+import { advancePractice, createPracticeQueue, currentPracticeWord, removePracticeWord } from '../domain/practiceQueue'
 import { applyReview, createProgress, markFluent } from '../domain/reviewScheduler'
 import { calculateStreak, toLocalDate } from '../domain/stats'
 import type { ActiveSession, LearningLanguage, ReviewRating, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
@@ -16,7 +18,9 @@ interface AppStateValue {
   activeSession?: ActiveSession
   dailyPlan: DailyPlan
   streak: number
+  moreGroupsToday: boolean
   startSession: (extraWords?: number) => Promise<ActiveSession | undefined>
+  startNextGroup: () => Promise<ActiveSession | undefined>
   rateCurrentWord: (rating: ReviewRating) => Promise<void>
   markCurrentWordFluent: () => Promise<boolean>
   completeQuizItem: (correct: boolean) => Promise<boolean>
@@ -27,6 +31,16 @@ interface AppStateValue {
 }
 
 const AppStateContext = createContext<AppStateValue | null>(null)
+
+function sessionQueue(session: ActiveSession) {
+  if (session.practice) return session.practice
+  const ids = session.phase === 'learn' ? session.newWordIds : session.wordIds
+  return createPracticeQueue(ids.slice(session.currentIndex))
+}
+
+function sessionWordId(session: ActiveSession): string | undefined {
+  return currentPracticeWord(sessionQueue(session))
+}
 
 export function AppStateProvider({ children, storageClient = defaultStorage }: { children: ReactNode; storageClient?: PalabraStorage }) {
   const [ready, setReady] = useState(false)
@@ -78,9 +92,14 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     [vocabulary],
   )
 
+  const moreGroupsToday = useMemo(
+    () => ready && hasMoreStudyGroups(vocabulary, progress, sessions, settings.dailyNewWords),
+    [ready, vocabulary, progress, sessions, settings.dailyNewWords],
+  )
+
   const startSession = async (extraWords = 0) => {
     if (activeSession) return activeSession
-    const plan = buildDailyPlan(vocabulary, progress, extraWords || settings.dailyNewWords)
+    const plan = buildNextStudyGroup(vocabulary, progress, sessions, settings.dailyNewWords, new Date(), extraWords)
     if (!plan.all.length) return undefined
     const session: ActiveSession = {
       id: `active-session:${settings.learningLanguage}`,
@@ -93,102 +112,127 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       correctCount: 0,
       answeredCount: 0,
       startedAt: new Date().toISOString(),
+      practice: createPracticeQueue(plan.newWords.length ? plan.newWords.map((word) => word.id) : plan.all.map((word) => word.id)),
+      assignedNewCount: plan.newWords.length,
+      assignedReviewCount: plan.review.length,
+      failedWordIds: [],
     }
     await storageClient.saveActiveSession(session)
     setActiveSession(session)
     return session
   }
 
+  const startNextGroup = () => startSession()
+
   const rateCurrentWord = async (rating: ReviewRating) => {
     if (!activeSession) return
-    const wordId = activeSession.newWordIds[activeSession.currentIndex]
+    const queue = sessionQueue(activeSession)
+    const wordId = sessionWordId(activeSession)
+    if (!wordId || activeSession.phase !== 'learn') return
     const now = new Date()
-    const nextProgress = progress[wordId]
+    const failedBefore = activeSession.failedWordIds?.includes(wordId) ?? false
+    const nextProgress = failedBefore && rating === 'known' ? undefined : progress[wordId]
       ? applyReview(progress[wordId], rating, now)
       : createProgress(wordId, rating, now, activeSession.language)
-    await storageClient.putProgress(nextProgress)
-    setProgress((current) => ({ ...current, [wordId]: nextProgress }))
-
-    const isLast = activeSession.currentIndex >= activeSession.newWordIds.length - 1
-    const nextSession: ActiveSession = isLast
-      ? { ...activeSession, phase: 'quiz', currentIndex: 0 }
-      : { ...activeSession, currentIndex: activeSession.currentIndex + 1 }
-    await storageClient.saveActiveSession(nextSession)
+    const advanced = advancePractice(queue, rating === 'known')
+    const failedWordIds = rating !== 'known' && !failedBefore
+      ? [...(activeSession.failedWordIds ?? []), wordId]
+      : activeSession.failedWordIds ?? []
+    const learnComplete = advanced.pendingIds.length === 0 && advanced.delayed.length === 0
+    const nextSession: ActiveSession = {
+      ...activeSession,
+      phase: learnComplete ? 'quiz' : 'learn',
+      practice: learnComplete ? createPracticeQueue(activeSession.wordIds) : advanced,
+      currentIndex: 0,
+      failedWordIds,
+      assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
+      assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
+    }
+    await storageClient.commitStudyStep(nextProgress, nextSession)
+    if (nextProgress) setProgress((current) => ({ ...current, [wordId]: nextProgress }))
     setActiveSession(nextSession)
   }
 
-  const finishSession = async (session: ActiveSession, correctCount: number, answeredCount: number) => {
+  const finishSession = async (session: ActiveSession, progressUpdate?: WordProgress) => {
     const now = new Date()
+    const answers = session.phase === 'quiz' ? Object.values(session.practice?.firstAnswers ?? {}) : []
     const completed: StudySession = {
       id: `${toLocalDate(now)}-${now.getTime()}`,
       language: session.language,
       date: toLocalDate(now),
-      newCount: session.newWordIds.length,
-      reviewCount: session.reviewWordIds.length,
-      correctCount,
-      totalCount: answeredCount,
+      newCount: session.assignedNewCount ?? session.newWordIds.length,
+      reviewCount: session.assignedReviewCount ?? session.reviewWordIds.length,
+      correctCount: session.correctCount + answers.filter(Boolean).length,
+      totalCount: session.answeredCount + answers.length,
       durationSeconds: Math.max(1, Math.round((now.getTime() - new Date(session.startedAt).getTime()) / 1000)),
       completed: true,
     }
-    await storageClient.putSession(completed)
-    await storageClient.clearActiveSession(session.language)
+    await storageClient.completeStudyGroup(completed, session.language, progressUpdate)
+    if (progressUpdate) setProgress((current) => ({ ...current, [progressUpdate.wordId]: progressUpdate }))
     setSessions((current) => [...current, completed])
     setActiveSession(undefined)
   }
 
   const markCurrentWordFluent = async () => {
     if (!activeSession) return false
-    const phaseIds = activeSession.phase === 'learn' ? activeSession.newWordIds : activeSession.wordIds
-    const wordId = phaseIds[activeSession.currentIndex]
+    const wordId = sessionWordId(activeSession)
     if (!wordId) return false
     const nextProgress = markFluent(progress[wordId], wordId, activeSession.language)
-    await storageClient.putProgress(nextProgress)
-    setProgress((current) => ({ ...current, [wordId]: nextProgress }))
-
+    const advanced = removePracticeWord(sessionQueue(activeSession), wordId)
+    const learnComplete = activeSession.phase === 'learn' && advanced.pendingIds.length === 0 && advanced.delayed.length === 0
     const nextSession: ActiveSession = {
       ...activeSession,
       wordIds: activeSession.wordIds.filter((id) => id !== wordId),
-      newWordIds: activeSession.phase === 'learn'
-        ? activeSession.newWordIds.filter((id) => id !== wordId)
-        : activeSession.newWordIds,
+      newWordIds: activeSession.newWordIds.filter((id) => id !== wordId),
       reviewWordIds: activeSession.reviewWordIds.filter((id) => id !== wordId),
+      phase: learnComplete ? 'quiz' : activeSession.phase,
+      practice: learnComplete
+        ? createPracticeQueue(activeSession.wordIds.filter((id) => id !== wordId))
+        : advanced,
+      currentIndex: 0,
+      assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
+      assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
     }
-    if (!nextSession.wordIds.length || (nextSession.phase === 'quiz' && activeSession.currentIndex >= nextSession.wordIds.length)) {
-      await finishSession(nextSession, nextSession.correctCount, nextSession.answeredCount)
+    if (!nextSession.wordIds.length || (nextSession.phase === 'quiz' && !nextSession.practice?.pendingIds.length && !nextSession.practice?.delayed.length)) {
+      await finishSession(nextSession, nextProgress)
       return true
     }
-    if (nextSession.phase === 'learn' && activeSession.currentIndex >= nextSession.newWordIds.length) {
-      nextSession.phase = 'quiz'
-      nextSession.currentIndex = 0
-    }
-    await storageClient.saveActiveSession(nextSession)
+    await storageClient.commitStudyStep(nextProgress, nextSession)
+    setProgress((current) => ({ ...current, [wordId]: nextProgress }))
     setActiveSession(nextSession)
     return false
   }
 
   const completeQuizItem = async (correct: boolean) => {
     if (!activeSession) return false
-    const wordId = activeSession.wordIds[activeSession.currentIndex]
-    if (activeSession.reviewWordIds.includes(wordId) || !correct) {
+    const queue = sessionQueue(activeSession)
+    const wordId = sessionWordId(activeSession)
+    if (!wordId || activeSession.phase !== 'quiz') return false
+    const failedBefore = activeSession.failedWordIds?.includes(wordId) ?? false
+    let nextProgress: WordProgress | undefined
+    if (!correct && !failedBefore || correct && activeSession.reviewWordIds.includes(wordId) && !failedBefore && !(wordId in queue.firstAnswers)) {
       const now = new Date()
-      const nextProgress = progress[wordId]
+      nextProgress = progress[wordId]
         ? applyReview(progress[wordId], correct ? 'known' : 'forgotten', now)
         : createProgress(wordId, correct ? 'known' : 'forgotten', now, activeSession.language)
-      await storageClient.putProgress(nextProgress)
-      setProgress((current) => ({ ...current, [wordId]: nextProgress }))
     }
-    const correctCount = activeSession.correctCount + (correct ? 1 : 0)
-    const answeredCount = activeSession.answeredCount + 1
-    const isLast = activeSession.currentIndex >= activeSession.wordIds.length - 1
-    if (!isLast) {
-      const next = { ...activeSession, currentIndex: activeSession.currentIndex + 1, correctCount, answeredCount }
-      await storageClient.saveActiveSession(next)
-      setActiveSession(next)
-      return false
+    const advanced = advancePractice(queue, correct)
+    const nextSession: ActiveSession = {
+      ...activeSession,
+      practice: advanced,
+      currentIndex: 0,
+      failedWordIds: !correct && !failedBefore ? [...(activeSession.failedWordIds ?? []), wordId] : activeSession.failedWordIds,
+      assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
+      assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
     }
-
-    await finishSession(activeSession, correctCount, answeredCount)
-    return true
+    if (!advanced.pendingIds.length && !advanced.delayed.length) {
+      await finishSession(nextSession, nextProgress)
+      return true
+    }
+    await storageClient.commitStudyStep(nextProgress, nextSession)
+    if (nextProgress) setProgress((current) => ({ ...current, [wordId]: nextProgress }))
+    setActiveSession(nextSession)
+    return false
   }
 
   const exitSession = async () => {
@@ -236,7 +280,9 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     activeSession,
     dailyPlan,
     streak: calculateStreak(sessions),
+    moreGroupsToday,
     startSession,
+    startNextGroup,
     rateCurrentWord,
     markCurrentWordFluent,
     completeQuizItem,

@@ -95,6 +95,9 @@ export interface ActiveSession {
   answeredCount: number
   startedAt: string
   practice?: PracticeQueue
+  assignedNewCount?: number
+  assignedReviewCount?: number
+  failedWordIds?: string[]
 }
 
 export interface PracticeQueue {

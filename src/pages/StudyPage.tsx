@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
+import { createPracticeQueue, currentPracticeWord } from '../domain/practiceQueue'
 import type { ReviewRating } from '../types'
 import { PronunciationButton } from '../components/PronunciationButton'
 import styles from '../styles/App.module.css'
@@ -16,13 +17,19 @@ export function StudyPage() {
   const actionPending = useRef(false)
 
   const phaseWordIds = activeSession?.phase === 'learn' ? activeSession.newWordIds : activeSession?.wordIds
-  const word = activeSession && phaseWordIds ? vocabulary.find((item) => item.id === phaseWordIds[activeSession.currentIndex]) : undefined
+  const queue = activeSession?.practice ?? createPracticeQueue(phaseWordIds?.slice(activeSession?.currentIndex ?? 0) ?? [])
+  const word = activeSession ? vocabulary.find((item) => item.id === currentPracticeWord(queue)) : undefined
+  const phaseTotal = activeSession?.phase === 'learn'
+    ? activeSession.assignedNewCount ?? activeSession.newWordIds.length
+    : (activeSession?.assignedNewCount ?? activeSession?.newWordIds.length ?? 0) + (activeSession?.assignedReviewCount ?? activeSession?.reviewWordIds.length ?? 0)
+  const remainingUnique = new Set([...queue.pendingIds, ...queue.delayed.map((item) => item.wordId)]).size
+  const completedUnique = Math.max(0, phaseTotal - remainingUnique)
   const mode = useMemo(() => {
     if (!activeSession) return 'choice'
     if (!settings.enableSpelling) return 'choice'
     if (!settings.enableChoice) return 'spelling'
-    return activeSession.currentIndex % 2 === 0 ? 'choice' : 'spelling'
-  }, [activeSession, settings.enableChoice, settings.enableSpelling])
+    return (phaseTotal - remainingUnique) % 2 === 0 ? 'choice' : 'spelling'
+  }, [activeSession, phaseTotal, remainingUnique, settings.enableChoice, settings.enableSpelling])
 
   const options = useMemo(() => {
     if (!word) return []
@@ -34,7 +41,7 @@ export function StudyPage() {
     setRevealed(false)
     setAnswer('')
     setFeedback(undefined)
-  }, [activeSession?.currentIndex, activeSession?.phase, word?.id])
+  }, [activeSession?.practice?.promptNumber, activeSession?.currentIndex, activeSession?.phase, word?.id])
 
   if (!activeSession || !word) {
     return <main className={styles.studyPage}><div className={styles.emptyState}><h1>没有进行中的学习</h1><button className={styles.primaryButton} onClick={() => navigate('/today')}>回到今日</button></div></main>
@@ -80,14 +87,13 @@ export function StudyPage() {
     })
   }
 
-  const phaseTotal = phaseWordIds?.length ?? 0
-  const percent = ((activeSession.currentIndex + (activeSession.phase === 'quiz' ? 1 : 0)) / phaseTotal) * 100
+  const percent = phaseTotal ? completedUnique / phaseTotal * 100 : 100
 
   return <main className={styles.studyPage}>
     <header className={styles.studyHeader}>
       <button className={styles.quietButton} disabled={busy} onClick={() => void leave()}>结束</button>
       <div className={styles.studyHeaderActions}>
-        <span>{activeSession.currentIndex + 1} / {phaseTotal}</span>
+        <span>{Math.min(phaseTotal, completedUnique + 1)} / {phaseTotal}</span>
         {!feedback && <button className={styles.fluentButton} type="button" disabled={busy} onClick={() => void markAsFluent()}>标为熟练</button>}
       </div>
     </header>

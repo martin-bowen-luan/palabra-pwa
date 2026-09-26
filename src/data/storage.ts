@@ -324,6 +324,24 @@ export class PalabraStorage {
     await this.put(STORE_ACTIVE, { ...session, id: activeSessionId(language), language })
   }
 
+  async commitStudyStep(progress: WordProgress | undefined, active: ActiveSession): Promise<void> {
+    const database = await this.open()
+    const transaction = database.transaction([STORE_PROGRESS, STORE_ACTIVE], 'readwrite')
+    if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
+    transaction.objectStore(STORE_ACTIVE).put({ ...active, id: activeSessionId(active.language) })
+    await transactionDone(transaction)
+  }
+
+  async completeStudyGroup(completed: StudySession, language: LearningLanguage, progress?: WordProgress): Promise<void> {
+    const database = await this.open()
+    const stores = progress ? [STORE_SESSIONS, STORE_ACTIVE, STORE_PROGRESS] : [STORE_SESSIONS, STORE_ACTIVE]
+    const transaction = database.transaction(stores, 'readwrite')
+    if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
+    transaction.objectStore(STORE_SESSIONS).put({ ...completed, language })
+    transaction.objectStore(STORE_ACTIVE).delete(activeSessionId(language))
+    await transactionDone(transaction)
+  }
+
   async clearActiveSession(language: LearningLanguage = 'es'): Promise<void> {
     const database = await this.open()
     const transaction = database.transaction(STORE_ACTIVE, 'readwrite')

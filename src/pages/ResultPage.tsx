@@ -4,7 +4,7 @@ import { toLocalDate } from '../domain/stats'
 import styles from '../styles/App.module.css'
 
 export function ResultPage() {
-  const { sessions } = useAppState()
+  const { sessions, moreGroupsToday, startNextGroup } = useAppState()
   const navigate = useNavigate()
   const session = [...sessions].reverse().find((item) => item.date === toLocalDate(new Date()))
   if (!session) return <Navigate to="/today" replace />
@@ -19,6 +19,8 @@ export function ResultPage() {
       <div><strong>{session.reviewCount}</strong><span>复习词</span></div>
       <div><strong>{session.newCount + session.reviewCount}</strong><span>下次会再见</span></div>
     </div>
-    <button className={styles.primaryButton} onClick={() => navigate('/today')}>回到今日</button>
+    {moreGroupsToday
+      ? <button className={styles.primaryButton} onClick={() => void startNextGroup().then((group) => { if (group) navigate('/study') })}>开始下一组</button>
+      : <button className={styles.primaryButton} onClick={() => navigate('/today')}>回到今日</button>}
   </main>
 }
