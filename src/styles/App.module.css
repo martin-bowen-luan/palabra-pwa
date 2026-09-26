@@ -35,6 +35,10 @@
 
 .studyPage { min-height: 100vh; display: flex; flex-direction: column; padding: 0 24px calc(24px + var(--safe-bottom)); }
 .studyHeader { min-height: 64px; border-bottom: 0; color: var(--muted); font-size: 13px; }
+.studyHeaderActions { display: flex; align-items: center; gap: 12px; }
+.fluentButton { min-height: 44px; padding: 0 4px; border: 0; color: var(--blue); background: transparent; font-size: 13px; cursor: pointer; }
+.fluentButton:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.fluentButton:disabled { opacity: .55; }
 .quietButton, .backButton { min-width: 44px; min-height: 44px; padding: 0; border: 0; color: var(--muted); background: transparent; cursor: pointer; }
 .studyProgress { margin: 0; }
 .wordStage, .quizStage { flex: 1; display: flex; flex-direction: column; min-height: 0; }

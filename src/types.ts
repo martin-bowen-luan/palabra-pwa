@@ -56,6 +56,7 @@ export interface WordProgress {
   reviewCount: number
   correctCount: number
   lastReviewedAt: string
+  skipReview?: boolean
 }
 
 export interface StudySession {

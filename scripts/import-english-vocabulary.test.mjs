@@ -59,6 +59,17 @@ describe('English vocabulary importer', () => {
     expect(normalizeEnglishRecord(sourceRecord, 0).spellingVariants).toContain('color')
   })
 
+  it('keeps subject labels together in the meaning instead of splitting brackets into the part of speech', () => {
+    const result = normalizeEnglishRecord({
+      ...sourceRecord,
+      word: 'soluble',
+      definition: 'adj. [化] 可溶的；可以解决的；可以解释的；[数]可解的',
+    }, 0)
+
+    expect(result.partOfSpeech).toBe('adj.')
+    expect(result.meaningZh).toBe('[化] 可溶的；可以解决的；可以解释的')
+  })
+
   it('recovers a missing top-level definition from the bilingual definition section', () => {
     const result = normalizeEnglishRecord({
       ...sourceRecord,

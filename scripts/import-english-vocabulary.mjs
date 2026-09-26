@@ -59,8 +59,11 @@ function parseDefinition(definition) {
   const normalized = cleanText(definition)
   const firstChinese = normalized.search(/[\u3400-\u9fff]/u)
   if (firstChinese < 0) return { partOfSpeech: '', meaningZh: normalized }
-  const partOfSpeech = normalized.slice(0, firstChinese).trim().replace(/[|；;]+$/u, '').trim()
-  const meanings = normalized.slice(firstChinese)
+  const prefix = normalized.slice(0, firstChinese)
+  const openingBracket = prefix.search(/[\[［【（(〈“]/u)
+  const meaningStart = openingBracket >= 0 ? openingBracket : firstChinese
+  const partOfSpeech = normalized.slice(0, meaningStart).trim().replace(/[|；;]+$/u, '').trim()
+  const meanings = normalized.slice(meaningStart)
     .split(/[；;|]/u)
     .map((item) => cleanText(item).replace(/[，,。]+$/u, ''))
     .filter(Boolean)

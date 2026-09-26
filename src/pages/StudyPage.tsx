@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
@@ -7,11 +7,13 @@ import { PronunciationButton } from '../components/PronunciationButton'
 import styles from '../styles/App.module.css'
 
 export function StudyPage() {
-  const { activeSession, settings, vocabulary, rateCurrentWord, completeQuizItem, exitSession } = useAppState()
+  const { activeSession, settings, vocabulary, rateCurrentWord, markCurrentWordFluent, completeQuizItem, exitSession } = useAppState()
   const navigate = useNavigate()
   const [revealed, setRevealed] = useState(false)
   const [answer, setAnswer] = useState('')
   const [feedback, setFeedback] = useState<{ correct: boolean; selected: string }>()
+  const [busy, setBusy] = useState(false)
+  const actionPending = useRef(false)
 
   const phaseWordIds = activeSession?.phase === 'learn' ? activeSession.newWordIds : activeSession?.wordIds
   const word = activeSession && phaseWordIds ? vocabulary.find((item) => item.id === phaseWordIds[activeSession.currentIndex]) : undefined
@@ -32,31 +34,50 @@ export function StudyPage() {
     setRevealed(false)
     setAnswer('')
     setFeedback(undefined)
-  }, [activeSession?.currentIndex, activeSession?.phase])
+  }, [activeSession?.currentIndex, activeSession?.phase, word?.id])
 
   if (!activeSession || !word) {
     return <main className={styles.studyPage}><div className={styles.emptyState}><h1>没有进行中的学习</h1><button className={styles.primaryButton} onClick={() => navigate('/today')}>回到今日</button></div></main>
   }
 
-  const leave = async () => {
-    await exitSession()
-    navigate('/today')
+  const runAction = async (action: () => Promise<void>) => {
+    if (actionPending.current) return
+    actionPending.current = true
+    setBusy(true)
+    try {
+      await action()
+    } finally {
+      actionPending.current = false
+      setBusy(false)
+    }
   }
 
+  const leave = async () => runAction(async () => {
+    await exitSession()
+    navigate('/today')
+  })
+
   const rate = async (rating: ReviewRating) => {
-    await rateCurrentWord(rating)
+    await runAction(() => rateCurrentWord(rating))
+  }
+
+  const markAsFluent = async () => {
+    await runAction(async () => {
+      if (await markCurrentWordFluent()) navigate('/result')
+    })
   }
 
   const submit = (selected: string) => {
-    if (feedback) return
+    if (feedback || actionPending.current) return
     const correct = mode === 'spelling' ? isCorrectSpelling(selected, word.term, word.spellingVariants) : selected === word.meaningZh
     setFeedback({ correct, selected })
   }
 
   const next = async () => {
     if (!feedback) return
-    const finished = await completeQuizItem(feedback.correct)
-    if (finished) navigate('/result')
+    await runAction(async () => {
+      if (await completeQuizItem(feedback.correct)) navigate('/result')
+    })
   }
 
   const phaseTotal = phaseWordIds?.length ?? 0
@@ -64,8 +85,11 @@ export function StudyPage() {
 
   return <main className={styles.studyPage}>
     <header className={styles.studyHeader}>
-      <button className={styles.quietButton} onClick={() => void leave()}>结束</button>
-      <span>{activeSession.currentIndex + 1} / {phaseTotal}</span>
+      <button className={styles.quietButton} disabled={busy} onClick={() => void leave()}>结束</button>
+      <div className={styles.studyHeaderActions}>
+        <span>{activeSession.currentIndex + 1} / {phaseTotal}</span>
+        {!feedback && <button className={styles.fluentButton} type="button" disabled={busy} onClick={() => void markAsFluent()}>标为熟练</button>}
+      </div>
     </header>
     <div className={styles.studyProgress}><span style={{ width: `${percent}%` }} /></div>
 
@@ -81,7 +105,7 @@ export function StudyPage() {
           <p>{word.partOfSpeech}</p>
         </div>
         {!revealed ? (
-          <button className={styles.revealButton} onClick={() => setRevealed(true)}>点击查看释义</button>
+          <button className={styles.revealButton} disabled={busy} onClick={() => setRevealed(true)}>点击查看释义</button>
         ) : (
           <div className={styles.definition}>
             <strong>{word.meaningZh}</strong>
@@ -90,9 +114,9 @@ export function StudyPage() {
           </div>
         )}
         {revealed && <div className={styles.ratingBar} aria-label="记忆程度">
-          <button onClick={() => void rate('forgotten')}>忘记</button>
-          <button onClick={() => void rate('fuzzy')}>模糊</button>
-          <button className={styles.knownButton} onClick={() => void rate('known')}>认识</button>
+          <button disabled={busy} onClick={() => void rate('forgotten')}>忘记</button>
+          <button disabled={busy} onClick={() => void rate('fuzzy')}>模糊</button>
+          <button className={styles.knownButton} disabled={busy} onClick={() => void rate('known')}>认识</button>
         </div>}
       </section>
     ) : (
@@ -105,20 +129,20 @@ export function StudyPage() {
               key={option}
               className={feedback?.selected === option ? (feedback.correct ? styles.correctChoice : styles.wrongChoice) : ''}
               onClick={() => submit(option)}
-              disabled={Boolean(feedback)}
+              disabled={Boolean(feedback) || busy}
             >{option}</button>)}
           </div>
         ) : (
           <form className={`${styles.spellingForm} ${feedback && !feedback.correct ? styles.shake : ''}`} onSubmit={(event) => { event.preventDefault(); submit(answer) }}>
             <label htmlFor="spelling">{word.language === 'en' ? '英语' : '西班牙语'}</label>
-            <input id="spelling" value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" autoCapitalize="none" disabled={Boolean(feedback)} />
-            {!feedback && <button className={styles.primaryButton} type="submit" disabled={!answer.trim()}>检查答案</button>}
+            <input id="spelling" value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" autoCapitalize="none" disabled={Boolean(feedback) || busy} />
+            {!feedback && <button className={styles.primaryButton} type="submit" disabled={!answer.trim() || busy}>检查答案</button>}
           </form>
         )}
         {feedback && <div className={`${styles.feedback} ${feedback.correct ? styles.feedbackCorrect : styles.feedbackWrong}`} role="status">
           <strong>{feedback.correct ? '正确' : '再记一次'}</strong>
           {!feedback.correct && <p>正确答案是 <span lang={word.language}>{word.term}</span></p>}
-          <button className={styles.primaryButton} onClick={() => void next()}>继续</button>
+          <button className={styles.primaryButton} disabled={busy} onClick={() => void next()}>继续</button>
         </div>}
       </section>
     )}

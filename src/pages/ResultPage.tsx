@@ -8,12 +8,12 @@ export function ResultPage() {
   const navigate = useNavigate()
   const session = [...sessions].reverse().find((item) => item.date === toLocalDate(new Date()))
   if (!session) return <Navigate to="/today" replace />
-  const accuracy = session.totalCount ? Math.round(session.correctCount / session.totalCount * 100) : 0
+  const accuracy = session.totalCount ? Math.round(session.correctCount / session.totalCount * 100) : undefined
   return <main className={styles.resultPage}>
     <div className={styles.completionMark}><span>✓</span></div>
     <p>今天完成了</p>
-    <h1>{accuracy}%</h1>
-    <span>测试正确率</span>
+    <h1>{accuracy === undefined ? '—' : `${accuracy}%`}</h1>
+    <span>{accuracy === undefined ? '无需测试' : '测试正确率'}</span>
     <div className={styles.resultStats}>
       <div><strong>{session.newCount}</strong><span>新学词</span></div>
       <div><strong>{session.reviewCount}</strong><span>复习词</span></div>

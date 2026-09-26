@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
@@ -77,6 +77,80 @@ describe('Palabra app', () => {
     await user.click(screen.getByRole('button', { name: '点击查看释义' }))
     expect(screen.getByText('你好')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '认识' })).toBeInTheDocument()
+  })
+
+  it('marks a word fluent from the study header, skips its quiz, and keeps it out of future sessions', async () => {
+    const user = userEvent.setup()
+    const secondWord = { ...databaseWord, id: 'database-02', term: 'continuar', spanish: 'continuar' }
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord, secondWord], vocabularyRevision: 42 })
+
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+
+    expect(await screen.findByRole('heading', { name: 'continuar' })).toBeInTheDocument()
+    await waitFor(async () => expect((await storage.getAllProgress('es')).find((item) => item.wordId === 'database-01')?.skipReview).toBe(true))
+    await user.click(screen.getByRole('button', { name: '结束' }))
+    await waitFor(async () => expect(await storage.getActiveSession('es')).toMatchObject({ wordIds: ['database-02'] }))
+
+    cleanup()
+    render(<MemoryRouter initialEntries={['/today']}><App storageClient={storage} /></MemoryRouter>)
+    await user.click(await screen.findByRole('button', { name: '继续今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'continuar' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'persistir' })).not.toBeInTheDocument()
+  })
+
+  it('finishes the session when its only word is marked fluent', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+
+    expect(await screen.findByText('无需测试')).toBeInTheDocument()
+    await expect(storage.getActiveSession('es')).resolves.toBeUndefined()
+    expect((await storage.getAllProgress('es'))[0].skipReview).toBe(true)
+  })
+
+  it('does not count a word as unlearned when it is marked fluent during its quiz', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '认识' }))
+    expect(await screen.findByText('选择正确的中文意思')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+
+    expect(await screen.findByText('无需测试')).toBeInTheDocument()
+    expect(screen.getByText('新学词').parentElement).toHaveTextContent('1')
+    expect((await storage.getAllProgress('es'))[0].skipReview).toBe(true)
+  })
+
+  it('blocks competing study controls while the fluent mark is being saved', async () => {
+    const user = userEvent.setup()
+    const storage = await renderApp('/today', undefined, { vocabularySeed: [databaseWord], vocabularyRevision: 42 })
+    const originalPut = storage.putProgress.bind(storage)
+    let releaseWrite = () => {}
+    const pendingWrite = new Promise<void>((resolve) => { releaseWrite = resolve })
+    const putSpy = vi.spyOn(storage, 'putProgress').mockImplementation(async (record) => {
+      if (record.skipReview) await pendingWrite
+      await originalPut(record)
+    })
+    await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
+    expect(await screen.findByRole('heading', { name: 'persistir' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '点击查看释义' }))
+    await user.click(screen.getByRole('button', { name: '标为熟练' }))
+
+    try {
+      expect(screen.getByRole('button', { name: '认识' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: '结束' })).toBeDisabled()
+    } finally {
+      releaseWrite()
+      putSpy.mockRestore()
+    }
+    expect(await screen.findByText('无需测试')).toBeInTheDocument()
+    expect((await storage.getAllProgress('es'))[0].skipReview).toBe(true)
   })
 
   it('keeps due reviews out of the new-word phase and reschedules them after a correct quiz', async () => {

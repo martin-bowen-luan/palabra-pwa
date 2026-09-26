@@ -44,7 +44,7 @@ export function LibraryPage() {
           <blockquote lang={selected.language}>{example.text}</blockquote>
           <p>{example.translationZh}</p>
         </div>)}
-        <footer>{stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / 5`}</footer>
+        <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / 5`}</footer>
       </section>
     </main>
   }
