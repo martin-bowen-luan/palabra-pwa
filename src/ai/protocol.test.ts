@@ -49,7 +49,10 @@ describe('request privacy and generic compatibility', () => {
     expect(init).toMatchObject({ method: 'POST', credentials: 'omit', redirect: 'error', signal: expect.any(AbortSignal) })
     expect(new Headers(init?.headers).get('authorization')).toBe('Bearer private-api-key')
     const body = JSON.parse(init?.body as string)
-    expect(Object.keys(body).sort()).toEqual(['max_tokens', 'messages', 'model', 'stream'])
+    expect(Object.keys(body).sort()).toEqual(provider === 'deepseek'
+      ? ['max_tokens', 'messages', 'model', 'response_format', 'stream', 'thinking']
+      : ['max_tokens', 'messages', 'model', 'stream'])
+    if (provider === 'deepseek') expect(body).toMatchObject({ thinking: { type: 'disabled' }, response_format: { type: 'json_object' } })
     expect(body).toMatchObject({ model: 'deepseek-chat', max_tokens: 4096, stream: false })
     expect(body.messages[0]).toMatchObject({ role: 'system', content: expect.stringContaining('JSON') })
     expect(JSON.parse(body.messages[1].content)).toEqual({
@@ -57,6 +60,18 @@ describe('request privacy and generic compatibility', () => {
       examples: [{ text: 'Act now.', translationZh: '现在行动。' }], relatedTerms: ['action'], derivedTerms: ['active'], roots: [{ part: 'act', meaningZh: '做' }],
     })
     expect(init?.body).not.toContain('private')
+  })
+  it('requests non-thinking JSON for deepseek-flash without increasing the token budget', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response(complete))
+    await expect(request(fetcher, undefined, { ...settings, model: 'deepseek-flash' })).resolves.toEqual(complete)
+    expect(JSON.parse(fetcher.mock.calls[0][1]?.body as string)).toMatchObject({
+      model: 'deepseek-flash', thinking: { type: 'disabled' }, response_format: { type: 'json_object' }, max_tokens: 4096,
+    })
+  })
+  it('still rejects truncated DeepSeek JSON without retrying even if the partial JSON parses', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response(complete, 'length'))
+    await expect(request(fetcher, undefined, { ...settings, model: 'deepseek-flash' })).rejects.toThrow(/截断/)
+    expect(fetcher).toHaveBeenCalledTimes(1)
   })
   it('requires a model before contacting a provider', async () => {
     const fetcher = vi.fn<typeof fetch>()

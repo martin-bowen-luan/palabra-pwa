@@ -131,7 +131,10 @@ export async function requestAnalysis(word: VocabularyEntry, settings: AiSetting
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({ model, stream: false, max_tokens: 4096, messages: [
         { role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: JSON.stringify(analysisInput(word)) },
-      ] }),
+      ], ...(settings.provider === 'deepseek' ? {
+        thinking: { type: 'disabled' },
+        response_format: { type: 'json_object' },
+      } : {}) }),
     })
   } catch {
     checkAbort(signal)

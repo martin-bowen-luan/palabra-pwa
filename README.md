@@ -49,3 +49,5 @@ npm run preview
 AI 模式下，已显示的英文例句可点击朗读、停止或重播；使用系统英语语音，不调用文本模型、不需要解锁 API 密钥。优先本地美式英语、其次本地其他英语，联网时可使用系统远程英语语音；离线需预先安装本地英语语音。句子和单词发音互斥，系统语音不生成可供本应用下载缓存的音频。无可用语音时显示错误，不假装已播放；参见 [MDN localService](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService)。
 
 开发自动化测试使用模拟 API 和系统语音事件。真实 DeepSeek/Qwen 调用需要使用者在设置中提供有效配置；真实手机语音、系统权限和跨域限制需在目标设备另行验收。
+
+选择 DeepSeek 服务商时（包括 `deepseek-flash`），应用显式关闭思考模式并请求 JSON 输出，保留 4096 token 上限。Qwen 和自定义服务不附加这些 DeepSeek 参数。JSON 模式仍可能截断，应用继续拒绝不完整结果、保留旧缓存，不自动重试产生额外费用；可手动重新分析。已有有效缓存继续复用。
