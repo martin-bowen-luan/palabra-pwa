@@ -110,7 +110,8 @@ export interface ActiveSession {
   assignedNewCount?: number
   assignedReviewCount?: number
   failedWordIds?: string[]
-  quizFeedback?: { wordId: string; correct: boolean; selected: string; selectedWordId?: string; nextPractice: PracticeQueue }
+  spellingHint?: { wordId: string; promptNumber: number; revealedCount: number }
+  quizFeedback?: { wordId: string; correct: boolean; selected: string; selectedWordId?: string; nextPractice: PracticeQueue; assisted?: boolean }
   revision?: number
 }
 

@@ -139,7 +139,7 @@ describe('Palabra app', () => {
     await user.type(await screen.findByLabelText('英语'), 'word0')
     await user.click(screen.getByRole('button', { name: '检查答案' }))
     await user.click(await screen.findByRole('button', { name: '继续' }))
-    expect(await screen.findByRole('heading', { name: '释义1' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'n. 释义1' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '跳过，稍后优先复习' }))
     await user.type(await screen.findByLabelText('英语'), 'word0')
     await user.click(screen.getByRole('button', { name: '检查答案' }))

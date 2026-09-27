@@ -10,6 +10,7 @@ import { pronunciationPlayer } from '../audio/pronunciation'
 import { buildEnglishChoiceOptions } from '../domain/choiceOptions'
 import { MEMORY_ROUNDS, ROUND_LABELS } from '../domain/memoryRounds'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
+import { buildSpellingHint } from '../domain/spellingHint'
 import { toLocalDate } from '../domain/stats'
 import type { ActiveSession, VocabularyEntry } from '../types'
 import styles from '../styles/App.module.css'
@@ -45,7 +46,7 @@ export function EnglishStudyPage() {
 }
 
 function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSession; word: VocabularyEntry; busy: boolean; perform: (action: () => Promise<boolean | void>) => Promise<void> }) {
-  const { vocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord } = useAppState()
+  const { vocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord, revealSpellingLetter } = useAppState()
   const { settings: aiSettings } = useAi()
   const [answer, setAnswer] = useState('')
   const location = useLocation()
@@ -60,6 +61,8 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
   })
   const round = session.memoryRound!
   const feedback = session.quizFeedback
+  const hintCount = session.spellingHint?.wordId === word.id && session.spellingHint.promptNumber === session.practice?.promptNumber ? session.spellingHint.revealedCount : 0
+  const letterHint = buildSpellingHint(word.term, hintCount)
   const choices = useMemo(() => {
     if (round !== 'choice') return undefined
     const excluded = new Set(session.wordIds)
@@ -80,7 +83,7 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
   return <section className={styles.memoryPrompt}>
     <p className={styles.quizPrompt}>第 {MEMORY_ROUNDS.indexOf(round) + 1} 关 · {ROUND_LABELS[round]}{session.practice?.stateById[word.id] === 'retry' ? ' · 再试一次' : session.practice?.stateById[word.id] === 'revisit' ? ' · 再回想一次' : ''}</p>
     <div className={styles.memoryIdentity}>
-      <h1 lang={round === 'spelling' ? 'zh-CN' : 'en'} className={round === 'spelling' ? styles.meaningPrompt : ''}>{round === 'spelling' ? word.meaningZh : word.term}</h1>
+      <h1 lang={round === 'spelling' ? 'zh-CN' : 'en'} className={round === 'spelling' ? styles.meaningPrompt : ''}>{round === 'spelling' ? <><span className={styles.promptPartOfSpeech}>{word.partOfSpeech} </span>{word.meaningZh}</> : word.term}</h1>
       <div className={styles.pronunciationRow}><span>{word.pronunciation?.ipa || '美式发音'}</span><PronunciationButton word={word} /></div>
     </div>
     {round === 'context' && !revealed && <><blockquote className={styles.contextSentence} lang="en">{word.examples[0]?.text || '这个词暂未收录例句，请直接回忆词义。'}</blockquote>{aiSettings.enabled && word.examples[0] && <SentenceSpeechButton text={word.examples[0].text} />}</>}
@@ -90,16 +93,22 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
     {revealed && round !== 'spelling' && <div className={styles.memoryDefinition}>
       <p><small>{word.partOfSpeech}</small><strong>{word.meaningZh}</strong></p>
       {word.examples[0] && <><blockquote lang="en">{word.examples[0].text}</blockquote>{aiSettings.enabled && <SentenceSpeechButton text={word.examples[0].text} />}<p>{word.examples[0].translationZh}</p></>}
-      {selectedWord && !feedback?.correct && <div className={styles.choiceComparison}><small>你选的是</small><strong lang="en">{selectedWord.term}</strong><p>{selectedWord.meaningZh}</p><small>本题单词</small><strong lang="en">{word.term}</strong><p>{word.meaningZh}</p></div>}
+      {selectedWord && !feedback?.correct && <div className={styles.choiceComparison} role="region" aria-label="释义错误对比"><small>你选的是</small><strong lang="en">{selectedWord.term}</strong><p>{selectedWord.partOfSpeech} {selectedWord.meaningZh}</p><small>本题单词</small><strong lang="en">{word.term}</strong><p>{word.partOfSpeech} {word.meaningZh}</p></div>}
       <WordRelations word={word} vocabulary={vocabulary} />
     </div>}
     {checking && !feedback && <div className={styles.recallActions}><p>{hinted ? '看过提示后，再练习一次。' : '和你刚才回忆的意思一致吗？'}</p><div>{!hinted && <button disabled={busy} onClick={() => void submit(true, '记对了')}>记对了</button>}<button disabled={busy} onClick={() => void submit(false, hinted ? '使用提示' : '记错了')}>{hinted ? '继续练习' : '记错了'}</button></div></div>}
     {round === 'spelling' && !feedback && <form className={styles.spellingForm} onSubmit={e => { e.preventDefault(); if (answer.trim()) void submit(isCorrectSpelling(answer, word.term, word.spellingVariants), answer) }}>
       <label htmlFor="group-spelling">英语</label><input id="group-spelling" value={answer} onChange={e => setAnswer(e.target.value)} autoComplete="off" autoCapitalize="none" spellCheck={false} maxLength={120} disabled={busy} />
+      {letterHint.limit > 0 && <div className={styles.spellingHint}>
+        <button type="button" className={styles.textButton} disabled={busy || hintCount >= letterHint.limit} onClick={() => void perform(revealSpellingLetter)}>提示字母</button>
+        <p lang="en" aria-label="字母提示" aria-live="polite" aria-atomic="true">{hintCount > 0 ? letterHint.mask : ''}</p>
+        {hintCount > 0 && <small>用过提示后，稍后还需无提示拼对一次。{hintCount >= letterHint.limit && '已达到提示上限。'}</small>}
+      </div>}
       <button className={styles.primaryButton} disabled={busy || !answer.trim()}>检查答案</button>
     </form>}
     {feedback && <div className={`${styles.memoryFeedback} ${feedback.correct ? styles.feedbackCorrect : styles.feedbackWrong}`} role="status">
       <strong>{feedback.correct ? '正确' : '再记一次'}</strong>
+      {feedback.correct && feedback.assisted && <p>用过提示，稍后再无提示拼写一次。</p>}
       {round === 'spelling' && !feedback.correct && <SpellingComparison input={feedback.selected} word={word} />}
       <button className={styles.primaryButton} disabled={busy} onClick={() => void perform(completeQuizItem)}>{feedback.correct ? '继续' : '立即重做'}</button>
     </div>}

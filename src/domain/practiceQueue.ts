@@ -21,12 +21,12 @@ function promoteDue(
   return { pendingIds, delayed: waiting }
 }
 
-export function advancePractice(queue: PracticeQueue, correct: boolean): PracticeQueue {
+export function advancePractice(queue: PracticeQueue, correct: boolean, assisted = false): PracticeQueue {
   const wordId = currentPracticeWord(queue)
   if (!wordId) return queue
   const firstAnswers = wordId in queue.firstAnswers
     ? queue.firstAnswers
-    : { ...queue.firstAnswers, [wordId]: correct }
+    : { ...queue.firstAnswers, [wordId]: correct && !assisted }
 
   if (!correct) {
     return {
@@ -37,7 +37,7 @@ export function advancePractice(queue: PracticeQueue, correct: boolean): Practic
     }
   }
 
-  const state = queue.stateById[wordId] ?? 'fresh'
+  const state = assisted ? 'retry' : queue.stateById[wordId] ?? 'fresh'
   const stateById = { ...queue.stateById }
   if (state === 'retry') stateById[wordId] = 'revisit'
   else delete stateById[wordId]

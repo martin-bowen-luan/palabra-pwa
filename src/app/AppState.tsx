@@ -7,6 +7,7 @@ import { applyReview, createProgress, markFluent } from '../domain/reviewSchedul
 import { calculateStreak, toLocalDate } from '../domain/stats'
 import { advanceMemoryRound, buildEnglishGroup } from '../domain/memoryRounds'
 import { scheduleEnglishReview } from '../domain/englishReview'
+import { buildSpellingHint } from '../domain/spellingHint'
 import type { ActiveSession, LearningLanguage, ReviewRating, StudyMode, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
 
 interface AppStateValue {
@@ -26,6 +27,7 @@ interface AppStateValue {
   rateCurrentWord: (rating: ReviewRating) => Promise<void>
   markCurrentWordFluent: () => Promise<boolean>
   submitQuizAnswer: (correct: boolean, selected: string, selectedWordId?: string) => Promise<void>
+  revealSpellingLetter: () => Promise<void>
   skipSpellingWord: () => Promise<boolean>
   completeQuizItem: () => Promise<boolean>
   exitSession: () => Promise<void>
@@ -265,12 +267,33 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     return false
   }
 
+  const revealSpellingLetter = async () => {
+    if (!activeSession || activeSession.language !== 'en' || activeSession.memoryRound !== 'spelling' || activeSession.quizFeedback) return
+    const queue = sessionQueue(activeSession)
+    const wordId = currentPracticeWord(queue)
+    const word = vocabulary.find(entry => entry.id === wordId)
+    if (!word) return
+    const savedHint = activeSession.spellingHint
+    const count = savedHint && savedHint.wordId === wordId && savedHint.promptNumber === queue.promptNumber ? savedHint.revealedCount : 0
+    if (count >= buildSpellingHint(word.term, count).limit) return
+    const nextSession: ActiveSession = {
+      ...activeSession,
+      spellingHint: { wordId: word.id, promptNumber: queue.promptNumber, revealedCount: count + 1 },
+      revision: (activeSession.revision ?? 0) + 1,
+    }
+    try { await storageClient.commitStudyStep(undefined, nextSession) }
+    catch (error) { if (await recoverStaleSession(error, activeSession.language)) return; throw error }
+    setActiveSession(nextSession)
+  }
+
   const submitQuizAnswer = async (correct: boolean, selected: string, selectedWordId?: string) => {
     if (!activeSession) return
     const queue = sessionQueue(activeSession)
     const wordId = sessionWordId(activeSession)
     if (!wordId || activeSession.phase !== 'quiz' || activeSession.quizFeedback) return
     const failedBefore = activeSession.failedWordIds?.includes(wordId) ?? false
+    const assisted = activeSession.memoryRound === 'spelling' && activeSession.spellingHint?.wordId === wordId
+      && activeSession.spellingHint.promptNumber === queue.promptNumber && activeSession.spellingHint.revealedCount > 0
     let nextProgress: WordProgress | undefined
     if (!activeSession.memoryRound && (!correct && !failedBefore || correct && activeSession.reviewWordIds.includes(wordId) && !failedBefore && !(wordId in queue.firstAnswers))) {
       const now = new Date()
@@ -278,11 +301,11 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
         ? applyReview(progress[wordId], correct ? 'known' : 'forgotten', now)
         : createProgress(wordId, correct ? 'known' : 'forgotten', now, activeSession.language)
     }
-    const advanced = advancePractice(queue, correct)
+    const advanced = advancePractice(queue, correct, assisted)
     const nextSession: ActiveSession = {
       ...activeSession,
-      quizFeedback: { wordId, correct, selected, selectedWordId, nextPractice: advanced },
-      failedWordIds: !correct && !failedBefore ? [...(activeSession.failedWordIds ?? []), wordId] : activeSession.failedWordIds,
+      quizFeedback: { wordId, correct, selected, selectedWordId, nextPractice: advanced, assisted },
+      failedWordIds: (!correct || assisted) && !failedBefore ? [...(activeSession.failedWordIds ?? []), wordId] : activeSession.failedWordIds,
       assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
       revision: (activeSession.revision ?? 0) + 1,
@@ -304,6 +327,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       ...activeSession,
       practice: advanced,
       quizFeedback: undefined,
+      spellingHint: undefined,
       currentIndex: 0,
       revision: (activeSession.revision ?? 0) + 1,
     }
@@ -346,7 +370,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const advanced = removePracticeWord(queue, wordId)
     advanced.firstAnswers = { ...advanced.firstAnswers, [wordId]: false }
     const nextSession: ActiveSession = {
-      ...activeSession, practice: advanced, quizFeedback: undefined,
+      ...activeSession, practice: advanced, quizFeedback: undefined, spellingHint: undefined,
       skippedWordIds: [...new Set([...(activeSession.skippedWordIds ?? []), wordId])],
       revision: (activeSession.revision ?? 0) + 1,
     }
@@ -405,6 +429,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     rateCurrentWord,
     markCurrentWordFluent,
     submitQuizAnswer,
+    revealSpellingLetter,
     completeQuizItem,
     skipSpellingWord,
     exitSession,

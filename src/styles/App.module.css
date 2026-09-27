@@ -42,6 +42,11 @@
 .memoryPrompt > .quizPrompt { margin-bottom: 24px; font-size: 12px; }
 .memoryIdentity h1 { margin: 0; font: 520 clamp(44px, 13vw, 66px)/1.12 'Source Serif 4 Variable', serif; letter-spacing: -.035em; overflow-wrap: anywhere; }
 .memoryIdentity .meaningPrompt { font: 600 26px/1.55 'Noto Sans SC Variable', sans-serif; letter-spacing: 0; }
+.promptPartOfSpeech { display: block; font-size: 16px; font-weight: 400; color: var(--muted); }
+.spellingHint { padding: 4px 0 12px; }
+.spellingHint > p { margin: 8px 0; color: var(--blue); font: 500 26px/1.6 'Source Serif 4 Variable', serif; letter-spacing: .18em; overflow-wrap: anywhere; white-space: pre-wrap; }
+.spellingHint > p:empty { margin: 0; }
+.spellingHint > small { display: block; color: var(--muted); font-size: 13px; line-height: 1.7; }
 .memoryIdentity .pronunciationRow { justify-content: flex-start; margin-top: 8px; }
 .memoryChoices { display: grid; gap: 10px; margin-top: 32px; }
 .memoryChoices button { min-height: 68px; padding: 13px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--control); text-align: left; font-size: 16px; line-height: 1.55; cursor: pointer; }

@@ -2,6 +2,20 @@ import { describe, expect, it } from 'vitest'
 import { advancePractice, createPracticeQueue, currentPracticeWord, removePracticeWord } from './practiceQueue'
 
 describe('practice queue', () => {
+  it('requires an unassisted recall after a hinted correct spelling, including repeat hints', () => {
+    let queue = advancePractice(createPracticeQueue(['a', 'b', 'c', 'd', 'e']), true, true)
+    expect(currentPracticeWord(queue)).toBe('b')
+    expect(queue.firstAnswers.a).toBe(false)
+    expect(queue.delayed).toEqual([{wordId:'a',remaining:3}])
+    for (let i=0;i<3;i++) queue=advancePractice(queue,true)
+    expect(currentPracticeWord(queue)).toBe('a')
+    queue=advancePractice(queue,true,true)
+    expect(currentPracticeWord(queue)).toBe('e')
+    queue=advancePractice(queue,true)
+    expect(currentPracticeWord(queue)).toBe('a')
+    queue=advancePractice(queue,true)
+    expect(currentPracticeWord(queue)).toBeUndefined()
+  })
   it('repeats an incorrect word now and recalls it after three other words', () => {
     let queue = createPracticeQueue(['a', 'b', 'c', 'd', 'e'])
     queue = advancePractice(queue, false)
