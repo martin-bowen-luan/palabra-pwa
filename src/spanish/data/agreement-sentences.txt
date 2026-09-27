@@ -1,0 +1,328 @@
+basic-07.p|Los [perdones] que recibió no borraron el daño causado.|他得到的多次原谅并没有抹去已经造成的伤害。
+basic-26.fs|Esta llave no sirve; necesito [otra] llave.|这把钥匙不管用，我需要另一把。
+basic-26.mp|Hay [otros] caminos para llegar al pueblo.|还有别的路可以到村子。
+basic-26.fp|Preguntaremos en [otras] tiendas del barrio.|我们会去社区的其他商店问问。
+basic-27.fs|Vamos a la [misma] escuela desde pequeños.|我们从小就在同一所学校上学。
+basic-27.mp|Todos los autobuses siguen los [mismos] horarios.|所有公交车都遵循相同的时刻表。
+basic-27.fp|Las dos recetas usan las [mismas] especias.|这两份食谱用同样的香料。
+people-01.p|Solo quedan asientos para tres [personas].|只剩够三个人坐的座位。
+people-02.p|Dos [hombres] levantan el sofá para pasarlo por la puerta.|两个男人抬起沙发把它搬过门口。
+people-03.p|Las [mujeres] del equipo han ganado la final.|队里的女选手赢得了决赛。
+people-04.p|Los [niños] dejan las mochilas junto a la entrada.|男孩们把背包放在入口旁。
+people-05.p|Las [niñas] preparan un baile para la fiesta.|女孩们为聚会准备一支舞。
+people-06.p|Mis [amigos] me esperan fuera del cine.|我的朋友们在电影院外等我。
+people-07.p|Tres [amigas] de mi hermana vienen a cenar.|我姐姐的三个女性朋友来吃晚饭。
+people-08.p|Varias [familias] comparten el jardín del edificio.|几户人家共用这栋楼的花园。
+people-09.p|Las [madres] recogen a sus hijos después de la excursión.|远足后，妈妈们来接孩子。
+people-10.p|Mis [padres] celebran hoy su aniversario de boda.|我父母今天庆祝结婚纪念日。
+people-11.p|Sus dos [hijos] juegan en el mismo equipo.|他的两个儿子在同一支队里。
+people-12.p|Las [hijas] de Ana estudian en otra ciudad.|安娜的女儿们在另一个城市读书。
+people-13.p|Los dos [hermanos] se parecen mucho.|这两个兄弟长得很像。
+people-14.p|Mis [hermanas] comparten una habitación.|我的姐妹们住同一个房间。
+people-15.p|Los [abuelos] cuentan historias a sus nietos.|祖父母们给孙辈讲故事。
+people-16.p|Las dos [abuelas] del bebé viven cerca.|宝宝的奶奶和外婆都住在附近。
+people-17.p|Sus [maridos] se conocen desde la universidad.|她们的丈夫从大学时就认识。
+people-18.p|Los dos hombres vinieron con sus [esposas].|那两名男子和各自的妻子一起来了。
+people-18.ms|El [esposo] de Ana trabaja en la biblioteca.|安娜的丈夫在图书馆工作。
+people-18.mp|Los [esposos] de mis primas preparan la cena.|我的表姐妹们的丈夫在做晚饭。
+people-19.p|He olvidado los [nombres] de los nuevos vecinos.|我忘了新邻居们的名字。
+people-20.p|En el festival se reúnen [gentes] de muchos países.|来自许多国家的人们在节日里相聚。
+people-21.p|Los [bebés] duermen en una sala tranquila.|宝宝们在一间安静的屋子里睡觉。
+people-22.p|Las [estudiantes] presentan sus proyectos el viernes.|女学生们周五展示她们的项目。
+people-23.p|Los [profesores] se reúnen antes de empezar las clases.|老师们上课前开会。
+people-23.fs|La [profesora] de música toca el violín.|那位女音乐老师拉小提琴。
+people-23.fp|Las [profesoras] acompañan a la clase al museo.|女老师们陪全班去博物馆。
+people-24.p|Mis [compañeros] de trabajo me han traído flores.|我的同事们给我送来了花。
+people-24.fs|Mi [compañera] de piso tiene una gata.|我的女室友养了一只母猫。
+people-24.fp|Las [compañeras] de Ana organizan su despedida.|安娜的女同事们在组织她的欢送会。
+people-25.p|Los [vecinos] han limpiado el patio entre todos.|邻居们一起打扫了院子。
+people-25.fs|La [vecina] del segundo me presta una escalera.|二楼的女邻居借给我一把梯子。
+people-25.fp|Mis [vecinas] cuidan las plantas cuando viajo.|我旅行时，女邻居们帮我照料植物。
+people-26.p|Los [señores] de la mesa del fondo piden la cuenta.|最里面那桌的先生们要结账。
+people-27.p|Las [señoras] de la asociación han preparado una merienda.|协会里的女士们准备了下午茶。
+people-28.p|Los [jóvenes] del pueblo organizan el concierto.|村里的年轻人组织音乐会。
+people-29.p|Los [adultos] pagan entrada; los niños entran gratis.|成年人买票，孩子们免费入场。
+people-29.fs|Una [adulta] debe acompañar a las niñas al vestuario.|必须有一名成年女性陪女孩们去更衣室。
+people-29.fp|Las [adultas] del grupo ayudan a las más pequeñas.|组里的成年女性帮助年幼的女孩们。
+people-30.p|Las [parejas] bailan junto al escenario.|一对对伴侣在舞台旁跳舞。
+time-01.fs|De las tres entradas, solo queda [una].|三张票中只剩一张了。
+time-11.p|Faltan tres [días] para que empiecen las vacaciones.|离假期开始还有三天。
+time-12.p|Estaremos fuera dos [semanas].|我们将外出两周。
+time-13.p|El curso dura seis [meses].|课程持续六个月。
+time-14.p|Mi abuela tiene ochenta [años].|我奶奶八十岁了。
+time-15.p|La caminata nos llevó cuatro [horas].|这次徒步花了我们四个小时。
+time-16.p|El próximo tren sale en diez [minutos].|下一班火车十分钟后出发。
+time-17.p|Calienta la leche durante treinta [segundos].|把牛奶加热三十秒。
+time-18.p|Guardamos fotos de los mejores [momentos] del viaje.|我们保存了旅行中最美好时刻的照片。
+time-19.p|Las [fechas] de los exámenes están en el tablón.|考试日期贴在公告栏上。
+time-20.p|Estos [calendarios] tienen fotografías de la ciudad.|这些日历上有这座城市的照片。
+time-21.p|Los [lunes] tengo clase de natación.|我每周一上游泳课。
+time-22.p|Todos los [martes] llamo a mi abuela.|我每周二给奶奶打电话。
+time-23.p|La tienda cierra los [miércoles] por la tarde.|商店每周三下午关门。
+time-24.p|Los [jueves] cenamos con los vecinos.|我们每周四和邻居吃晚饭。
+time-25.p|Hay mercado todos los [viernes].|每周五都有集市。
+time-26.p|Mis padres pasean por el río los [sábados].|我父母每周六在河边散步。
+time-27.p|Los [domingos] no pongo el despertador.|每周日我不设闹钟。
+time-28.p|En verano pasamos los [mediodías] a la sombra del patio.|夏天每天中午，我们都在院子的阴凉处待着。
+time-29.p|Recuerdo aquellas [medianoches] de verano junto al mar.|我记得那些在海边度过的夏日午夜。
+time-30.p|Los [fines] de semana salimos a caminar.|周末我们出去走路。
+food-01.p|Las [aguas] del lago están tranquilas al amanecer.|黎明时，湖水很平静。
+food-02.p|El camarero trae dos [cafés] a nuestra mesa.|服务员给我们这桌端来两杯咖啡。
+food-03.p|La tienda vende [tés] de varias regiones.|这家店卖来自不同地区的茶。
+food-04.p|En la nevera hay [leches] de vaca y de cabra.|冰箱里有牛奶和山羊奶。
+food-05.p|El panadero saca del horno tres [panes] redondos.|面包师从烤箱里取出三个圆面包。
+food-06.p|Este restaurante prepara [arroces] con verduras o marisco.|这家餐馆做蔬菜饭或海鲜饭等米饭菜肴。
+food-07.p|La carta ofrece [carnes] a la parrilla.|菜单上有多种烤肉。
+food-08.p|En el mostrador hay [pescados] de distintos tamaños.|柜台上摆着大小不同的鱼。
+food-09.p|Asaremos dos [pollos] para todos los invitados.|我们将烤两只鸡招待所有客人。
+food-10.p|Necesitas tres [huevos] para este pastel.|做这个蛋糕需要三个鸡蛋。
+food-11.p|Probamos varios [quesos] en la feria.|我们在展销会上尝了几种奶酪。
+food-12.p|La ensalada lleva [frutas] de muchos colores.|这份沙拉里有各种颜色的水果。
+food-13.p|He comprado un kilo de [manzanas].|我买了一公斤苹果。
+food-14.p|Estas [naranjas] tienen mucho zumo.|这些橙子汁水很多。
+food-15.p|Los [plátanos] ya están maduros.|这些香蕉已经熟了。
+food-16.p|Lava las [verduras] antes de cortarlas.|切菜前把蔬菜洗净。
+food-17.p|Los [tomates] del huerto son muy dulces.|菜园里的番茄很甜。
+food-18.p|Fríe las [patatas] en aceite caliente.|把土豆放进热油里炸。
+food-19.p|En invierno preparo [sopas] con las verduras que tengo.|冬天我用手边的蔬菜做各种汤。
+food-20.p|El menú incluye dos [ensaladas] sin queso.|菜单包括两款不加奶酪的沙拉。
+food-21.p|El precio incluye los [desayunos] de toda la semana.|价格包含一整周的早餐。
+food-22.p|Preparamos los [almuerzos] para llevarlos al trabajo.|我们准备好午餐，带去上班。
+food-23.p|Las [cenas] familiares del domingo son muy animadas.|周日的家庭晚餐总是很热闹。
+food-24.p|Hacemos tres [comidas] al día.|我们每天吃三餐。
+food-25.p|La etiqueta indica la cantidad de [azúcares] de la bebida.|标签标明了饮料的含糖量。
+food-26.p|Esta agua contiene [sales] minerales.|这种水含有矿物盐。
+food-27.p|Lleva las [botellas] vacías al contenedor de vidrio.|把空瓶拿到玻璃回收桶去。
+food-28.p|Los [vasos] limpios están en el estante de arriba.|干净的玻璃杯在上面的架子上。
+food-29.p|Estas [tazas] son un regalo de mi abuela.|这些杯子是奶奶送给我的。
+food-30.p|Seca los [platos] con este paño.|用这块布把盘子擦干。
+home-01.p|Las [casas] del pueblo tienen tejados rojos.|村里的房子都有红屋顶。
+home-02.p|El hotel tiene veinte [habitaciones] con balcón.|酒店有二十间带阳台的客房。
+home-03.p|Las [cocinas] de estos pisos dan al patio.|这些公寓的厨房都朝着院子。
+home-04.p|Los [baños] están al final del pasillo.|洗手间在走廊尽头。
+home-05.p|Cierra las [puertas] del armario.|把衣柜的门关上。
+home-06.p|Las [ventanas] nuevas aíslan mejor del ruido.|新窗户隔音更好。
+home-07.p|Juntamos dos [mesas] para comer todos juntos.|我们把两张桌子拼起来一起吃饭。
+home-08.p|Faltan tres [sillas] para los invitados.|给客人的椅子还差三把。
+home-09.p|La habitación tiene dos [camas] individuales.|房间有两张单人床。
+home-10.p|Probamos varios [sofás] antes de elegir uno.|选定之前，我们试坐了几张沙发。
+home-11.p|Las [lámparas] del pasillo se encienden solas.|走廊上的灯会自动亮起。
+home-12.p|Deja las [llaves] en el cuenco de la entrada.|把钥匙放在入口处的碗里。
+home-13.p|Tengo que devolver estos [libros] mañana.|我明天得还这些书。
+home-14.p|Los niños guardan sus [cuadernos] en la mochila.|孩子们把笔记本放进书包。
+home-15.p|Firma los [papeles] que están sobre la mesa.|签一下桌上的那些文件。
+home-16.p|He comprado [bolígrafos] de tres colores.|我买了三种颜色的圆珠笔。
+home-17.p|Apagad los [teléfonos] antes de que empiece la película.|电影开始前请关掉手机。
+home-18.p|Los [ordenadores] de la biblioteca son de uso público.|图书馆的电脑供公众使用。
+home-19.p|En el taller reparan [relojes] antiguos.|这家作坊修古董钟表。
+home-20.p|Te enviaré las [fotos] de la boda esta noche.|今晚我会把婚礼照片发给你。
+home-21.p|Donamos [ropas] de abrigo antes del invierno.|冬天来临前，我们捐赠了保暖衣物。
+home-22.p|Estas [camisas] se pueden lavar en la lavadora.|这些衬衫可以机洗。
+home-23.p|Los [pantalones] azules están tendidos en el balcón.|蓝色裤子晾在阳台上。
+home-24.p|Quítate los [zapatos] antes de entrar.|进来前脱鞋。
+home-25.p|Llevamos [bolsas] de tela para hacer la compra.|我们带布袋去购物。
+home-27.p|Todavía quedan muchas [cosas] por guardar en las cajas.|还有很多东西要装进箱子。
+home-28.p|Los [regalos] están envueltos con papel azul.|礼物都用蓝纸包着。
+home-29.p|Trae tus [juegos] de mesa para la tarde del domingo.|把你的桌游带来，周日下午玩。
+home-30.p|El festival reúne [músicas] de distintas culturas.|这个音乐节汇集了不同文化的音乐。
+places-01.p|El tren conecta las dos [ciudades] en una hora.|乘这趟火车从一座城市到另一座只需一小时。
+places-02.p|Visitamos varios [pueblos] de la costa.|我们游览了几个海滨村镇。
+places-03.p|Las [calles] del centro están cortadas por la carrera.|市中心的街道因赛跑封闭了。
+places-04.p|Hay fuentes en las dos [plazas] del barrio.|社区的两个广场上都有喷泉。
+places-05.p|Los [parques] cierran al anochecer.|公园天黑时关门。
+places-06.p|Las [tiendas] ya han puesto los precios de rebajas.|商店已经贴出了打折价格。
+places-07.p|Me gusta visitar los [mercados] de las ciudades a las que viajo.|我喜欢逛旅行目的地的市场。
+places-08.p|Los [restaurantes] de esta calle sirven comida local.|这条街上的餐馆供应当地菜。
+places-09.p|Todos los [hoteles] cercanos están completos.|附近所有酒店都客满了。
+places-10.p|Las [escuelas] del pueblo comparten el polideportivo.|村里的学校共用体育馆。
+places-11.p|Dos [universidades] colaboran en este proyecto.|两所大学合作开展这个项目。
+places-12.p|Las [oficinas] ocupan las tres plantas superiores.|办公室占据了上面三层楼。
+places-13.p|Los [hospitales] necesitan más personal durante el invierno.|医院冬天需要更多工作人员。
+places-14.p|Hay dos [farmacias] abiertas cerca de aquí.|这附近有两家开着门的药房。
+places-15.p|Los [bancos] de esta zona cierran a las dos.|这个地区的银行两点关门。
+places-16.p|Solo faltan dos [estaciones] para llegar.|再过两站就到了。
+places-17.p|Los [aeropuertos] están muy ocupados en agosto.|机场在八月很繁忙。
+places-18.p|Las [playas] del norte tienen arena muy fina.|北部海滩的沙子很细。
+places-19.p|En este equipo trabajan personas de cinco [países].|这个团队有来自五个国家的人。
+places-20.p|Estos [mapas] muestran los caminos de la montaña.|这些地图标明了山路。
+places-21.p|Los [viajes] en tren me resultan más cómodos.|我觉得坐火车旅行更舒适。
+places-22.p|No se permiten [coches] en esta calle peatonal.|这条步行街禁止汽车通行。
+places-23.p|Los [autobuses] salen cada quince minutos.|公交车每十五分钟发一班。
+places-24.p|Los [trenes] de cercanías paran en todas las estaciones.|市郊列车每站都停。
+places-25.p|Vemos despegar los [aviones] desde la terraza.|我们从露台上看飞机起飞。
+places-26.p|Dejad las [bicicletas] en el aparcamiento de la entrada.|把自行车停在入口处的停车区。
+places-27.p|He guardado los [billetes] de vuelta en la cartera.|我把回程票放进了钱包。
+places-28.p|Las [maletas] ya están en el maletero.|行李箱已经放进后备箱了。
+places-29.p|Estos [caminos] llevan al mismo refugio.|这些路都通向同一个山间小屋。
+places-30.p|Anota las [direcciones] de los dos hoteles.|记下两家酒店的地址。
+body-01.p|El agua sostiene nuestros [cuerpos] mientras flotamos.|漂浮时，水托着我们的身体。
+body-02.p|Los niños asoman las [cabezas] por la ventana.|孩子们把头探出窗外。
+body-03.p|Reconocí varias [caras] entre el público.|观众中有几张我认识的面孔。
+body-04.p|Cierra los [ojos] mientras te lavo el pelo.|我给你洗头时闭上眼睛。
+body-05.p|Los payasos llevan [narices] rojas de goma.|小丑们戴着红色橡胶鼻子。
+body-06.p|Los polluelos abren las [bocas] para recibir comida.|雏鸟张着嘴等喂食。
+body-07.p|Lávate los [dientes] antes de acostarte.|睡觉前刷牙。
+body-08.p|El conejo tiene las [orejas] muy largas.|这只兔子的耳朵很长。
+body-09.p|Hay [pelos] del gato en el sofá.|沙发上有猫毛。
+body-10.p|Las jirafas tienen [cuellos] largos.|长颈鹿的脖子很长。
+body-11.p|El bebé se duerme en mis [brazos].|宝宝在我怀里睡着了。
+body-12.p|Lávate las [manos] antes de cocinar.|做饭前洗手。
+body-13.p|No metas los [dedos] en el enchufe.|别把手指伸进插座。
+body-14.p|Después de la caminata me duelen las [piernas].|走完长路后，我双腿疼。
+body-15.p|Tengo los [pies] mojados por la lluvia.|我的脚被雨淋湿了。
+body-16.p|Los nadadores flotan sobre sus [espaldas].|游泳的人仰面浮在水上。
+body-17.p|La niña dibuja [corazones] en la tarjeta.|女孩在卡片上画心形。
+body-19.p|Tiene [dolores] de espalda después de cargar las cajas.|搬箱子后，他背痛。
+body-20.p|Los [médicos] revisan los resultados de las pruebas.|医生们查看检查结果。
+body-20.fs|La [médica] escucha al paciente con atención.|女医生认真听病人说话。
+body-20.fp|Las [médicas] del centro organizan una charla sobre salud.|医疗中心的女医生们组织了一场健康讲座。
+body-21.p|Guarda las [medicinas] fuera del alcance de los niños.|把药放在孩子够不到的地方。
+body-26.p|Anoto mis [sueños] al despertarme.|我醒来后记下做过的梦。
+body-27.p|Hacemos [descansos] cortos cada hora de trabajo.|我们每工作一小时短暂休息一次。
+body-28.p|La fisioterapeuta me ha enseñado varios [ejercicios].|理疗师教了我几个练习动作。
+world-01.p|En ese sistema hay dos [soles] que iluminan los planetas.|在那个恒星系统中，有两颗恒星照亮着行星。
+world-02.p|Júpiter tiene muchas [lunas].|木星有许多卫星。
+world-03.p|Los [cielos] despejados permiten ver las estrellas.|晴朗的天空让人能看到星星。
+world-04.p|Esta noche se ven muchas [estrellas].|今晚能看到许多星星。
+world-05.p|El barco ha navegado por varios [mares].|这艘船曾航行于多个海域。
+world-06.p|Los [ríos] de la región crecen con el deshielo.|该地区的河流因融雪涨水。
+world-07.p|Las [montañas] del fondo tienen nieve todo el año.|远处的山全年有雪。
+world-08.p|Los [árboles] del parque dan mucha sombra.|公园里的树遮出大片阴凉。
+world-09.p|Pon las [flores] en un jarrón con agua.|把花放进装水的花瓶。
+world-10.p|No des comida a los [animales] del parque.|别喂公园里的动物。
+world-11.p|Los [perros] deben llevar correa en esta zona.|这片区域的狗必须拴绳。
+world-11.fs|La [perra] de mi vecino acaba de tener cachorros.|邻居家的母狗刚生了小狗。
+world-11.fp|Las dos [perras] juegan juntas en el jardín.|两只母狗在花园里一起玩。
+world-12.p|Los [gatos] buscan sitios cálidos para dormir.|猫会找暖和的地方睡觉。
+world-12.fs|Nuestra [gata] se esconde debajo del sofá.|我们家的母猫躲在沙发底下。
+world-12.fp|Las [gatas] del refugio tienen su propia sala.|收容所里的母猫有单独的房间。
+world-13.p|Los [pájaros] cantan al amanecer.|鸟儿在黎明时歌唱。
+world-14.p|Mi abuelo recuerda los [tiempos] en que no había coches en el pueblo.|我爷爷记得村里还没有汽车的年代。
+world-15.p|Las fuertes [lluvias] han cortado la carretera.|大雨让道路中断了。
+world-16.p|Los [vientos] del norte traen aire frío.|北风带来冷空气。
+world-17.p|Las [nubes] anuncian que pronto lloverá.|云层预示很快要下雨。
+world-26.p|El dibujo tiene muchos [colores] vivos.|这幅画有许多鲜艳的颜色。
+world-27.p|Las [primaveras] son suaves en esta región.|这一地区的春天很温和。
+world-28.p|Pasamos los [veranos] en casa de los abuelos.|我们每年夏天都在祖父母家度过。
+world-29.p|Los [otoños] aquí suelen ser lluviosos.|这里的秋天通常多雨。
+world-30.p|Los [inviernos] en la montaña son largos.|山里的冬天很漫长。
+adjectives-01.fs|La sopa está [buena] incluso sin añadir sal.|这汤即使不加盐也很好喝。
+adjectives-01.mp|Estos zapatos son [buenos] para caminar.|这些鞋适合走路。
+adjectives-01.fp|Las noticias que trae Ana son [buenas].|安娜带来的都是好消息。
+adjectives-02.fs|Con esta [mala] señal, la llamada se corta a cada momento.|信号这么差，通话老是中断。
+adjectives-02.mp|Esos tomates están [malos]; no los uses.|那些番茄坏了，别用。
+adjectives-02.fp|Las [malas] noticias llegaron por la mañana.|坏消息早上到了。
+adjectives-03.fs|La caja es demasiado [grande] para este estante.|这个箱子太大，架子放不下。
+adjectives-03.mp|Estos vasos son más [grandes] que los de casa.|这些杯子比家里的大。
+adjectives-03.fp|Necesitamos mesas [grandes] para la cena familiar.|家庭晚餐需要大桌子。
+adjectives-04.fs|La cocina es [pequeña], pero está bien organizada.|厨房很小，但布置得井井有条。
+adjectives-04.mp|Los platos [pequeños] son para el postre.|小盘子是用来盛甜点的。
+adjectives-04.fp|Corta la zanahoria en rodajas [pequeñas].|把胡萝卜切成小圆片。
+adjectives-05.fs|Mi hermana estrena una bicicleta [nueva].|我姐姐第一次骑她的新自行车。
+adjectives-05.mp|Los vecinos [nuevos] se mudaron ayer.|新邻居昨天搬来了。
+adjectives-05.fp|Hay lámparas [nuevas] en todo el pasillo.|整个走廊都装了新灯。
+adjectives-06.fs|La casa [vieja] necesita una reforma.|这栋老房子需要翻修。
+adjectives-06.mp|Estos libros [viejos] eran de mi abuelo.|这些旧书以前是我爷爷的。
+adjectives-06.fp|Guardamos las fotos [viejas] en una caja.|我们把旧照片保存在盒子里。
+adjectives-07.fs|La enfermera es muy [joven], pero tiene mucha experiencia.|这位护士很年轻，但经验丰富。
+adjectives-07.mp|Los árboles [jóvenes] necesitan más agua.|幼树需要更多的水。
+adjectives-07.fp|Las jugadoras [jóvenes] entrenan con el primer equipo.|年轻的女球员们和一线队一起训练。
+adjectives-08.fs|La plaza está [bonita] con las luces de la fiesta.|有了节日灯饰，广场很漂亮。
+adjectives-08.mp|En ese pueblo hay patios muy [bonitos].|那个村里有很漂亮的庭院。
+adjectives-08.fp|Tus fotos de la montaña son [bonitas].|你拍的山景照片很美。
+adjectives-09.fs|La mancha de la pared es bastante [fea].|墙上那块污渍挺难看的。
+adjectives-09.mp|Esos cables son [feos], pero podemos esconderlos.|那些电线不好看，但我们可以把它们藏起来。
+adjectives-09.fp|Las cortinas son [feas] y además no tapan la luz.|这些窗帘不好看，而且遮不住光。
+adjectives-10.fs|La primera pregunta es [fácil] de responder.|第一道题很容易回答。
+adjectives-10.mp|Los pasos de esta receta son [fáciles].|这份食谱的步骤很简单。
+adjectives-10.fp|Estas cajas son [fáciles] de abrir.|这些盒子很容易打开。
+adjectives-11.fs|La subida es [difícil] cuando llueve.|下雨时这段上坡很难走。
+adjectives-11.mp|Los últimos kilómetros fueron [difíciles] por el viento.|因为有风，最后几公里很难跑。
+adjectives-11.fp|Las instrucciones son [difíciles] de entender.|这些说明很难懂。
+adjectives-12.fs|Necesitamos una respuesta [rápida] para confirmar la reserva.|我们需要尽快得到回复，好确认预订。
+adjectives-12.mp|Los trenes [rápidos] no paran en este pueblo.|快车不停这个村镇。
+adjectives-12.fp|Las nadadoras más [rápidas] pasan a la final.|速度最快的女游泳选手进入决赛。
+adjectives-13.fs|La conexión es [lenta] cuando todos usan internet.|大家都上网时，连接速度很慢。
+adjectives-13.mp|Los autobuses son [lentos] por las obras.|因为施工，公交车开得很慢。
+adjectives-13.fp|Las colas del banco avanzan muy [lentas].|银行的队伍前进得很慢。
+adjectives-14.fs|La leche está [caliente]; espera antes de beber.|牛奶是烫的，等一下再喝。
+adjectives-14.mp|Los platos salen [calientes] del lavavajillas.|盘子从洗碗机出来时是热的。
+adjectives-14.fp|Lleva bebidas [calientes] para la excursión de invierno.|冬季远足时带些热饮。
+adjectives-15.fs|La sopa se ha quedado [fría] mientras hablábamos.|我们说话时，汤变凉了。
+adjectives-15.mp|Tengo los pies [fríos] después de caminar por la nieve.|在雪里走过后，我的脚很冷。
+adjectives-15.fp|Las noches son [frías] en la montaña.|山里的夜晚很冷。
+adjectives-16.fs|La camisa está [limpia] y lista para planchar.|衬衫洗干净了，可以熨了。
+adjectives-16.mp|Guarda los vasos [limpios] en el armario.|把干净的杯子放进柜子。
+adjectives-16.fp|Las ventanas están [limpias] después de lavarlas.|洗过之后，窗户很干净。
+adjectives-17.fs|La mesa está [sucia] de harina.|桌上沾了面粉，脏了。
+adjectives-17.mp|Deja los zapatos [sucios] fuera de casa.|把脏鞋留在屋外。
+adjectives-17.fp|Las manos del niño están [sucias] de barro.|孩子的手沾了泥，很脏。
+adjectives-18.fs|La puerta está [abierta] para que entre aire.|门开着，好让空气进来。
+adjectives-18.mp|Los museos están [abiertos] durante la fiesta local.|当地节日期间，博物馆都开门。
+adjectives-18.fp|Las tiendas siguen [abiertas] a esta hora.|这个时间商店还开着。
+adjectives-19.fs|La ventana está [cerrada] porque hace frío.|天气冷，所以窗户关着。
+adjectives-19.mp|Los bancos están [cerrados] los domingos.|银行每周日都关门。
+adjectives-19.fp|Las maletas ya están [cerradas] en la entrada.|行李箱都合上了，放在入口处。
+adjectives-20.fs|La botella está [llena] de agua fresca.|瓶子里装满了清凉的水。
+adjectives-20.mp|Los hoteles están [llenos] durante el festival.|节日期间酒店都客满了。
+adjectives-20.fp|Las calles están [llenas] de gente esta tarde.|今天下午街上挤满了人。
+adjectives-21.fs|La nevera está [vacía]; tenemos que comprar comida.|冰箱空了，我们得买食物。
+adjectives-21.mp|Recoge los platos [vacíos] de la mesa.|把桌上的空盘子收走。
+adjectives-21.fp|Las cajas [vacías] se pueden doblar.|空箱子可以折起来。
+adjectives-22.fs|Mi madre está [feliz] de tenernos a todos en casa.|我们都在家，妈妈很高兴。
+adjectives-22.mp|Los niños están [felices] con sus bicicletas nuevas.|有了新自行车，孩子们很高兴。
+adjectives-22.fp|Mis hermanas están [felices] de viajar juntas.|我的姐妹们很高兴能一起旅行。
+adjectives-23.fs|Ana está [triste] porque su amiga se muda.|朋友要搬家了，安娜很难过。
+adjectives-23.mp|Los abuelos se quedaron [tristes] al despedirse.|告别后，祖父母很伤感。
+adjectives-23.fp|Las canciones del final son muy [tristes].|最后的几首歌很悲伤。
+adjectives-24.fs|Mi hermana está [cansada] después del turno de noche.|上完夜班，我姐姐很疲惫。
+adjectives-24.mp|Los viajeros llegaron [cansados] al hotel.|旅客们疲惫地到了酒店。
+adjectives-24.fp|Las jugadoras están [cansadas] después de la final.|决赛后，女球员们很累。
+adjectives-25.fs|Esta llamada es [importante] para mi trabajo.|这通电话对我的工作很重要。
+adjectives-25.mp|Guarda los documentos [importantes] en una carpeta.|把重要文件放在文件夹里。
+adjectives-25.fp|Las fechas [importantes] están marcadas en rojo.|重要日期都用红色标记了。
+adjectives-26.fs|Esta receta es [diferente] de la que hace mi madre.|这份食谱和我妈妈做的不一样。
+adjectives-26.mp|Los dos hermanos tienen gustos [diferentes].|这两个兄弟的喜好不同。
+adjectives-26.fp|Las habitaciones tienen vistas [diferentes].|这些房间看到的景色不同。
+adjectives-27.fs|Mi mochila es [igual] a la tuya.|我的背包和你的一样。
+adjectives-27.mp|Los precios son [iguales] en todas las sucursales.|所有分店的价格都一样。
+adjectives-27.fp|Las dos llaves parecen [iguales], pero abren puertas distintas.|这两把钥匙看着一样，但开的门不同。
+adjectives-28.fs|Esta es la dirección [correcta] del hotel.|这是酒店的正确地址。
+adjectives-28.mp|Todos los números del informe son [correctos].|报告中的所有数字都正确。
+adjectives-28.fp|La profesora ha marcado las respuestas [correctas].|老师标出了正确答案。
+adjectives-29.fs|La visita aún es [posible] si salimos ahora.|如果现在出发，我们仍能去参观。
+adjectives-29.mp|Hemos revisado todos los caminos [posibles].|我们查看了所有可能的路线。
+adjectives-29.fp|Hay varias soluciones [posibles] para este problema.|这个问题有几种可行的解决办法。
+adjectives-30.fs|La cena está [lista]; venid a la mesa.|晚饭做好了，来餐桌边吧。
+adjectives-30.mp|Los equipajes están [listos] para salir.|行李都收拾好了，可以出发。
+adjectives-30.fp|Las habitaciones están [listas] para los nuevos huéspedes.|房间准备好了，可以接待新客人。
+body-22.fs|Mi gata está [enferma] y no quiere comer.|我的母猫病了，不想吃东西。
+body-22.mp|Los niños [enfermos] se quedan en casa.|生病的孩子们留在家里。
+body-22.fp|Las plantas [enfermas] tienen manchas en las hojas.|生病的植物叶子上有斑点。
+body-23.fs|La niña está [sana] y crece con normalidad.|女孩很健康，发育正常。
+body-23.mp|Estos árboles están [sanos] a pesar de la sequía.|尽管干旱，这些树仍然健康。
+body-23.fp|Las encías [sanas] no suelen sangrar al cepillarse.|健康的牙龈刷牙时通常不出血。
+world-18.fs|Llevo una bufanda [roja] para que me reconozcas.|我戴一条红围巾，方便你认出我。
+world-18.mp|Los tomates [rojos] ya se pueden recoger.|红番茄已经可以采摘了。
+world-18.fp|Pon las flores [rojas] junto a las blancas.|把红花放在白花旁边。
+world-19.fs|La puerta [azul] es la entrada principal.|蓝色的门是正门。
+world-19.mp|Mi abuelo tiene los ojos [azules].|我爷爷有蓝色的眼睛。
+world-19.fp|Las tazas [azules] están en el estante de arriba.|蓝色杯子在上面的架子上。
+world-20.fs|La mochila [verde] es de mi hermano.|绿色背包是我哥哥的。
+world-20.mp|Los pimientos [verdes] cuestan menos hoy.|青椒今天便宜些。
+world-20.fp|Las hojas siguen [verdes] en este árbol.|这棵树的叶子还是绿的。
+world-21.fs|Busca la casa [amarilla] junto al puente.|找桥旁边那栋黄色房子。
+world-21.mp|Los plátanos [amarillos] están listos para comer.|黄色的香蕉已经可以吃了。
+world-21.fp|Las líneas [amarillas] prohíben aparcar aquí.|黄色标线表示这里禁止停车。
+world-22.fs|Necesito una camisa [blanca] para el concierto.|音乐会我需要一件白衬衫。
+world-22.mp|Los platos [blancos] combinan con este mantel.|白盘子和这张桌布很配。
+world-22.fp|Las paredes [blancas] dan más luz al salón.|白色墙面让客厅更明亮。
+world-23.fs|La gata [negra] duerme sobre la alfombra.|黑色母猫睡在地毯上。
+world-23.mp|Mis zapatos [negros] necesitan limpieza.|我的黑鞋需要擦了。
+world-23.fp|Las nubes [negras] anuncian una tormenta.|黑云预示暴风雨将至。
+world-24.fs|La chaqueta [gris] está detrás de la puerta.|灰色夹克在门后。
+world-24.mp|Los días [grises] me invitan a quedarme en casa.|阴沉的日子让我想待在家里。
+world-24.fp|Las piedras [grises] forman el borde del camino.|灰色石头构成了路的边缘。
+world-25.fs|He perdido una bolsa [marrón] en el autobús.|我在公交车上丢了一个棕色袋子。
+world-25.mp|Los ojos de mi hermana son [marrones].|我姐姐的眼睛是棕色的。
+world-25.fp|Las botas [marrones] están llenas de barro.|棕色靴子上沾满了泥。

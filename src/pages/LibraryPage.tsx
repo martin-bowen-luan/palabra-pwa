@@ -9,6 +9,8 @@ import { useAi } from '../ai/AiProvider'
 import { useAppState } from '../app/AppState'
 import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
+import { SpanishDictionary, groupSpanishResults } from '../spanish/SpanishDictionary'
+import spanishStyles from '../spanish/Spanish.module.css'
 
 export function LibraryPage() {
   const { categories, progress, settings, vocabulary } = useAppState()
@@ -34,7 +36,7 @@ export function LibraryPage() {
     return vocabulary.filter((word) =>
       (view === 'all' || Boolean(progress[word.id])) &&
       (category === '全部' || word.category === category) &&
-      (!needle || word.term.toLocaleLowerCase(word.language).includes(needle) || word.meaningZh.includes(needle) || word.spellingVariants?.some((variant) => variant.toLocaleLowerCase('en').includes(needle))),
+      (!needle || word.term.toLocaleLowerCase(word.language).includes(needle) || word.meaningZh.includes(needle) || word.spanishData?.lemma.toLocaleLowerCase('es').includes(needle) || word.spanishData?.grammarLabel.includes(needle) || word.spellingVariants?.some((variant) => variant.toLocaleLowerCase('en').includes(needle))),
     )
   }, [category, progress, query, view, vocabulary])
   useEffect(() => {
@@ -49,6 +51,7 @@ export function LibraryPage() {
     heading.current?.closest('main')?.scrollIntoView?.({ block: 'start', behavior: 'instant' })
   }, [selectedId])
   const visibleWords = filtered.slice(0, visibleCount)
+  const spanishGroups = settings.learningLanguage === 'es' && vocabulary.some(word=>word.spanishData) ? groupSpanishResults(filtered) : undefined
 
   if (selectedId && !selected) return <main className={styles.page}>
     <button className={styles.backButton} onClick={goBack}><BackIcon />{backLabel}</button>
@@ -74,6 +77,7 @@ export function LibraryPage() {
           <p>{example.translationZh}</p>
         </div>)}
         <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} />
+        <SpanishDictionary word={selected} vocabulary={vocabulary} progress={progress} select={id=>setSearchParams({word:id},{state:{wordLinkFrom:location.pathname+location.search}})} />
         <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / ${progress[selected.id]?.scheduleVersion === 1 ? 7 : 5}`}{progress[selected.id]?.reviewPriority === 'skipped' && ' · 拼写跳过，优先复习'}</footer>
       </section>
     </main>
@@ -94,11 +98,11 @@ export function LibraryPage() {
       {categories.map((item) => <button key={item} className={category === item ? styles.categoryActive : ''} onClick={() => setCategory(item)}>{item}</button>)}
     </div>
     <div className={styles.dictionaryList}>
-      {visibleWords.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSearchParams({ word: word.id }, { state: { wordLinkFrom: '/library' } })}>
+      {spanishGroups ? spanishGroups.slice(0,visibleCount).map(group=>group.words.length===1?<button key={group.term} className={`${styles.dictionaryRow} ${spanishStyles.resultRow}`} onClick={()=>setSearchParams({word:group.words[0].id},{state:{wordLinkFrom:'/library'}})}><span><strong>{group.term}</strong><small>{group.words[0].spanishData?.grammarLabel??group.words[0].partOfSpeech}</small></span><span>{group.words[0].meaningZh}</span></button>:<details key={group.term} className={spanishStyles.searchGroup}><summary><strong lang="es">{group.term}</strong><span>{group.words.length} 种语法用法</span></summary>{group.words.map(word=><button key={word.id} className={spanishStyles.formRow} onClick={()=>setSearchParams({word:word.id},{state:{wordLinkFrom:'/library'}})}><strong>{word.meaningZh}</strong><span>{word.spanishData?.lemma} · {word.spanishData?.grammarLabel}</span></button>)}</details>) : visibleWords.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSearchParams({ word: word.id }, { state: { wordLinkFrom: '/library' } })}>
         <span><strong>{word.term}</strong><small>{word.partOfSpeech}</small></span>
         <span>{word.meaningZh}</span>
       </button>)}
-      {visibleCount < filtered.length && <button className={styles.loadMoreButton} onClick={() => setVisibleCount((count) => count + 80)}>显示更多</button>}
+      {visibleCount < (spanishGroups?.length??filtered.length) && <button className={styles.loadMoreButton} onClick={() => setVisibleCount((count) => count + 80)}>显示更多</button>}
       {!filtered.length && <div className={styles.emptyState}>
         <h2>{view === 'learned' && !Object.keys(progress).length ? '还没有背过单词' : '没有找到这个词'}</h2>
         <p>{view === 'learned' && !Object.keys(progress).length ? '开始学习后，背过的词会出现在这里。' : '换一个关键词或分类试试。'}</p>

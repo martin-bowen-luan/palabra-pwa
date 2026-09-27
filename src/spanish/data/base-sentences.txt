@@ -1,0 +1,300 @@
+basic-01|¡[Hola], Marta! ¿Ya has llegado?|你好，玛尔塔！你已经到了吗？
+basic-02|Le dije [adiós] desde la ventana del tren.|我从火车窗口向他告别。
+basic-03|Muchas [gracias] por traerme las llaves.|非常感谢你给我送来钥匙。
+basic-04|Cierra la puerta, [por favor].|请把门关上。
+basic-05|Esta vez [sí] puedo acompañarte.|这次我确实能陪你去。
+basic-06|Hoy [no] hay clase porque es fiesta.|今天放假，所以不上课。
+basic-07|Te pido [perdón] por llegar tan tarde.|我为来得这么晚向你道歉。
+basic-08|El abuelo se encuentra [bien] después del descanso.|爷爷休息后感觉很好。
+basic-09|He dormido [mal] por el ruido de la calle.|街上的噪声让我没睡好。
+basic-10|Te echo [mucho] de menos desde que te fuiste.|你走后，我非常想念你。
+basic-11|Hoy he dormido [poco] porque tenía mucho trabajo.|今天我因为工作很多，睡得很少。
+basic-12|La estación está [más] lejos de lo que pensaba.|车站比我想的更远。
+basic-13|Este billete cuesta [menos] que el de ayer.|这张票比昨天的便宜。
+basic-14|Ana viene a cenar y Luis [también].|安娜要来吃晚饭，路易斯也来。
+basic-15|Deja la maleta [aquí], junto a mis pies.|把行李箱放在这里，我脚边。
+basic-16|El pueblo está [allí], al otro lado del río.|村庄在那里，河的对岸。
+basic-17|No puedo hablar [ahora]; estoy conduciendo.|我现在不能说话，正在开车。
+basic-18|Mi cumpleaños es [hoy]; esta noche lo celebramos.|今天是我的生日，今晚我们庆祝。
+basic-19|El paquete llegará [mañana]; hoy todavía está en Madrid.|包裹明天到，今天还在马德里。
+basic-20|La reunión fue [ayer]; hoy solo tenemos que enviar el resumen.|会议昨天开过了，今天我们只需要发送纪要。
+basic-21|Mi padre [siempre] lleva gafas para leer.|我爸爸看书时总戴眼镜。
+basic-22|Yo [nunca] he viajado en avión.|我从未坐过飞机。
+basic-23|Hay [algo] debajo de la cama, pero no veo qué es.|床底下有个东西，但我看不清是什么。
+basic-24|Abrí la caja y no encontré [nada].|我打开盒子，里面什么也没有。
+basic-25|Ya está [todo] preparado para la cena.|晚餐的一切都准备好了。
+basic-26|Este vaso está roto; tráeme [otro] vaso.|这个杯子破了，给我再拿一个杯子。
+basic-27|Los dos autobuses van al [mismo] pueblo.|这两辆公交车都去同一个村庄。
+basic-28|El café está [muy] caliente; espera un poco.|咖啡很烫，等一会儿。
+basic-29|No compres pan; [ya] he comprado dos barras.|别买面包了，我已经买了两条。
+basic-30|Son las once y el bebé [todavía] duerme.|十一点了，宝宝还在睡。
+people-01|Solo cabe una [persona] más en el ascensor.|电梯里只能再进一个人。
+people-02|El [hombre] del abrigo azul es mi tío.|穿蓝色大衣的男人是我叔叔。
+people-03|La [mujer] que vende flores conoce a mi madre.|卖花的那位女士认识我妈妈。
+people-04|El [niño] guarda sus juguetes antes de cenar.|那个男孩在晚饭前收好玩具。
+people-05|La [niña] dibuja un barco en la arena.|那个女孩在沙滩上画了一艘船。
+people-06|Mi [amigo] Pablo me presta su bicicleta.|我的朋友巴勃罗把自行车借给我。
+people-07|Mi [amiga] Clara vive en el piso de arriba.|我的朋友克拉拉住在楼上。
+people-08|Toda la [familia] se reúne en casa de la abuela.|全家人聚在奶奶家。
+people-09|Mi [madre] me enseñó a cocinar esta sopa.|我妈妈教我做这道汤。
+people-10|Su [padre] viene a recogerlo a la escuela.|他爸爸来学校接他。
+people-11|Nuestro [hijo] acaba de cumplir cinco años.|我们的儿子刚满五岁。
+people-12|Su [hija] toca el piano en el concierto.|他们的女儿在音乐会上弹钢琴。
+people-13|Mi [hermano] mayor trabaja en una farmacia.|我哥哥在药房工作。
+people-14|Llamo a mi [hermana] para contarle la noticia.|我打电话把这个消息告诉姐姐。
+people-15|El [abuelo] nos cuenta historias de su pueblo.|爷爷给我们讲他村里的故事。
+people-16|La [abuela] ha tejido una bufanda para el bebé.|奶奶给宝宝织了一条围巾。
+people-17|Mi [marido] prepara el desayuno los domingos.|我的丈夫每周日做早餐。
+people-18|Su [esposa] lo espera en la entrada del cine.|他的妻子在电影院门口等他。
+people-19|Escribe tu [nombre] en la primera línea.|把你的名字写在第一行。
+people-20|Hay mucha [gente] esperando el autobús.|很多人在等公交车。
+people-21|El [bebé] se ha quedado dormido en mis brazos.|宝宝在我怀里睡着了。
+people-22|La [estudiante] entrega su trabajo a la profesora.|那名女学生把作业交给老师。
+people-23|El [profesor] explica el problema con un dibujo.|老师用一幅图解释这个问题。
+people-24|Mi [compañero] de piso ha perdido sus llaves.|我的室友弄丢了钥匙。
+people-25|Nuestro [vecino] riega las plantas cuando viajamos.|我们旅行时，邻居帮忙浇花。
+people-26|El [señor] García tiene una cita a las diez.|加西亚先生约好了十点见面。
+people-27|La [señora] del tercero nos ha traído un pastel.|住三楼的女士给我们送来了蛋糕。
+people-28|El [joven] dejó su asiento a una anciana.|那位年轻人把座位让给了一位老太太。
+people-29|Cada niño debe entrar acompañado de un [adulto].|每个孩子都必须由一名成年人陪同入场。
+people-30|Mi [pareja] y yo compartimos los gastos de la casa.|我和伴侣分担家里的开支。
+time-01|De los tres caminos, solo [uno] llega al río.|三条路中只有一条通向河边。
+time-02|Necesito [dos] entradas, una para ti y otra para mí.|我需要两张票，你我各一张。
+time-03|La mesa tiene [tres] patas y no se cae.|这张桌子有三条腿，但不会倒。
+time-04|En esta casa vivimos [cuatro] personas.|我们四个人住在这栋房子里。
+time-05|Tengo [cinco] dedos en cada mano.|我的每只手都有五根手指。
+time-06|La caja trae [seis] huevos, media docena.|这盒装了六个鸡蛋，也就是半打。
+time-07|Una semana tiene [siete] días.|一周有七天。
+time-08|El pulpo tiene [ocho] brazos.|章鱼有八条腕足。
+time-09|El niño cumple [nueve] años este mes.|这个男孩本月满九岁。
+time-10|Puedes sacar [diez] libros con este carné.|用这张借书证可以借十本书。
+time-11|Pasamos todo el [día] en la playa.|我们在海滩待了一整天。
+time-12|La biblioteca cierra una [semana] por obras.|图书馆因施工关闭一周。
+time-13|El alquiler se paga una vez al [mes].|房租每月付一次。
+time-14|El próximo [año] empezaré la universidad.|我明年开始上大学。
+time-15|El viaje dura una [hora] en tren.|坐火车这趟路要一个小时。
+time-16|Espera un [minuto]; voy a buscar mi abrigo.|等一分钟，我去拿外套。
+time-17|El ganador llegó un [segundo] antes que yo.|冠军比我早一秒到达。
+time-18|Este es un buen [momento] para pedir ayuda.|现在是求助的好时机。
+time-19|¿Qué [fecha] aparece en tu billete?|你的票上写的是什么日期？
+time-20|He marcado la cita en el [calendario] de la cocina.|我在厨房的日历上标好了预约时间。
+time-21|El [lunes] vuelvo al trabajo después del fin de semana.|周末过后，我周一回去上班。
+time-22|El [martes] tengo cita con el dentista después de trabajar.|周二下班后我约了看牙医。
+time-23|Cada [miércoles] llevo a mi hija a natación.|每周三我带女儿去游泳。
+time-24|El pedido llegará el [jueves] por la mañana.|订的货周四上午送到。
+time-25|Salimos el [viernes] y volvemos el domingo.|我们周五出发，周日回来。
+time-26|El [sábado] por la mañana vamos al mercado.|周六早上我们去市场。
+time-27|El [domingo] descansa toda la familia.|周日全家人休息。
+time-28|Nos encontramos al [mediodía], a las doce.|我们中午十二点见面。
+time-29|La fiesta terminó a [medianoche], cuando dieron las doce.|午夜十二点钟响时，聚会结束了。
+time-30|El [fin] de las vacaciones llegó demasiado pronto.|假期结束得太快了。
+food-01|Llena la botella con [agua] del grifo.|用自来水把瓶子装满。
+food-02|Tomo un [café] solo antes de salir de casa.|出门前我喝一杯黑咖啡。
+food-03|¿Prefieres [té] verde o una infusión de menta?|你喜欢绿茶还是薄荷茶？
+food-04|Guarda la [leche] en la nevera para que no se estropee.|把牛奶放进冰箱，免得变质。
+food-05|Compra una barra de [pan] en la esquina.|去街角买一条面包。
+food-06|El [arroz] necesita diez minutos más de cocción.|米饭还需要再煮十分钟。
+food-07|Ella no come [carne], pero sí come pescado.|她不吃肉，但吃鱼。
+food-08|El [pescado] del mercado está muy fresco.|市场里的鱼很新鲜。
+food-09|Hoy asamos un [pollo] con patatas.|今天我们烤一只鸡，配土豆。
+food-10|Rompe un [huevo] en el cuenco.|往碗里打一个鸡蛋。
+food-11|Este [queso] se elabora con leche de oveja.|这种奶酪是用羊奶做的。
+food-12|De postre prefiero [fruta] fresca.|甜点我更想吃新鲜水果。
+food-13|Partí una [manzana] para compartirla contigo.|我切了一个苹果，和你一起吃。
+food-14|Exprime una [naranja] para preparar el zumo.|榨一个橙子来做果汁。
+food-15|Llevo un [plátano] en la mochila para la merienda.|我在背包里带了一根香蕉，当下午点心。
+food-16|Añade más [verdura] al guiso.|往炖菜里多放些蔬菜。
+food-17|Corta el [tomate] en rodajas finas.|把番茄切成薄片。
+food-18|Pela una [patata] grande para la tortilla.|削一个大土豆，用来做西班牙蛋饼。
+food-19|La [sopa] está hirviendo; ten cuidado.|汤在沸腾，小心。
+food-20|Preparo una [ensalada] de lechuga y pepino.|我做一份生菜黄瓜沙拉。
+food-21|El hotel incluye el [desayuno] en el precio.|酒店房价包含早餐。
+food-22|Nos vemos para el [almuerzo] a la una.|我们一点见面吃午饭。
+food-23|La [cena] estará lista a las nueve.|晚饭九点做好。
+food-24|No tires la [comida] que sobra.|别把剩下的食物扔掉。
+food-25|No añadas [azúcar]; el zumo ya es dulce.|别加糖了，果汁已经很甜。
+food-26|A esta sopa le falta [sal].|这汤缺点盐。
+food-27|La [botella] de vidrio se ha roto.|那个玻璃瓶碎了。
+food-28|Pon un [vaso] junto a cada plato.|在每个盘子旁放一个玻璃杯。
+food-29|Mi [taza] de té tiene el asa rota.|我的茶杯把手断了。
+food-30|Este [plato] de cerámica lo hizo mi hermana.|这个陶瓷盘子是我姐姐做的。
+home-01|Nuestra [casa] tiene un pequeño jardín detrás.|我们房子后面有个小花园。
+home-02|La [habitación] del hotel da al mar.|酒店房间朝着大海。
+home-03|Huele a pan recién hecho en la [cocina].|厨房里有刚出炉面包的香味。
+home-04|El [baño] está al fondo del pasillo.|浴室在走廊尽头。
+home-05|Alguien llama a la [puerta] de la calle.|有人在敲临街的大门。
+home-06|Abre la [ventana] para que entre aire.|打开窗户透透气。
+home-07|La comida ya está sobre la [mesa].|饭菜已经摆在桌上。
+home-08|Acerca una [silla] para sentarte con nosotros.|搬把椅子来和我们一起坐。
+home-09|El gato duerme debajo de la [cama].|猫在床底下睡觉。
+home-10|Este [sofá] es lo bastante grande para tres personas.|这张沙发足够坐三个人。
+home-11|Enciende la [lámpara] para leer mejor.|打开灯，看书更清楚。
+home-12|Esta [llave] no abre la puerta del garaje.|这把钥匙打不开车库门。
+home-13|Devuelve el [libro] a la biblioteca el viernes.|周五把书还给图书馆。
+home-14|Apunto las recetas en un [cuaderno].|我把食谱记在笔记本里。
+home-15|Envuelve el regalo con este [papel].|用这张纸包礼物。
+home-16|¿Me prestas un [bolígrafo] para firmar?|能借我一支圆珠笔签字吗？
+home-17|Me he dejado el [teléfono] cargando en casa.|我把手机落在家里充电了。
+home-18|El [ordenador] se apagó antes de guardar el archivo.|文件还没保存，电脑就关机了。
+home-19|Mi [reloj] se retrasa cinco minutos al día.|我的手表每天慢五分钟。
+home-20|Esta [foto] la hicimos durante el viaje.|这张照片是我们旅行时拍的。
+home-21|La [ropa] sigue mojada por la lluvia.|衣服淋了雨，还湿着。
+home-22|Necesito planchar la [camisa] para la entrevista.|我得把面试要穿的衬衫熨一下。
+home-23|Este [pantalón] me queda demasiado largo.|这条裤子我穿太长了。
+home-24|Tengo una piedra dentro del [zapato].|我的鞋子里有一颗石头。
+home-25|Trae una [bolsa] para llevar la compra.|带个袋子装买的东西。
+home-26|He ahorrado suficiente [dinero] para el viaje.|我已经存够了旅行的钱。
+home-27|Solo falta una [cosa]: cerrar las ventanas.|只剩一件事：关窗户。
+home-28|He comprado un [regalo] para tu cumpleaños.|我给你买了一份生日礼物。
+home-29|Este [juego] de cartas es para cuatro jugadores.|这个纸牌游戏需要四个人玩。
+home-30|Baja la [música]; el bebé está durmiendo.|把音乐调小些，宝宝在睡觉。
+places-01|La [ciudad] tiene una red de metro muy extensa.|这座城市的地铁网络很大。
+places-02|En mi [pueblo] todos se conocen.|在我的村子里，大家互相认识。
+places-03|Esta [calle] es solo para peatones.|这条街只供行人通行。
+places-04|Los niños juegan en la [plaza] del ayuntamiento.|孩子们在市政厅广场玩耍。
+places-05|Paseamos por el [parque] después de comer.|吃完饭，我们在公园散步。
+places-06|La [tienda] de la esquina vende pilas.|街角的商店卖电池。
+places-07|El [mercado] abre temprano los sábados.|市场每周六很早开门。
+places-08|He reservado una mesa en el [restaurante].|我在餐馆订了一张桌子。
+places-09|Dejamos las maletas en el [hotel].|我们把行李箱留在酒店。
+places-10|Mi hija va a una [escuela] cerca de casa.|我女儿在家附近的一所学校上学。
+places-11|Mi hermano estudia medicina en la [universidad].|我哥哥在大学学医。
+places-12|Hoy trabajo desde casa y no voy a la [oficina].|今天我在家办公，不去办公室。
+places-13|La ambulancia llegó al [hospital] en pocos minutos.|救护车几分钟就到了医院。
+places-14|Voy a la [farmacia] a recoger mis medicamentos.|我去药房取药。
+places-15|El [banco] me ha enviado una tarjeta nueva.|银行给我寄了一张新卡。
+places-16|Nos vemos en la [estación] antes de que salga el tren.|我们在火车出发前在车站见面。
+places-17|El taxi nos dejó en el [aeropuerto].|出租车把我们送到了机场。
+places-18|La [playa] está vacía a esta hora.|这个时间海滩上没有人。
+places-19|Para entrar en ese [país] necesitas pasaporte.|进入那个国家需要护照。
+places-20|Busca el museo en el [mapa].|在地图上找一下博物馆。
+places-21|El [viaje] en barco duró toda la noche.|这趟乘船旅行持续了一整夜。
+places-22|Hemos aparcado el [coche] junto al puente.|我们把汽车停在了桥边。
+places-23|Este [autobús] para delante del museo.|这辆公交车在博物馆前停靠。
+places-24|El [tren] con destino a Madrid sale del andén dos.|去马德里的火车从二号站台发车。
+places-25|El [avión] aterrizó con veinte minutos de retraso.|飞机晚了二十分钟降落。
+places-26|Voy al trabajo en [bicicleta] cuando no llueve.|不下雨时，我骑自行车去上班。
+places-27|Guarda el [billete] hasta el final del trayecto.|把车票保留到行程结束。
+places-28|Mi [maleta] pesa más de veinte kilos.|我的行李箱重二十多公斤。
+places-29|Este [camino] atraviesa el bosque.|这条路穿过森林。
+places-30|Anota la [dirección] del hotel antes de salir.|出门前记下酒店地址。
+verbs-01|De mayor quiero [ser] médico.|我长大后想当医生。
+verbs-02|Prefiero [estar] cerca de la ventana.|我更愿意待在窗户附近。
+verbs-03|Me gustaría [tener] un jardín pequeño.|我想有一个小花园。
+verbs-04|Tenemos que [hacer] la compra antes de las ocho.|我们得在八点前买好东西。
+verbs-05|¿Quieres [ir] conmigo al concierto?|你想和我一起去听音乐会吗？
+verbs-06|Gracias por [venir] a verme al hospital.|谢谢你来医院看我。
+verbs-07|Desde aquí se puede [ver] la montaña.|从这里能看到那座山。
+verbs-08|No dejes de [mirar] la carretera mientras conduces.|开车时不要把视线移开路面。
+verbs-09|Necesito [hablar] contigo en privado.|我需要和你单独谈谈。
+verbs-10|No sé qué [decir] después de esa noticia.|听到那个消息后，我不知道该说什么。
+verbs-11|Me gusta [escuchar] la radio mientras cocino.|我喜欢做饭时听广播。
+verbs-12|El niño está aprendiendo a [leer].|孩子正在学认字阅读。
+verbs-13|Voy a [escribir] una carta a mi abuela.|我要给奶奶写一封信。
+verbs-14|No podemos [comer] dentro de la biblioteca.|我们不能在图书馆里吃东西。
+verbs-15|Después de correr, necesito [beber] agua.|跑步后，我需要喝水。
+verbs-16|El ruido no me deja [dormir].|噪声让我睡不着。
+verbs-17|Han decidido [vivir] cerca de sus padres.|他们决定住在父母附近。
+verbs-18|Ella busca un lugar tranquilo para [trabajar].|她在找一个安静的地方工作。
+verbs-19|Esta tarde tengo que [estudiar] para el examen.|今天下午我得为考试学习。
+verbs-20|Quiero [aprender] a tocar la guitarra.|我想学弹吉他。
+verbs-21|Vamos a [comprar] fruta en el mercado.|我们要去市场买水果。
+verbs-22|¿Puedo [pagar] con tarjeta?|我可以用卡付款吗？
+verbs-23|Hace falta una llave para [abrir] este cajón.|打开这个抽屉需要一把钥匙。
+verbs-24|Recuerda [cerrar] el grifo cuando termines.|用完后记得关水龙头。
+verbs-25|Salimos a [buscar] al perro perdido.|我们出去找走失的狗。
+verbs-26|No consigo [encontrar] mis gafas.|我找不到眼镜。
+verbs-27|Es normal [querer] descansar después del viaje.|旅行后想休息很正常。
+verbs-28|Espero [poder] ayudarte mañana.|我希望明天能帮你。
+verbs-29|Vamos a [necesitar] más sillas para los invitados.|我们会需要更多椅子给客人坐。
+verbs-30|¿Puedes [ayudar] a tu hermano con las bolsas?|你能帮你弟弟提袋子吗？
+adjectives-01|Este pan es [bueno], aunque parece duro.|这面包虽看着硬，但很好吃。
+adjectives-02|El olor del cubo de basura es [malo].|垃圾桶的气味很难闻。
+adjectives-03|Necesitamos un armario [grande] para los abrigos.|我们需要一个大衣柜放外套。
+adjectives-04|Mi piso es [pequeño], pero tiene mucha luz.|我的公寓很小，但采光很好。
+adjectives-05|He comprado un teléfono [nuevo] porque el anterior se rompió.|原来的手机坏了，所以我买了一部新的。
+adjectives-06|Este puente es muy [viejo], de hace varios siglos.|这座桥很古老，有好几个世纪了。
+adjectives-07|Mi abuelo era muy [joven] cuando empezó a trabajar.|我爷爷开始工作时还很年轻。
+adjectives-08|El jardín está [bonito] con tantas flores.|花这么多，花园真漂亮。
+adjectives-09|Ese edificio es [feo], pero por dentro resulta cómodo.|那栋楼不好看，但里面很舒适。
+adjectives-10|Este ejercicio es [fácil]; lo terminé en un minuto.|这道练习很简单，我一分钟就做完了。
+adjectives-11|El último problema es [difícil] incluso con ayuda.|最后一道题即使有人帮忙也很难。
+adjectives-12|El tren [rápido] llega en solo media hora.|快车只要半小时就到。
+adjectives-13|El servicio es [lento]; llevamos una hora esperando.|服务很慢，我们已经等了一个小时。
+adjectives-14|El plato sigue [caliente]; no lo toques.|盘子还烫着，别碰。
+adjectives-15|El café se ha quedado [frío] sobre la mesa.|咖啡放在桌上变凉了。
+adjectives-16|El suelo está [limpio]; acabo de fregarlo.|地板很干净，我刚拖过。
+adjectives-17|El mantel está [sucio] de salsa.|桌布沾了酱汁，脏了。
+adjectives-18|El supermercado sigue [abierto] hasta las diez.|超市一直营业到十点。
+adjectives-19|El museo está [cerrado] por reformas.|博物馆因装修关闭了。
+adjectives-20|El autobús va [lleno]; esperemos al siguiente.|这辆公交车满了，我们等下一辆吧。
+adjectives-21|El vaso está [vacío]; ¿quieres más agua?|杯子空了，你还要水吗？
+adjectives-22|Mi hermano está [feliz] con su nuevo trabajo.|我哥哥对新工作很满意。
+adjectives-23|El niño está [triste] porque se ha perdido su gato.|猫走丢了，那个男孩很难过。
+adjectives-24|Estoy [cansado] después de cargar tantas cajas.|搬了这么多箱子后，我累了。
+adjectives-25|Este documento es [importante]; guárdalo bien.|这份文件很重要，要收好。
+adjectives-26|Mi billete es [diferente] del tuyo: tiene otra fecha.|我的票和你的不一样，日期不同。
+adjectives-27|El precio es [igual] en las dos tiendas.|两家商店的价格一样。
+adjectives-28|El número que has marcado es [correcto].|你拨的号码是正确的。
+adjectives-29|Con este tiempo, el viaje aún es [posible].|这样的天气下，旅行仍然可行。
+adjectives-30|El equipaje está [listo] junto a la puerta.|行李已经收拾好，放在门旁。
+body-01|Hay que mover el [cuerpo] después de tantas horas sentado.|坐了这么久，该活动一下身体了。
+body-02|Me duele la [cabeza] desde esta mañana.|我从今天早上开始头痛。
+body-03|El niño tiene la [cara] llena de chocolate.|孩子的脸上沾满了巧克力。
+body-04|Me ha entrado arena en el [ojo] derecho.|我的右眼进了沙子。
+body-05|Tengo la [nariz] tapada por el resfriado.|我感冒了，鼻子堵着。
+body-06|Abre la [boca] para que el dentista pueda mirar.|张开嘴，让牙医检查。
+body-07|Al niño se le ha caído un [diente].|孩子掉了一颗牙。
+body-08|Lleva un pendiente en la [oreja] izquierda.|她左耳戴着一只耳环。
+body-09|Me seco el [pelo] antes de salir.|我出门前把头发吹干。
+body-10|La bufanda me protege el [cuello] del frío.|围巾保护我的脖子不受冻。
+body-11|El enfermero me puso una venda en el [brazo].|护士在我的手臂上缠了绷带。
+body-12|Levanta la [mano] si necesitas ayuda.|需要帮助就举手。
+body-13|Me corté un [dedo] al pelar la fruta.|削水果时，我割破了一根手指。
+body-14|Apoya la [pierna] sobre un cojín.|把腿放在垫子上。
+body-15|Este zapato me aprieta el [pie].|这只鞋挤我的脚。
+body-16|La mochila me hace daño en la [espalda].|背包把我的背弄疼了。
+body-17|El médico escuchó mi [corazón] con el estetoscopio.|医生用听诊器听了我的心脏。
+body-18|Dormir bien es importante para la [salud].|睡好觉对健康很重要。
+body-19|El [dolor] de muelas no me deja comer.|牙痛让我没法吃东西。
+body-20|El [médico] me ha recomendado descansar.|医生建议我休息。
+body-21|Toma la [medicina] después de cenar, como te indicaron.|按嘱咐，晚饭后吃药。
+body-22|Mi hijo está [enfermo] y hoy no va al colegio.|我儿子病了，今天不上学。
+body-23|El cachorro está [sano] y crece deprisa.|小狗很健康，长得很快。
+body-24|Tengo [hambre] porque no he desayunado.|我没吃早餐，所以饿了。
+body-25|Después del paseo tengo mucha [sed].|散步后我很渴。
+body-26|Apago la luz porque tengo [sueño].|我困了，所以关灯。
+body-27|Hagamos un [descanso] antes de seguir trabajando.|继续工作前，我们休息一下吧。
+body-28|Hago [ejercicio] en el parque tres veces por semana.|我每周在公园锻炼三次。
+body-29|Prefiero [caminar] hasta la estación.|我更愿意走路去车站。
+body-30|No debes [correr] por las escaleras.|你不该在楼梯上跑。
+world-01|El [sol] se oculta detrás de las montañas.|太阳消失在群山后面。
+world-02|Esta noche la [luna] ilumina el camino.|今晚月亮照亮了道路。
+world-03|No hay ninguna nube en el [cielo].|天空中一片云也没有。
+world-04|Vimos una [estrella] fugaz desde el balcón.|我们从阳台上看到了一颗流星。
+world-05|El [mar] está tranquilo esta mañana.|今天早上海面很平静。
+world-06|Un puente de piedra cruza el [río].|一座石桥横跨河流。
+world-07|La [montaña] está cubierta de nieve.|山上覆盖着积雪。
+world-08|Nos sentamos a la sombra de un [árbol].|我们坐在一棵树的树荫下。
+world-09|Ha salido una [flor] amarilla en la maceta.|花盆里开出了一朵黄花。
+world-10|No te acerques a ese [animal] salvaje.|别靠近那只野生动物。
+world-11|Nuestro [perro] espera junto a la puerta.|我们的狗等在门边。
+world-12|El [gato] se ha subido al tejado.|猫爬上了屋顶。
+world-13|Un [pájaro] ha hecho su nido en el balcón.|一只鸟在阳台上筑了巢。
+world-14|No tenemos [tiempo] para visitar otro museo.|我们没有时间再参观一个博物馆了。
+world-15|La [lluvia] golpea los cristales de la ventana.|雨打在窗玻璃上。
+world-16|El [viento] se ha llevado mi sombrero.|风吹走了我的帽子。
+world-17|Una [nube] oscura tapa el sol.|一朵乌云遮住了太阳。
+world-18|No cruces cuando el semáforo está [rojo].|红灯时不要过马路。
+world-19|Reconocerás mi coche por su color [azul].|你看蓝色就能认出我的车。
+world-20|El césped está [verde] después de la lluvia.|雨后草坪绿油油的。
+world-21|El autobús escolar es [amarillo].|校车是黄色的。
+world-22|El mantel [blanco] tiene una mancha de vino.|白色桌布上有一块酒渍。
+world-23|Mi abrigo [negro] está colgado detrás de la puerta.|我的黑色大衣挂在门后。
+world-24|El cielo está [gris] y parece que va a llover.|天空灰蒙蒙的，看起来要下雨。
+world-25|He elegido un cinturón [marrón] para estos zapatos.|我选了一条棕色皮带来配这双鞋。
+world-26|¿De qué [color] quieres pintar la pared?|你想把墙刷成什么颜色？
+world-27|En [primavera] florecen los almendros.|杏树在春天开花。
+world-28|Pasamos el [verano] en una casa junto al mar.|我们在海边的一栋房子里度过夏天。
+world-29|En [otoño] se caen las hojas de estos árboles.|这些树的叶子在秋天掉落。
+world-30|Durante el [invierno] anochece muy temprano.|冬天，天很早就黑了。

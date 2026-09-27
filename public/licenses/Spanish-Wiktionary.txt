@@ -1,0 +1,32 @@
+Spanish course grammatical data attribution
+
+Grammatical forms and tags are derived from English Wiktionary contributors,
+via Tatu Ylonen's Kaikki.org / Wiktextract extraction. These selected and
+normalized grammatical data are distributed under CC BY-SA 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Retrieved 2026-09-27 from:
+https://kaikki.org/dictionary/Spanish/kaikki.org-dictionary-Spanish.jsonl
+Index: https://kaikki.org/dictionary/Spanish/index.html
+The index states: enwiktionary dump 2026-09-02, extraction 2026-09-25,
+wiktextract revisions 1a05e46 and e3d6d4e.
+
+Attribution and contributor histories for each underlying Spanish lemma:
+https://en.wiktionary.org/wiki/<lemma>#Spanish
+https://en.wiktionary.org/w/index.php?title=<lemma>&action=history
+(Replace <lemma> with the URL-encoded source word.)
+
+Full download hash, selected snapshot hash, and per-word extraction hashes
+are recorded in src/spanish/data/source/grammar-source.json. These hashes
+identify the checked-in extraction, not a Wikimedia page revision ID.
+Reproduction instructions and editorial limits: docs/spanish-corpus.md.
+
+Changes: selected the existing course lemmas, retained grammatical fields,
+selected six persons of four indicative tenses without vos forms, normalized
+gender/number tags, and added independently authored Spanish cloze sentences,
+Chinese translations and learning annotations. Original course sentences and
+their translations are also released under CC BY-SA 4.0. The sentence text
+is not copied from Wiktionary or Kaikki. No native/human review is claimed.
+
+No endorsement by Wiktionary contributors, Kaikki.org, or Wikimedia is implied.
+Other code and data retain their existing licenses.

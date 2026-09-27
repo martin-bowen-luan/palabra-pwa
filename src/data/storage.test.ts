@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { DEFAULT_SETTINGS, PalabraStorage, StaleStudySessionError } from './storage'
-import { vocabulary } from './vocabulary'
+import { spanishVocabulary } from '../spanish/vocabulary'
 import type { ActiveSession, StudySession, VocabularyEntry, WordProgress } from '../types'
 
 const firstWord: VocabularyEntry = {
@@ -233,12 +233,12 @@ describe('PalabraStorage', () => {
     const storage = createStorage(name)
 
     const saved = await storage.getVocabulary()
-    expect(saved).toHaveLength(300)
-    expect(new Set(saved.map((word) => word.id)).size).toBe(300)
+    expect(saved).toHaveLength(spanishVocabulary.length)
+    expect(new Set(saved.map((word) => word.id)).size).toBe(spanishVocabulary.length)
     storage.close()
 
     const reopened = createStorage(name)
-    await expect(reopened.getVocabulary()).resolves.toEqual(vocabulary)
+    await expect(reopened.getVocabulary()).resolves.toEqual(spanishVocabulary)
     reopened.close()
   })
 
@@ -422,7 +422,7 @@ describe('PalabraStorage', () => {
     await storage.clearLearningData()
     expect(await storage.getAllProgress()).toEqual([])
     expect((await storage.getSettings()).dailyNewWords).toBe(20)
-    expect(await storage.getVocabulary()).toHaveLength(300)
+    expect(await storage.getVocabulary()).toHaveLength(spanishVocabulary.length)
     storage.close()
   })
 })

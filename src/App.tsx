@@ -11,6 +11,7 @@ import { TodayPage } from './pages/TodayPage'
 import styles from './styles/App.module.css'
 import { AiProvider } from './ai/AiProvider'
 import { WordlePage } from './wordle/WordlePage'
+import { SpanishProvider } from './spanish/SpanishProvider'
 
 function AppRoutes({ storageClient }: { storageClient?: PalabraStorage }) {
   const { loadError, ready } = useAppState()
@@ -38,5 +39,5 @@ function AppRoutes({ storageClient }: { storageClient?: PalabraStorage }) {
 }
 
 export default function App({ storageClient }: { storageClient?: PalabraStorage }) {
-  return <AppStateProvider storageClient={storageClient}><AiProvider storageClient={storageClient}><AppRoutes storageClient={storageClient} /></AiProvider></AppStateProvider>
+  return <AppStateProvider storageClient={storageClient}><SpanishProvider storageClient={storageClient}><AiProvider storageClient={storageClient}><AppRoutes storageClient={storageClient} /></AiProvider></SpanishProvider></AppStateProvider>
 }

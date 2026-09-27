@@ -34,7 +34,7 @@ describe('AI local storage', () => {
     expect((await db.getAiConfiguration()).settings.enabled).toBe(false)
     db.close()
     const upgraded = await new Promise<IDBDatabase>(resolve => { const request=indexedDB.open(name); request.onsuccess=()=>resolve(request.result) })
-    expect(upgraded.version).toBe(5)
+    expect(upgraded.version).toBe(6)
     for (const [store, record] of Object.entries(records)) {
       const actual = await new Promise(resolve => { const request=upgraded.transaction(store).objectStore(store).getAll(); request.onsuccess=()=>resolve(request.result) })
       expect(actual).toEqual([record])

@@ -1,0 +1,41 @@
+.study { gap: 0; }
+.prompt { padding: 34px 0 22px; }
+.grammar { color: var(--muted); font-size: 14px; line-height: 1.8; }
+.sentence { font-family: 'Source Serif 4 Variable', serif; font-size: clamp(28px, 7.6vw, 36px); font-weight: 500; line-height: 1.55; margin: 24px 0; overflow-wrap: anywhere; }
+.blank { color: var(--blue); border-bottom: 2px solid var(--blue); padding: 0 3px; }
+.translation { font-size: 16px; line-height: 1.9; }
+.cue { color: var(--blue); font-size: 14px; line-height: 1.8; }
+.answer { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 8px; }
+.inputLabel { font-size: 14px; color: var(--muted); }
+.answer input { width: 100%; min-height: 56px; border: 1px solid var(--line); border-radius: 8px; background: var(--control); color: var(--ink); padding: 12px; font-family: 'Source Serif 4 Variable', serif; font-size: 28px; }
+.accents { display: grid; grid-template-columns: repeat(auto-fit,minmax(44px,1fr)); gap: 2px; }
+.accents button { min-width: 0; min-height: 44px; border: 0; border-bottom: 1px solid var(--line); background: transparent; font-size: 20px; cursor: pointer; }
+.hint { min-height: 24px; color: var(--blue); overflow-wrap: anywhere; }
+.hint span { font-family: 'Source Serif 4 Variable', serif; font-size: 24px; letter-spacing: .15em; display: block; }
+.hint small { font-size: 12px; }
+.feedback { border-top: 1px solid var(--line); padding: 16px 0 0; line-height: 1.8; }
+.feedback h2 { font-size: 16px; }
+.feedback button { width: 100%; }
+.error { color: var(--red); line-height: 1.8; }
+.correct { color: var(--green); line-height: 1.8; }
+.grammarComparison { border-left: 2px solid var(--blue); padding-left: 16px; font-size: 14px; margin: 24px 0; }
+.paths { border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; margin-top: 28px; }
+.paths > div { padding: 20px 12px 20px 0; }
+.paths > div + div { padding-left: 20px; border-left: 1px solid var(--line); }
+.paths h2 { font-size: 20px; margin: 0; }
+.paths p, .paths small { font-size: 14px; line-height: 1.8; color: var(--muted); }
+.dictionary { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 16px; }
+.dictionary h2 { font-size: 18px; }
+.dictionary h3 { font-size: 14px; font-weight: 500; margin: 24px 0 8px; color: var(--blue); }
+.formRow { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.2fr); gap: 10px; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: none; min-height: 48px; padding: 12px 0; cursor: pointer; }
+.formRow strong { font-family: 'Source Serif 4 Variable',serif; font-size: 21px; font-weight: 500; overflow-wrap: anywhere; }
+.formRow span { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.source { font-size: 12px; color: var(--muted); line-height: 1.8; overflow-wrap: anywhere; }
+.source a { color: var(--blue); }
+.searchGroup { border-bottom: 1px solid var(--line); padding: 12px 0; }
+.searchGroup summary { min-height: 44px; cursor: pointer; display: flex; gap: 12px; align-items: center; }
+.searchGroup summary strong { font-family: 'Source Serif 4 Variable',serif; font-size: 22px; }
+.searchGroup summary span { color: var(--muted); font-size: 12px; }
+.resultRow > span:first-child { flex-direction: column; align-items: flex-start; min-width: 0; }
+.resultRow strong, .resultRow small { overflow-wrap: anywhere; }
+.resultRow > span:last-child { flex: 0 0 30%; }

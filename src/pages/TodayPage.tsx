@@ -4,8 +4,11 @@ import { LanguageSwitch } from '../components/LanguageSwitch'
 import { toLocalDate } from '../domain/stats'
 import styles from '../styles/App.module.css'
 import { EnglishToday } from './EnglishToday'
+import { SpanishToday } from '../spanish/SpanishToday'
+import { useSpanish } from '../spanish/SpanishProvider'
 
 export function TodayPage() {
+  const spanish = useSpanish()
   const { activeSession, dailyPlan, sessions, settings, startSession, startNextGroup, moreGroupsToday, streak } = useAppState()
   const navigate = useNavigate()
   const completedToday = sessions.some((session) => session.completed && session.date === toLocalDate(new Date()))
@@ -26,6 +29,7 @@ export function TodayPage() {
   }
 
   if (settings.learningLanguage === 'en') return <EnglishToday />
+  if (spanish.enabled) return <SpanishToday />
 
   return <main className={styles.page}>
     <header className={styles.brandHeader}>

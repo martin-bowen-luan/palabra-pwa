@@ -13,10 +13,11 @@ import { useAi } from '../ai/AiProvider'
 import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
 import { EnglishStudyPage } from './EnglishStudyPage'
+import { SpanishStudyPage } from '../spanish/SpanishStudyPage'
 
 export function StudyPage() {
   const { activeSession } = useAppState()
-  return activeSession?.memoryRound ? <EnglishStudyPage /> : <LegacyStudyPage />
+  return activeSession?.spanish ? <SpanishStudyPage /> : activeSession?.memoryRound ? <EnglishStudyPage /> : <LegacyStudyPage />
 }
 
 function LegacyStudyPage() {

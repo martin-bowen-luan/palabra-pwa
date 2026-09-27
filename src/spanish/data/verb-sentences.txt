@@ -1,0 +1,768 @@
+ser.present.1|Yo [soy] la nueva encargada de la biblioteca.|我是图书馆的新负责人。
+ser.present.2|Tú [eres] el único que tiene una llave.|你是唯一有钥匙的人。
+ser.present.3|Esta mesa [es] de madera de pino.|这张桌子是松木做的。
+ser.present.4|Nosotros [somos] vecinos desde hace diez años.|我们做邻居已经十年了。
+ser.present.5|Vosotros [sois] los primeros en llegar hoy.|你们是今天最先到的。
+ser.present.6|Las entradas [son] gratuitas para los menores.|未成年人的门票免费。
+ser.preterite.1|Yo [fui] capitán del equipo en aquel torneo.|那次锦标赛中，我当了队长。
+ser.preterite.2|Tú [fuiste] muy amable con mi madre ayer.|你昨天对我妈妈非常友好。
+ser.preterite.3|La cena de anoche [fue] un éxito.|昨晚的晚宴很成功。
+ser.preterite.4|Nosotros [fuimos] los últimos en salir del cine ayer.|昨天我们是最后离开电影院的。
+ser.preterite.5|Vosotros [fuisteis] testigos del accidente del lunes.|你们目睹了周一的事故。
+ser.preterite.6|Las vacaciones del año pasado [fueron] inolvidables.|去年的假期令人难忘。
+ser.imperfect.1|De niño, yo [era] muy tímido con los desconocidos.|小时候，我在陌生人面前很害羞。
+ser.imperfect.2|Tú [eras] el más alto de la clase en primaria.|小学时你是班里最高的。
+ser.imperfect.3|Antes, este edificio [era] una fábrica de zapatos.|以前这栋楼是一家鞋厂。
+ser.imperfect.4|Nosotros [éramos] estudiantes cuando nos conocimos.|我们认识的时候都是学生。
+ser.imperfect.5|Vosotros [erais] pequeños cuando cerró aquel cine.|那家电影院关闭时，你们还小。
+ser.imperfect.6|Las calles [eran] más estrechas en aquella época.|那个年代街道更窄。
+ser.future.1|Mañana yo [seré] quien abra la tienda.|明天由我来开店门。
+ser.future.2|Con práctica, tú [serás] un gran cocinero.|多练习，你会成为一名出色的厨师。
+ser.future.3|La próxima reunión [será] el martes.|下一次会议将在周二举行。
+ser.future.4|Nosotros [seremos] responsables de las reservas el mes próximo.|下个月我们将负责预订。
+ser.future.5|Vosotros [seréis] los invitados de honor en nuestra boda.|你们将是我们婚礼上的贵宾。
+ser.future.6|Las nuevas ventanas [serán] más resistentes al viento.|新窗户会更抗风。
+estar.present.1|Yo [estoy] en la entrada, junto a la fuente.|我在入口处，喷泉旁边。
+estar.present.2|Tú [estás] muy cerca de la meta.|你离终点很近了。
+estar.present.3|La sopa [está] demasiado caliente para el bebé.|这汤对宝宝来说太烫了。
+estar.present.4|Nosotros [estamos] de vacaciones esta semana.|我们本周在休假。
+estar.present.5|Vosotros [estáis] en la lista de invitados.|你们在宾客名单上。
+estar.present.6|Las llaves [están] dentro del cajón azul.|钥匙在蓝色抽屉里。
+estar.preterite.1|Ayer yo [estuve] dos horas en la biblioteca.|昨天我在图书馆待了两个小时。
+estar.preterite.2|Tú [estuviste] enfermo todo el fin de semana pasado.|你上个周末一直病着。
+estar.preterite.3|El ascensor [estuvo] averiado hasta las cinco de ayer.|昨天电梯一直坏到五点才恢复。
+estar.preterite.4|Nosotros [estuvimos] en Lisboa el verano pasado.|去年夏天我们在里斯本待过。
+estar.preterite.5|Vosotros [estuvisteis] en primera fila durante el concierto.|音乐会期间你们在第一排。
+estar.preterite.6|Mis padres [estuvieron] casados durante cuarenta años.|我父母的婚姻持续了四十年。
+estar.imperfect.1|Yo [estaba] en la ducha cuando sonó el teléfono.|电话响时，我正在淋浴。
+estar.imperfect.2|Tú [estabas] dormido cuando llegué anoche.|我昨晚到时，你已经睡着了。
+estar.imperfect.3|La puerta [estaba] abierta cuando volví a casa.|我回家时，门开着。
+estar.imperfect.4|Nosotros [estábamos] preocupados por la tormenta.|当时我们很担心暴风雨。
+estar.imperfect.5|Vosotros [estabais] en el jardín mientras yo cocinaba.|我做饭时，你们在花园里。
+estar.imperfect.6|Las tiendas [estaban] cerradas cuando pasamos por allí.|我们路过时，商店都关着门。
+estar.future.1|Mañana yo [estaré] disponible a partir de las seis.|明天六点起我有空。
+estar.future.2|Tú [estarás] más cómodo en este sillón.|你坐这把扶手椅会更舒服。
+estar.future.3|El paquete [estará] listo para recoger el viernes.|包裹周五就可以取了。
+estar.future.4|Nosotros [estaremos] fuera de la ciudad la próxima semana.|我们下周不在城里。
+estar.future.5|Vosotros [estaréis] cerca del escenario con esas entradas.|拿那些票，你们会坐在舞台附近。
+estar.future.6|Los resultados [estarán] en la web mañana.|结果明天会放到网上。
+tener.present.1|Yo [tengo] una cita con el dentista esta tarde.|我今天下午约了看牙医。
+tener.present.2|Tú [tienes] la misma mochila que mi hermana.|你的背包和我姐姐的一样。
+tener.present.3|El hotel [tiene] piscina en la azotea.|这家酒店楼顶有游泳池。
+tener.present.4|Nosotros [tenemos] suficiente comida para todos.|我们的食物够所有人吃。
+tener.present.5|Vosotros [tenéis] que mostrar el billete al entrar.|你们进去时得出示车票。
+tener.present.6|Los niños [tienen] frío después de nadar.|孩子们游完泳觉得冷。
+tener.preterite.1|Ayer yo [tuve] que volver a casa a por las llaves.|昨天我不得不回家拿钥匙。
+tener.preterite.2|Tú [tuviste] mucha paciencia conmigo aquella tarde.|那天下午你对我很有耐心。
+tener.preterite.3|El tren [tuvo] un retraso de media hora el lunes.|周一火车晚了半小时。
+tener.preterite.4|Nosotros [tuvimos] una reunión urgente ayer.|昨天我们开了一次紧急会议。
+tener.preterite.5|Vosotros [tuvisteis] suerte con el tiempo en vuestro viaje.|你们旅行时碰上了好天气，很幸运。
+tener.preterite.6|Mis abuelos [tuvieron] cuatro hijos.|我祖父母生了四个孩子。
+tener.imperfect.1|Yo [tenía] siete años cuando aprendí a nadar.|我学会游泳时七岁。
+tener.imperfect.2|Tú [tenías] un perro blanco cuando vivías aquí.|你住在这里时养了一只白狗。
+tener.imperfect.3|La casa antigua [tenía] un patio con naranjos.|那栋老房子有个种着橙树的院子。
+tener.imperfect.4|Nosotros [teníamos] poco dinero durante la universidad.|上大学时，我们钱很少。
+tener.imperfect.5|Vosotros [teníais] clases por la tarde en aquella época.|那时候你们下午有课。
+tener.imperfect.6|Los viajeros [tenían] hambre después de tantas horas.|过了这么多个小时，旅客们都饿了。
+tener.future.1|Yo [tendré] más tiempo libre cuando termine el proyecto.|项目结束后，我会有更多空闲时间。
+tener.future.2|Mañana tú [tendrás] ocasión de hablar con la directora.|明天你将有机会和主任谈话。
+tener.future.3|El nuevo piso [tendrá] dos habitaciones.|新公寓将有两间卧室。
+tener.future.4|Nosotros [tendremos] que salir antes del amanecer.|我们将不得不在天亮前出发。
+tener.future.5|Vosotros [tendréis] una copia del contrato el lunes.|周一你们会拿到一份合同副本。
+tener.future.6|Los alumnos [tendrán] una semana para entregar el trabajo.|学生们将有一周时间交作业。
+hacer.present.1|Yo [hago] el pan en casa los domingos.|我每周日在家做面包。
+hacer.present.2|Tú [haces] unas fotos preciosas del paisaje.|你拍的风景照片很漂亮。
+hacer.present.3|Mi hermana [hace] ejercicio antes de desayunar.|我姐姐在吃早餐前锻炼。
+hacer.present.4|Nosotros [hacemos] turnos para cuidar al abuelo.|我们轮流照顾爷爷。
+hacer.present.5|Vosotros [hacéis] demasiado ruido en el pasillo.|你们在走廊上太吵了。
+hacer.present.6|Los niños [hacen] castillos en la arena.|孩子们在沙滩上堆城堡。
+hacer.preterite.1|Anoche yo [hice] una tortilla para cenar.|昨晚我做了一份蛋饼当晚饭。
+hacer.preterite.2|Tú [hiciste] la reserva por teléfono ayer.|昨天你打电话订了位。
+hacer.preterite.3|El carpintero [hizo] esta mesa el mes pasado.|木匠上个月做了这张桌子。
+hacer.preterite.4|Nosotros [hicimos] una parada en el camino el sábado.|周六我们在途中停了一次。
+hacer.preterite.5|Vosotros [hicisteis] todas las preguntas al final de la charla.|你们在讲座结束时把问题都问了。
+hacer.preterite.6|Mis vecinos [hicieron] una fiesta anoche.|我的邻居昨晚办了个聚会。
+hacer.imperfect.1|Antes yo [hacía] la compra en una tienda pequeña.|以前我在一家小店买东西。
+hacer.imperfect.2|Tú [hacías] los deberes mientras yo preparaba la cena.|我准备晚饭时，你在做作业。
+hacer.imperfect.3|Mi abuela [hacía] mermelada cada verano.|我奶奶以前每年夏天都做果酱。
+hacer.imperfect.4|Nosotros [hacíamos] excursiones los fines de semana.|我们以前每逢周末就去远足。
+hacer.imperfect.5|Vosotros [hacíais] dibujos en los márgenes del cuaderno.|你们以前常在笔记本的空白边上画画。
+hacer.imperfect.6|Los obreros [hacían] mucho ruido cuando trabajaba en casa.|我在家工作时，工人们一直很吵。
+hacer.future.1|Mañana yo [haré] la llamada que falta.|明天我会打完剩下的那个电话。
+hacer.future.2|Tú [harás] el primer turno la semana que viene.|下周你将上第一班。
+hacer.future.3|El cocinero [hará] un menú especial para la boda.|厨师将为婚礼做一份特别菜单。
+hacer.future.4|Nosotros [haremos] sitio para otra silla.|我们会腾出地方再放一把椅子。
+hacer.future.5|Vosotros [haréis] la presentación el próximo martes.|你们将于下周二做汇报。
+hacer.future.6|Los técnicos [harán] las reparaciones mañana.|技术人员明天会来维修。
+ir.present.1|Yo [voy] al mercado antes de que cierre.|我在市场关门前去一趟。
+ir.present.2|Tú [vas] en bicicleta al instituto cada día.|你每天骑自行车去中学。
+ir.present.3|Este autobús [va] directamente al aeropuerto.|这辆公交车直达机场。
+ir.present.4|Nosotros [vamos] a la playa cuando hace calor.|天热时我们去海滩。
+ir.present.5|Vosotros [vais] por el camino más largo.|你们走的是较远的路。
+ir.present.6|Mis padres [van] al teatro una vez al mes.|我父母每月去一次剧院。
+ir.preterite.1|Ayer yo [fui] al banco a cambiar dinero.|昨天我去银行换了钱。
+ir.preterite.2|Tú [fuiste] a buscar a Ana a la estación el lunes.|周一你去车站接了安娜。
+ir.preterite.3|El domingo Luis [fue] al campo con su perro.|周日路易斯带狗去了乡下。
+ir.preterite.4|Nosotros [fuimos] a Sevilla en tren el mes pasado.|上个月我们坐火车去了塞维利亚。
+ir.preterite.5|Vosotros [fuisteis] al concierto sin nosotros anoche.|昨晚你们没带我们就去了音乐会。
+ir.preterite.6|Los bomberos [fueron] al edificio en cuanto recibieron el aviso.|消防员一接到通知就去了那栋楼。
+ir.imperfect.1|De pequeño yo [iba] a la escuela andando.|小时候我走路上学。
+ir.imperfect.2|Tú [ibas] hacia el parque cuando empezó a llover.|开始下雨时，你正往公园走。
+ir.imperfect.3|Mi abuelo [iba] al médico todos los martes.|我爷爷以前每周二都去看医生。
+ir.imperfect.4|Nosotros [íbamos] de excursión cada primavera.|我们以前每年春天都去远足。
+ir.imperfect.5|Vosotros [ibais] en el último vagón aquel día.|那天你们坐在最后一节车厢里。
+ir.imperfect.6|Los vecinos [iban] al río a bañarse en verano.|邻居们以前夏天会去河里游泳。
+ir.future.1|Mañana yo [iré] a recoger los resultados.|明天我会去取结果。
+ir.future.2|Tú [irás] delante y yo llevaré el mapa.|你走前面，我拿着地图。
+ir.future.3|La directora [irá] a Madrid la próxima semana.|主任下周将去马德里。
+ir.future.4|Nosotros [iremos] juntos a tu graduación.|我们会一起去参加你的毕业典礼。
+ir.future.5|Vosotros [iréis] en el primer coche mañana.|明天你们将坐第一辆车。
+ir.future.6|Los niños [irán] al museo el viernes.|孩子们周五将去博物馆。
+venir.present.1|Yo [vengo] a devolver el libro que me prestaste.|我是来还你借给我的书的。
+venir.present.2|Tú [vienes] de una ciudad mucho más grande.|你来自一个大得多的城市。
+venir.present.3|Mi prima [viene] a cenar los miércoles.|我表姐每周三来吃晚饭。
+venir.present.4|Nosotros [venimos] a este café por sus pasteles.|我们来这家咖啡馆是为了这里的蛋糕。
+venir.present.5|Vosotros [venís] justo a tiempo para el postre.|你们来得正好，赶上甜点。
+venir.present.6|Estos tomates [vienen] de una huerta cercana.|这些番茄来自附近的菜园。
+venir.preterite.1|Anoche yo [vine] en taxi porque perdí el autobús.|昨晚我错过了公交车，坐出租车来的。
+venir.preterite.2|Tú [viniste] a verme el día de mi cumpleaños.|你在我生日那天来看了我。
+venir.preterite.3|El fontanero [vino] ayer por la mañana.|水管工昨天早上来了。
+venir.preterite.4|Nosotros [vinimos] desde el pueblo para la boda.|我们从村里赶来参加了婚礼。
+venir.preterite.5|Vosotros [vinisteis] con comida cuando estábamos enfermos.|我们生病时，你们带着食物来了。
+venir.preterite.6|Solo diez personas [vinieron] a la reunión del lunes.|只有十个人来参加了周一的会议。
+venir.imperfect.1|Antes yo [venía] a nadar aquí cada semana.|以前我每周都来这里游泳。
+venir.imperfect.2|Tú [venías] de trabajar cuando nos encontramos.|我们遇到时，你刚下班回来。
+venir.imperfect.3|El olor a pan [venía] de la panadería de abajo.|面包香味是从楼下的面包店传来的。
+venir.imperfect.4|Nosotros [veníamos] a pie porque no teníamos coche.|以前我们步行来，因为没有车。
+venir.imperfect.5|Vosotros [veníais] a jugar a nuestra casa después de clase.|你们以前放学后常来我家玩。
+venir.imperfect.6|Mis tíos [venían] de visita todas las navidades.|我叔叔婶婶以前每年圣诞节都来探望。
+venir.future.1|El sábado yo [vendré] temprano para ayudarte.|周六我会早点来帮你。
+venir.future.2|Tú [vendrás] conmigo a elegir los muebles mañana.|明天你会和我一起来挑家具。
+venir.future.3|La enfermera [vendrá] a cambiar el vendaje el lunes.|护士周一将来换绷带。
+venir.future.4|Nosotros [vendremos] de nuevo cuando abra la exposición.|展览开放时，我们会再来。
+venir.future.5|Vosotros [vendréis] a la fiesta después del partido.|比赛后你们会来聚会。
+venir.future.6|Los invitados [vendrán] a partir de las ocho.|客人们将从八点开始到来。
+ver.present.1|Desde mi ventana yo [veo] el puerto.|从我的窗户能看到港口。
+ver.present.2|Tú [ves] mejor con las gafas nuevas.|你戴新眼镜看得更清楚。
+ver.present.3|Mi abuela [ve] las noticias mientras cena.|我奶奶边吃晚饭边看新闻。
+ver.present.4|Nosotros [vemos] a nuestros primos los domingos.|我们每周日见表亲们。
+ver.present.5|Vosotros [veis] la pantalla desde la última fila.|你们从最后一排能看到屏幕。
+ver.present.6|Los gatos [ven] bien con poca luz.|猫在光线暗时也看得清。
+ver.preterite.1|Ayer yo [vi] a tu hermana en la farmacia.|昨天我在药房见到了你姐姐。
+ver.preterite.2|Tú [viste] el relámpago antes de oír el trueno.|你先看见了闪电，然后听到了雷声。
+ver.preterite.3|Ana [vio] una ballena durante el viaje del mes pasado.|安娜上个月旅行时看见了一头鲸。
+ver.preterite.4|Nosotros [vimos] la película en versión original anoche.|昨晚我们看了那部电影的原声版。
+ver.preterite.5|Vosotros [visteis] cómo se cayó el vaso ayer.|昨天你们看见了杯子是怎么掉下来的。
+ver.preterite.6|Los guardias [vieron] al ladrón salir por la ventana.|保安看见小偷从窗户逃了出去。
+ver.imperfect.1|De niño yo [veía] dibujos animados antes de cenar.|小时候我晚饭前看动画片。
+ver.imperfect.2|Tú [veías] el mar desde tu antigua habitación.|从你以前的房间能看见大海。
+ver.imperfect.3|El conductor no [veía] la carretera por la niebla.|因为有雾，司机当时看不清路。
+ver.imperfect.4|Nosotros [veíamos] a los abuelos cada fin de semana.|我们以前每个周末都见祖父母。
+ver.imperfect.5|Vosotros [veíais] pasar los trenes desde el puente.|你们当时在桥上看火车经过。
+ver.imperfect.6|Las niñas [veían] peces en el estanque cuando llegamos.|我们到时，女孩们正在看池塘里的鱼。
+ver.future.1|Mañana yo [veré] al médico para hablar de los resultados.|明天我将见医生，谈谈检查结果。
+ver.future.2|Desde la cima tú [verás] todo el valle.|从山顶你将看到整个山谷。
+ver.future.3|Mi padre [verá] por primera vez a su nieta el sábado.|周六我父亲将第一次见到孙女。
+ver.future.4|Nosotros [veremos] la exposición antes de comer.|我们会在吃饭前看展览。
+ver.future.5|Vosotros [veréis] los cambios cuando volváis.|你们回来时将看到这些变化。
+ver.future.6|Los visitantes [verán] un vídeo al empezar la visita.|参观开始时，游客们会看一段视频。
+mirar.present.1|Yo [miro] los precios antes de elegir.|我挑选之前先看价格。
+mirar.present.2|Tú [miras] el reloj cada dos minutos.|你每两分钟就看一次钟。
+mirar.present.3|El bebé [mira] la lámpara con curiosidad.|宝宝好奇地看着灯。
+mirar.present.4|Nosotros [miramos] a ambos lados antes de cruzar.|我们过马路前会看两边。
+mirar.present.5|Vosotros [miráis] el mapa al revés.|你们把地图看倒了。
+mirar.present.6|Los turistas [miran] los escaparates de la plaza.|游客们看着广场上的橱窗。
+mirar.preterite.1|Yo [miré] debajo de la cama ayer, pero no encontré nada.|昨天我看了床底下，但什么也没找到。
+mirar.preterite.2|Tú [miraste] el número de la puerta antes de llamar.|你敲门前看了一下门牌号。
+mirar.preterite.3|El perro [miró] hacia la puerta al oír el ruido.|狗听到声响后朝门口看了一眼。
+mirar.preterite.4|Anoche nosotros [miramos] las estrellas desde la terraza.|昨晚我们在露台上看了星星。
+mirar.preterite.5|Vosotros [mirasteis] el horario equivocado el lunes.|你们周一看错了时刻表。
+mirar.preterite.6|Todos [miraron] al escenario cuando se encendió la luz.|灯亮时，所有人都看向了舞台。
+mirar.imperfect.1|Yo [miraba] por la ventana mientras esperaba el tren.|等火车时，我一直看着窗外。
+mirar.imperfect.2|Tú [mirabas] las fotos antiguas cuando entré.|我进来时，你正在看旧照片。
+mirar.imperfect.3|La niña [miraba] los peces sin hacer ruido.|女孩当时静静地看着鱼。
+mirar.imperfect.4|Nosotros [mirábamos] pisos todos los sábados aquel mes.|那个月我们每周六都去看公寓。
+mirar.imperfect.5|Vosotros [mirabais] los cuadros mientras la guía hablaba.|导游讲解时，你们看着画。
+mirar.imperfect.6|Los vecinos [miraban] las obras desde sus balcones.|邻居们当时从阳台上看施工。
+mirar.future.1|Yo [miraré] si queda leche cuando llegue a casa.|我回家后会看看还有没有牛奶。
+mirar.future.2|Tú [mirarás] las ofertas y yo compararé los precios.|你将看优惠，我来比较价格。
+mirar.future.3|El mecánico [mirará] el motor mañana.|修车师傅明天会检查发动机。
+mirar.future.4|Nosotros [miraremos] el menú antes de reservar.|我们会先看菜单再订位。
+mirar.future.5|Vosotros [miraréis] hacia la cámara cuando os avise.|我提醒时，你们要看向镜头。
+mirar.future.6|Los alumnos [mirarán] las muestras con una lupa mañana.|明天学生们将用放大镜观察样本。
+hablar.present.1|Yo [hablo] con mi madre por teléfono cada noche.|我每晚和妈妈通电话。
+hablar.present.2|Tú [hablas] tan bajo que casi no te oigo.|你说话太轻，我几乎听不见。
+hablar.present.3|La guía [habla] tres idiomas.|那位导游会说三种语言。
+hablar.present.4|Nosotros [hablamos] del viaje durante la cena.|我们吃晚饭时聊旅行的事。
+hablar.present.5|Vosotros [habláis] español con vuestros vecinos.|你们和邻居说西班牙语。
+hablar.present.6|Los clientes [hablan] con la encargada junto a la caja.|顾客们正在收银台旁和负责人交谈。
+hablar.preterite.1|Ayer yo [hablé] con el director sobre el horario.|昨天我和主任谈了时间安排。
+hablar.preterite.2|Tú [hablaste] en nombre de todo el equipo en la reunión.|你在会上代表整个团队发了言。
+hablar.preterite.3|Ana [habló] con su hermana ayer por la tarde.|安娜昨天下午和姐姐谈了话。
+hablar.preterite.4|Anoche nosotros [hablamos] hasta las dos de la mañana.|昨晚我们聊到了凌晨两点。
+hablar.preterite.5|Vosotros [hablasteis] de mudaros durante la cena de ayer.|昨天晚饭时，你们谈了搬家的事。
+hablar.preterite.6|Los médicos [hablaron] con la familia después de la operación.|手术后，医生们和家属谈了话。
+hablar.imperfect.1|Yo [hablaba] con el vecino cuando llegaste.|你到时，我正在和邻居聊天。
+hablar.imperfect.2|De niño tú [hablabas] mucho en clase.|小时候你上课很爱说话。
+hablar.imperfect.3|Mi abuela [hablaba] de su infancia mientras cosía.|奶奶一边缝衣服一边讲童年的事。
+hablar.imperfect.4|Antes nosotros [hablábamos] todos los días por videollamada.|以前我们每天都视频通话。
+hablar.imperfect.5|Vosotros [hablabais] de fútbol cuando entré en la cocina.|我进厨房时，你们正在聊足球。
+hablar.imperfect.6|Los pasajeros [hablaban] en voz baja durante el viaje.|旅途中，乘客们一直低声交谈。
+hablar.future.1|Mañana yo [hablaré] con el casero de la gotera.|明天我会和房东谈漏水的事。
+hablar.future.2|Tú [hablarás] primero en la presentación del viernes.|周五汇报时你将先发言。
+hablar.future.3|La autora [hablará] de su nueva novela esta tarde.|作者今天下午将谈她的新小说。
+hablar.future.4|Nosotros [hablaremos] del presupuesto en la próxima reunión.|下次会议我们将讨论预算。
+hablar.future.5|Vosotros [hablaréis] con los invitados después de la ceremonia.|仪式结束后，你们将与来宾交谈。
+hablar.future.6|Los representantes [hablarán] con la prensa mañana.|代表们明天将与媒体交谈。
+decir.present.1|Yo [digo] lo que pienso sin levantar la voz.|我平静地说出自己的想法。
+decir.present.2|Tú [dices] que no tienes hambre, pero no has comido.|你说你不饿，可你还没吃饭。
+decir.present.3|El cartel [dice] que la entrada es gratuita.|牌子上说免费入场。
+decir.present.4|Nosotros [decimos] la verdad aunque sea difícil.|即使难以启齿，我们也说实话。
+decir.present.5|Vosotros [decís] que este camino es más corto.|你们说这条路更近。
+decir.present.6|Los vecinos [dicen] que abrirán una panadería aquí.|邻居们说这里要开一家面包店。
+decir.preterite.1|Ayer yo [dije] que llegaría a las ocho.|昨天我说过会八点到。
+decir.preterite.2|Tú [dijiste] mi nombre cuando te preguntaron quién faltaba.|他们问谁没来时，你说了我的名字。
+decir.preterite.3|El médico [dijo] que podía volver a caminar.|医生说我可以重新走路了。
+decir.preterite.4|Nosotros [dijimos] adiós desde el andén ayer.|昨天我们在站台上道了别。
+decir.preterite.5|Vosotros [dijisteis] que traeríais el postre a la cena.|你们说过会带甜点来吃晚饭。
+decir.preterite.6|Los guardias [dijeron] que el museo ya estaba cerrado.|保安说博物馆已经关门了。
+decir.imperfect.1|Yo [decía] que quería ser piloto cuando era pequeño.|我小时候常说想当飞行员。
+decir.imperfect.2|Tú [decías] que te gustaba vivir junto al mar.|你以前说你喜欢住在海边。
+decir.imperfect.3|Mi padre siempre [decía] que había que llegar puntual.|我父亲以前总说要准时到。
+decir.imperfect.4|Nosotros [decíamos] buenas noches a los abuelos antes de acostarnos.|以前我们睡前都向祖父母道晚安。
+decir.imperfect.5|Vosotros [decíais] que aquel restaurante era barato.|你们以前说那家餐馆便宜。
+decir.imperfect.6|Las instrucciones [decían] que había que esperar diez minutos.|当时说明上写着要等十分钟。
+decir.future.1|Yo te [diré] la dirección cuando confirme la reserva.|确认预订后，我会告诉你地址。
+decir.future.2|Tú nos [dirás] cuándo estás listo para salir.|准备好出发时，你会告诉我们。
+decir.future.3|La profesora [dirá] los resultados mañana.|老师明天会公布结果。
+decir.future.4|Nosotros [diremos] lo ocurrido en la próxima reunión.|下次会议我们会说明发生了什么。
+decir.future.5|Vosotros [diréis] unas palabras al final de la fiesta.|聚会结束时，你们将说几句话。
+decir.future.6|Los técnicos [dirán] cuánto costará la reparación.|技术人员会告知维修要花多少钱。
+escuchar.present.1|Yo [escucho] la radio mientras preparo el desayuno.|我边做早餐边听广播。
+escuchar.present.2|Tú [escuchas] con atención cuando habla la abuela.|奶奶说话时，你认真听。
+escuchar.present.3|El niño [escucha] un cuento antes de dormir.|孩子睡前听一个故事。
+escuchar.present.4|Nosotros [escuchamos] música durante el viaje.|我们旅行时听音乐。
+escuchar.present.5|Vosotros [escucháis] las noticias en el coche.|你们在车里听新闻。
+escuchar.present.6|Los alumnos [escuchan] las instrucciones en silencio.|学生们安静地听指示。
+escuchar.preterite.1|Anoche yo [escuché] tu mensaje antes de acostarme.|昨晚我睡前听了你的留言。
+escuchar.preterite.2|Tú [escuchaste] la entrevista completa ayer.|昨天你听完了整个采访。
+escuchar.preterite.3|La directora [escuchó] nuestra propuesta esta mañana.|主任今天上午听了我们的建议。
+escuchar.preterite.4|El sábado nosotros [escuchamos] jazz en un bar pequeño.|周六我们在一家小酒吧听了爵士乐。
+escuchar.preterite.5|Vosotros [escuchasteis] un ruido extraño en el garaje anoche.|昨晚你们在车库听到了奇怪的声音。
+escuchar.preterite.6|Los jueces [escucharon] a todos los testigos ayer.|法官们昨天听取了所有证人的证词。
+escuchar.imperfect.1|Yo [escuchaba] un programa de cocina cuando llamaste.|你打电话时，我正在听烹饪节目。
+escuchar.imperfect.2|Antes tú [escuchabas] discos en ese tocadiscos.|以前你用那台唱机听唱片。
+escuchar.imperfect.3|Mi madre [escuchaba] las olas desde la terraza.|我妈妈当时在露台听海浪声。
+escuchar.imperfect.4|Nosotros [escuchábamos] al guía mientras cruzábamos el puente.|我们过桥时一直听导游讲解。
+escuchar.imperfect.5|Vosotros [escuchabais] canciones para aprender inglés de pequeños.|你们小时候听歌学英语。
+escuchar.imperfect.6|Los niños [escuchaban] al abuelo junto al fuego.|孩子们当时围着炉火听爷爷说话。
+escuchar.future.1|Mañana yo [escucharé] la grabación con auriculares.|明天我会戴耳机听录音。
+escuchar.future.2|Tú [escucharás] mejor desde la primera fila.|坐在第一排你会听得更清楚。
+escuchar.future.3|El comité [escuchará] las quejas el jueves.|委员会将于周四听取投诉。
+escuchar.future.4|Nosotros [escucharemos] el concierto por la radio esta noche.|今晚我们将通过广播听音乐会。
+escuchar.future.5|Vosotros [escucharéis] una señal antes de empezar.|开始前你们会听到一个信号。
+escuchar.future.6|Los visitantes [escucharán] historias del barrio durante la ruta.|游客们将在游览途中听到社区的故事。
+leer.present.1|Yo [leo] unas páginas antes de dormir.|我睡前读几页书。
+leer.present.2|Tú [lees] el menú y yo busco una mesa.|你看菜单，我找桌子。
+leer.present.3|Mi hija [lee] cuentos a su hermano pequeño.|我女儿给弟弟读故事。
+leer.present.4|Nosotros [leemos] las etiquetas antes de comprar.|我们购买前会读标签。
+leer.present.5|Vosotros [leéis] el periódico en la terraza.|你们在露台上看报纸。
+leer.present.6|Los pasajeros [leen] mientras esperan el tren.|乘客们边等火车边阅读。
+leer.preterite.1|Ayer yo [leí] tu carta dos veces.|昨天我把你的信读了两遍。
+leer.preterite.2|Tú [leíste] el contrato antes de firmarlo.|你签字前读了合同。
+leer.preterite.3|El actor [leyó] un poema al final del acto.|活动结束时，那位演员读了一首诗。
+leer.preterite.4|Nosotros [leímos] la novela durante las vacaciones pasadas.|上个假期我们读了那本小说。
+leer.preterite.5|Vosotros [leísteis] el aviso demasiado tarde ayer.|昨天你们看到通知时已经太晚了。
+leer.preterite.6|Los alumnos [leyeron] sus redacciones en voz alta el viernes.|学生们周五大声朗读了自己的作文。
+leer.imperfect.1|Yo [leía] en el sofá cuando se fue la luz.|停电时，我正坐在沙发上看书。
+leer.imperfect.2|De pequeño tú [leías] cómics en el autobús.|你小时候在公交车上看漫画。
+leer.imperfect.3|Mi abuelo [leía] el periódico con una lupa.|我爷爷以前用放大镜看报。
+leer.imperfect.4|Nosotros [leíamos] juntos cada noche antes de tener hijos.|有孩子之前，我们每晚一起读书。
+leer.imperfect.5|Vosotros [leíais] las señales mientras yo conducía.|我开车时，你们在看路标。
+leer.imperfect.6|Las niñas [leían] en el jardín cuando empezó a llover.|开始下雨时，女孩们正在花园里看书。
+leer.future.1|Yo [leeré] tu informe mañana por la mañana.|明天早上我会看你的报告。
+leer.future.2|Tú [leerás] la primera parte durante la ceremonia.|仪式中你将朗读第一部分。
+leer.future.3|La abogada [leerá] todos los documentos antes de responder.|律师会读完所有文件再答复。
+leer.future.4|Nosotros [leeremos] el mismo libro para comentarlo el sábado.|我们会读同一本书，周六一起讨论。
+leer.future.5|Vosotros [leeréis] las instrucciones antes del examen.|考试前你们将阅读说明。
+leer.future.6|Los niños [leerán] sus cartas a los abuelos esta noche.|孩子们今晚会把信读给祖父母听。
+escribir.present.1|Yo [escribo] la lista de la compra en el teléfono.|我把购物清单写在手机上。
+escribir.present.2|Tú [escribes] tan pequeño que necesito gafas.|你写的字太小，我需要眼镜才能看清。
+escribir.present.3|Mi padre [escribe] cartas a sus amigos de infancia.|我爸爸给儿时的朋友写信。
+escribir.present.4|Nosotros [escribimos] las fechas en el calendario.|我们把日期写在日历上。
+escribir.present.5|Vosotros [escribís] vuestros nombres en la primera página.|你们把名字写在第一页。
+escribir.present.6|Los periodistas [escriben] sobre las elecciones.|记者们撰写选举报道。
+escribir.preterite.1|Anoche yo [escribí] un correo al hotel.|昨晚我给酒店写了封邮件。
+escribir.preterite.2|Tú [escribiste] la dirección en una servilleta ayer.|昨天你把地址写在了一张餐巾纸上。
+escribir.preterite.3|La niña [escribió] su primer cuento el mes pasado.|那个女孩上个月写了自己的第一个故事。
+escribir.preterite.4|Ayer nosotros [escribimos] una nota para los vecinos.|昨天我们给邻居写了一张便条。
+escribir.preterite.5|Vosotros [escribisteis] la receta antes de salir de casa.|你们出门前写下了食谱。
+escribir.preterite.6|Los alumnos [escribieron] una carta de agradecimiento el viernes.|学生们周五写了一封感谢信。
+escribir.imperfect.1|Yo [escribía] en mi diario cuando me llamaste.|你打电话时，我正在写日记。
+escribir.imperfect.2|Antes tú [escribías] todos los apuntes a mano.|以前你所有的笔记都用手写。
+escribir.imperfect.3|Mi abuelo [escribía] poemas junto a la ventana.|我爷爷以前坐在窗边写诗。
+escribir.imperfect.4|Nosotros [escribíamos] postales durante cada viaje.|我们以前每次旅行都会写明信片。
+escribir.imperfect.5|Vosotros [escribíais] en la pizarra mientras la profesora repartía hojas.|老师发纸时，你们在黑板上写字。
+escribir.imperfect.6|Los empleados [escribían] los pedidos en cuadernos antes de usar ordenadores.|使用电脑前，员工们把订单写在本子上。
+escribir.future.1|Yo [escribiré] a la compañía para pedir una explicación.|我会写信向公司要求解释。
+escribir.future.2|Tú [escribirás] el título y yo haré el dibujo.|你来写标题，我来画图。
+escribir.future.3|La secretaria [escribirá] el resumen de la reunión mañana.|秘书明天会写会议纪要。
+escribir.future.4|Nosotros [escribiremos] a todos los invitados esta semana.|我们本周会给所有客人写信。
+escribir.future.5|Vosotros [escribiréis] las respuestas en una hoja aparte.|你们将在另一张纸上写答案。
+escribir.future.6|Los participantes [escribirán] sus propuestas al final del taller.|参与者将在工作坊结束时写下建议。
+comer.present.1|Yo [como] fruta entre horas cuando tengo hambre.|两餐之间饿了，我就吃水果。
+comer.present.2|Tú [comes] demasiado deprisa; disfruta la cena.|你吃得太快了，慢慢享用晚饭吧。
+comer.present.3|Mi hermano [come] en la oficina los lunes.|我哥哥每周一在办公室吃饭。
+comer.present.4|Nosotros [comemos] juntos los domingos.|我们每周日一起吃饭。
+comer.present.5|Vosotros [coméis] pescado dos veces por semana.|你们每周吃两次鱼。
+comer.present.6|Las gallinas [comen] el grano del suelo.|鸡在吃地上的谷粒。
+comer.preterite.1|Ayer yo [comí] una ensalada en la estación.|昨天我在车站吃了一份沙拉。
+comer.preterite.2|Tú [comiste] el último trozo de tarta anoche.|昨晚你吃掉了最后一块蛋糕。
+comer.preterite.3|El perro [comió] antes de salir al parque.|狗去公园前吃过了。
+comer.preterite.4|Nosotros [comimos] paella junto al mar el sábado.|周六我们在海边吃了西班牙海鲜饭。
+comer.preterite.5|Vosotros [comisteis] en casa de Ana el domingo pasado.|上周日你们在安娜家吃了饭。
+comer.preterite.6|Los niños [comieron] todo lo que había en sus platos.|孩子们吃光了盘子里的东西。
+comer.imperfect.1|De pequeño yo [comía] en el colegio.|小时候我在学校吃饭。
+comer.imperfect.2|Tú [comías] un bocadillo cuando llegó el autobús.|公交车到时，你正在吃三明治。
+comer.imperfect.3|Mi abuela [comía] muy poca carne.|我奶奶以前很少吃肉。
+comer.imperfect.4|Nosotros [comíamos] en la terraza durante el verano.|夏天我们以前会在露台上吃饭。
+comer.imperfect.5|Vosotros [comíais] temprano cuando trabajabais de noche.|上夜班时，你们以前吃饭很早。
+comer.imperfect.6|Los caballos [comían] hierba mientras descansábamos.|我们休息时，马在吃草。
+comer.future.1|Mañana yo [comeré] con mi hermana cerca de su trabajo.|明天我会和姐姐在她工作地点附近吃饭。
+comer.future.2|Tú [comerás] algo caliente cuando lleguemos.|到了以后，你会吃点热的。
+comer.future.3|El equipo [comerá] después del entrenamiento.|队员们将在训练后吃饭。
+comer.future.4|Nosotros [comeremos] lo que quede de la cena.|我们会吃晚餐剩下的食物。
+comer.future.5|Vosotros [comeréis] en el primer turno mañana.|明天你们将在第一轮用餐。
+comer.future.6|Los invitados [comerán] en el jardín si hace sol.|如果晴天，客人们将在花园里吃饭。
+beber.present.1|Yo [bebo] agua del grifo en casa.|我在家喝自来水。
+beber.present.2|Tú [bebes] el café sin azúcar.|你喝咖啡不加糖。
+beber.present.3|El gato [bebe] de su cuenco.|猫在喝碗里的水。
+beber.present.4|Nosotros [bebemos] té después de cenar.|我们晚饭后喝茶。
+beber.present.5|Vosotros [bebéis] mucha agua cuando salís a caminar.|你们出去走路时喝很多水。
+beber.present.6|Los niños [beben] leche en el desayuno.|孩子们早餐喝牛奶。
+beber.preterite.1|Después de la carrera yo [bebí] dos vasos de agua.|跑完比赛后，我喝了两杯水。
+beber.preterite.2|Tú [bebiste] un zumo de naranja esta mañana.|今天早上你喝了一杯橙汁。
+beber.preterite.3|El viajero [bebió] de la fuente antes de seguir.|旅人在继续赶路前喝了泉水。
+beber.preterite.4|Nosotros [bebimos] chocolate caliente al volver del paseo.|散步回来后，我们喝了热巧克力。
+beber.preterite.5|Vosotros [bebisteis] agua durante la pausa de ayer.|昨天休息时，你们喝了水。
+beber.preterite.6|Los invitados [bebieron] limonada en la fiesta.|宾客们在聚会上喝了柠檬水。
+beber.imperfect.1|Antes yo [bebía] café por la noche, pero ya no.|以前我晚上喝咖啡，现在不喝了。
+beber.imperfect.2|Tú [bebías] té cuando empezó la película.|电影开始时，你在喝茶。
+beber.imperfect.3|El bebé [bebía] leche mientras su madre le acariciaba la cabeza.|宝宝喝奶时，妈妈轻抚他的头。
+beber.imperfect.4|Nosotros [bebíamos] agua de aquel pozo cuando vivíamos allí.|我们住在那里时喝那口井的水。
+beber.imperfect.5|Vosotros [bebíais] zumo recién hecho cada mañana en el hotel.|住酒店时，你们每天早上喝鲜榨果汁。
+beber.imperfect.6|Los pájaros [bebían] en la fuente cuando salimos al patio.|我们走进院子时，鸟儿在喷泉里喝水。
+beber.future.1|Esta noche yo [beberé] té en lugar de café.|今晚我会喝茶，不喝咖啡。
+beber.future.2|Tú [beberás] algo fresco al terminar la caminata.|徒步结束后，你会喝点凉的。
+beber.future.3|El cachorro [beberá] de este cuenco nuevo.|小狗将用这个新碗喝水。
+beber.future.4|Nosotros [beberemos] agua durante la excursión de mañana.|明天远足时，我们会喝水。
+beber.future.5|Vosotros [beberéis] el zumo cuando esté frío.|果汁凉了以后，你们会喝。
+beber.future.6|Los corredores [beberán] en el siguiente punto de descanso.|跑步者们将在下一个休息点喝水。
+dormir.present.1|Yo [duermo] con la ventana entreabierta.|我睡觉时让窗户半开着。
+dormir.present.2|Tú [duermes] mejor cuando no tomas café por la tarde.|下午不喝咖啡时，你睡得更好。
+dormir.present.3|El gato [duerme] encima de mi abrigo.|猫睡在我的大衣上。
+dormir.present.4|Nosotros [dormimos] ocho horas casi todas las noches.|我们几乎每晚都睡八个小时。
+dormir.present.5|Vosotros [dormís] en la habitación del fondo.|你们睡在最里面那间房。
+dormir.present.6|Los bebés [duermen] mucho durante el día.|婴儿白天睡很久。
+dormir.preterite.1|Anoche yo [dormí] en el sofá por el calor.|昨晚因为太热，我睡在沙发上。
+dormir.preterite.2|Tú [dormiste] durante casi todo el vuelo de ayer.|昨天的航程你几乎一路都在睡。
+dormir.preterite.3|El niño [durmió] diez horas seguidas anoche.|那个孩子昨晚连续睡了十个小时。
+dormir.preterite.4|El sábado nosotros [dormimos] en una tienda de campaña.|周六我们睡在帐篷里。
+dormir.preterite.5|Vosotros [dormisteis] poco antes del examen del lunes.|周一考试前，你们睡得很少。
+dormir.preterite.6|Los viajeros [durmieron] en la estación aquella noche.|那天晚上旅客们睡在车站里。
+dormir.imperfect.1|Yo [dormía] cuando empezó la tormenta.|暴风雨开始时，我正在睡觉。
+dormir.imperfect.2|De niño tú [dormías] con un oso de peluche.|你小时候抱着玩具熊睡觉。
+dormir.imperfect.3|Mi hermano [dormía] en la cama de arriba.|我哥哥以前睡上铺。
+dormir.imperfect.4|Nosotros [dormíamos] la siesta en las tardes de verano.|以前夏天的下午我们会睡午觉。
+dormir.imperfect.5|Vosotros [dormíais] cuando el vecino llamó a la puerta.|邻居敲门时，你们正在睡觉。
+dormir.imperfect.6|Los perros [dormían] bajo el árbol mientras comíamos.|我们吃饭时，狗在树下睡觉。
+dormir.future.1|Esta noche yo [dormiré] en casa de mi prima.|今晚我会睡在表姐家。
+dormir.future.2|Tú [dormirás] junto a la ventana en el refugio.|在山间小屋里，你将睡在窗边。
+dormir.future.3|El bebé [dormirá] en la cuna nueva a partir de mañana.|宝宝从明天起将睡新婴儿床。
+dormir.future.4|Nosotros [dormiremos] en el tren para ahorrar tiempo.|我们会在火车上睡觉来节省时间。
+dormir.future.5|Vosotros [dormiréis] más tranquilos cuando arreglen la alarma.|警报器修好后，你们会睡得更安稳。
+dormir.future.6|Los excursionistas [dormirán] en el refugio esta noche.|远足者们今晚将在山间小屋过夜。
+vivir.present.1|Yo [vivo] encima de una panadería.|我住在一家面包店楼上。
+vivir.present.2|Tú [vives] a cinco minutos de la estación.|你住的地方离车站五分钟路程。
+vivir.present.3|Mi tía [vive] sola, pero recibe muchas visitas.|我姨妈独居，但常有人去探望。
+vivir.present.4|Nosotros [vivimos] en un piso sin ascensor.|我们住的公寓楼没有电梯。
+vivir.present.5|Vosotros [vivís] cerca de un parque grande.|你们住在一个大公园附近。
+vivir.present.6|Los osos [viven] en las montañas de esta región.|熊生活在这一地区的山里。
+vivir.preterite.1|Yo [viví] en Valencia durante dos años antes de mudarme.|搬家前，我在瓦伦西亚住了两年。
+vivir.preterite.2|Tú [viviste] una aventura increíble en aquel viaje.|那次旅行中，你经历了一次令人难以置信的冒险。
+vivir.preterite.3|Mi abuelo [vivió] noventa y dos años.|我爷爷活了九十二岁。
+vivir.preterite.4|Nosotros [vivimos] en esa casa de 2010 a 2015.|我们从2010年到2015年住在那栋房子里。
+vivir.preterite.5|Vosotros [vivisteis] seis meses junto al mar el año pasado.|去年你们在海边住了六个月。
+vivir.preterite.6|Los vecinos [vivieron] momentos de miedo durante el incendio.|火灾期间，邻居们经历了恐惧的时刻。
+vivir.imperfect.1|Yo [vivía] con mis padres cuando empecé a trabajar.|我开始工作时还和父母同住。
+vivir.imperfect.2|Tú [vivías] al otro lado del río cuando nos conocimos.|我们认识时，你住在河对岸。
+vivir.imperfect.3|La familia [vivía] de lo que cultivaba.|那个家庭过去靠自己种的庄稼生活。
+vivir.imperfect.4|Nosotros [vivíamos] en el centro antes de tener hijos.|有孩子前，我们住在市中心。
+vivir.imperfect.5|Vosotros [vivíais] en la misma calle que mi abuela.|你们以前和我奶奶住在同一条街上。
+vivir.imperfect.6|En aquella época, muchos trabajadores [vivían] cerca de la fábrica.|那时，许多工人住在工厂附近。
+vivir.future.1|El próximo año yo [viviré] en una residencia universitaria.|明年我将住在大学宿舍。
+vivir.future.2|Tú [vivirás] más cerca de tu trabajo cuando te mudes.|搬家后，你会住得离工作地点更近。
+vivir.future.3|Mi hermana [vivirá] con nosotros durante las obras.|装修期间，我姐姐将和我们同住。
+vivir.future.4|Nosotros [viviremos] en el pueblo a partir de junio.|六月起，我们将住在村里。
+vivir.future.5|Vosotros [viviréis] una experiencia única en ese viaje.|那次旅行将给你们带来独特的体验。
+vivir.future.6|Los estudiantes [vivirán] con familias locales durante el intercambio.|交换学习期间，学生们将住在当地家庭。
+trabajar.present.1|Yo [trabajo] en una librería del centro.|我在市中心的一家书店工作。
+trabajar.present.2|Tú [trabajas] mejor en una habitación silenciosa.|你在安静的房间里工作效率更高。
+trabajar.present.3|Mi madre [trabaja] en el hospital por las noches.|我妈妈在医院上夜班。
+trabajar.present.4|Nosotros [trabajamos] juntos en el mismo proyecto.|我们一起做同一个项目。
+trabajar.present.5|Vosotros [trabajáis] los sábados por la mañana.|你们每周六上午上班。
+trabajar.present.6|Los agricultores [trabajan] desde el amanecer.|农民们从天亮开始干活。
+trabajar.preterite.1|Ayer yo [trabajé] hasta las siete para terminar el pedido.|昨天我为了完成订单工作到七点。
+trabajar.preterite.2|Tú [trabajaste] en aquel hotel el verano pasado.|去年夏天你在那家酒店工作过。
+trabajar.preterite.3|El electricista [trabajó] toda la mañana en la cocina.|电工在厨房干了一上午。
+trabajar.preterite.4|El domingo nosotros [trabajamos] en el jardín durante dos horas.|周日我们在花园里干了两个小时的活。
+trabajar.preterite.5|Vosotros [trabajasteis] mucho para preparar la exposición.|为了筹备展览，你们做了很多工作。
+trabajar.preterite.6|Los bomberos [trabajaron] toda la noche para apagar el fuego.|消防员为扑灭大火工作了一整夜。
+trabajar.imperfect.1|Antes yo [trabajaba] en una oficina sin ventanas.|以前我在一间没有窗户的办公室工作。
+trabajar.imperfect.2|Tú [trabajabas] cuando te llamé ayer.|我昨天打电话时，你正在工作。
+trabajar.imperfect.3|Mi abuelo [trabajaba] la madera en su taller.|我爷爷以前在作坊里做木工。
+trabajar.imperfect.4|Nosotros [trabajábamos] de noche y estudiábamos de día.|我们以前晚上工作，白天学习。
+trabajar.imperfect.5|Vosotros [trabajabais] cerca de la estación en aquella época.|那时候你们在车站附近工作。
+trabajar.imperfect.6|Los técnicos [trabajaban] en el tejado cuando empezó la lluvia.|下雨时，技术人员正在屋顶上工作。
+trabajar.future.1|Mañana yo [trabajaré] desde casa.|明天我会在家办公。
+trabajar.future.2|Tú [trabajarás] con la nueva diseñadora el mes próximo.|下个月你将和新设计师一起工作。
+trabajar.future.3|El equipo [trabajará] en dos turnos durante las obras.|施工期间，团队将分两班工作。
+trabajar.future.4|Nosotros [trabajaremos] menos horas a partir de julio.|七月起，我们的工作时长将缩短。
+trabajar.future.5|Vosotros [trabajaréis] en parejas durante el taller.|工作坊期间，你们将两人一组合作。
+trabajar.future.6|Los voluntarios [trabajarán] en la limpieza de la playa el sábado.|志愿者们周六将清理海滩。
+estudiar.present.1|Yo [estudio] español en el tren camino del trabajo.|我上班路上在火车里学西班牙语。
+estudiar.present.2|Tú [estudias] medicina en la universidad.|你在大学学医。
+estudiar.present.3|Mi hermano [estudia] en la biblioteca porque hay menos ruido.|我哥哥在图书馆学习，因为那里更安静。
+estudiar.present.4|Nosotros [estudiamos] las opciones antes de decidir.|我们做决定前研究各种选择。
+estudiar.present.5|Vosotros [estudiáis] juntos para el examen de historia.|你们一起准备历史考试。
+estudiar.present.6|Los científicos [estudian] el agua del río.|科学家们研究河水。
+estudiar.preterite.1|Ayer yo [estudié] hasta que cerró la biblioteca.|昨天我一直学到图书馆关门。
+estudiar.preterite.2|Tú [estudiaste] francés durante tres años en el colegio.|你在学校学过三年法语。
+estudiar.preterite.3|La arquitecta [estudió] el plano antes de visitar la obra.|建筑师去工地前研究了图纸。
+estudiar.preterite.4|Anoche nosotros [estudiamos] el mapa de la ruta.|昨晚我们研究了路线图。
+estudiar.preterite.5|Vosotros [estudiasteis] todos los capítulos el fin de semana pasado.|上周末你们学完了所有章节。
+estudiar.preterite.6|Los médicos [estudiaron] el caso en la reunión de ayer.|医生们在昨天的会议上研究了病例。
+estudiar.imperfect.1|Yo [estudiaba] cuando mis compañeros de piso salieron de fiesta.|室友们出去聚会时，我正在学习。
+estudiar.imperfect.2|Tú [estudiabas] música cuando vivías en Sevilla.|你住在塞维利亚时学音乐。
+estudiar.imperfect.3|Mi madre [estudiaba] por las noches después de trabajar.|我妈妈以前下班后的晚上学习。
+estudiar.imperfect.4|Nosotros [estudiábamos] en la misma clase de pequeños.|小时候我们在同一个班学习。
+estudiar.imperfect.5|Vosotros [estudiabais] los precios mientras yo miraba la calidad.|我看质量时，你们在研究价格。
+estudiar.imperfect.6|Los alumnos [estudiaban] en silencio cuando entró la profesora.|老师进来时，学生们正安静地学习。
+estudiar.future.1|Yo [estudiaré] la propuesta antes del viernes.|我会在周五之前研究这项建议。
+estudiar.future.2|El próximo curso tú [estudiarás] en otra ciudad.|下学年你将在另一个城市学习。
+estudiar.future.3|El ayuntamiento [estudiará] cómo mejorar el transporte.|市政府将研究如何改善交通。
+estudiar.future.4|Nosotros [estudiaremos] juntos mañana por la tarde.|明天下午我们将一起学习。
+estudiar.future.5|Vosotros [estudiaréis] los resultados con la profesora el lunes.|周一你们将和老师一起分析结果。
+estudiar.future.6|Los investigadores [estudiarán] los efectos de la sequía.|研究人员将研究干旱的影响。
+aprender.present.1|Yo [aprendo] una receta nueva cada semana.|我每周学一道新菜。
+aprender.present.2|Tú [aprendes] rápido cuando puedes practicar.|有机会练习时，你学得很快。
+aprender.present.3|Mi hija [aprende] a montar en bicicleta.|我女儿在学骑自行车。
+aprender.present.4|Nosotros [aprendemos] mucho de nuestros errores.|我们从错误中学到很多。
+aprender.present.5|Vosotros [aprendéis] canciones en la clase de música.|你们在音乐课上学歌。
+aprender.present.6|Los niños [aprenden] a compartir sus juguetes.|孩子们在学习分享玩具。
+aprender.preterite.1|Yo [aprendí] a nadar el verano pasado.|我去年夏天学会了游泳。
+aprender.preterite.2|Tú [aprendiste] la ruta después de recorrerla dos veces.|走了两次后，你记住了路线。
+aprender.preterite.3|Mi padre [aprendió] a usar el móvil en aquel curso.|我父亲在那个课程里学会了用手机。
+aprender.preterite.4|Nosotros [aprendimos] a hacer pan durante las vacaciones.|假期里我们学会了做面包。
+aprender.preterite.5|Vosotros [aprendisteis] los pasos del baile en una tarde.|你们一个下午就学会了舞步。
+aprender.preterite.6|Los alumnos [aprendieron] a medir la temperatura ayer.|学生们昨天学会了测温。
+aprender.imperfect.1|Yo [aprendía] a conducir cuando me mudé a Madrid.|我搬到马德里时正在学开车。
+aprender.imperfect.2|Tú [aprendías] nuevas palabras leyendo cómics de pequeño.|你小时候通过看漫画学新词。
+aprender.imperfect.3|Mi hermana [aprendía] a coser con la abuela.|我姐姐以前跟奶奶学缝纫。
+aprender.imperfect.4|Nosotros [aprendíamos] jugando en aquella escuela.|以前我们在那所学校通过游戏学习。
+aprender.imperfect.5|Vosotros [aprendíais] los nombres de los árboles durante los paseos.|你们以前散步时学习树的名称。
+aprender.imperfect.6|Los aprendices [aprendían] el oficio observando al maestro.|学徒们以前通过观察师傅学习手艺。
+aprender.future.1|Este verano yo [aprenderé] a navegar.|今年夏天我将学驾帆船。
+aprender.future.2|Tú [aprenderás] a preparar esta salsa en el taller.|你将在工作坊学做这种酱汁。
+aprender.future.3|El cachorro [aprenderá] a sentarse con la ayuda del adiestrador.|小狗将在训犬师的帮助下学会坐下。
+aprender.future.4|Nosotros [aprenderemos] a reparar bicicletas el sábado.|周六我们将学修自行车。
+aprender.future.5|Vosotros [aprenderéis] a orientaros con un mapa en la excursión.|远足时，你们将学习用地图辨认方向。
+aprender.future.6|Los niños [aprenderán] a plantar semillas mañana.|孩子们明天将学播种。
+comprar.present.1|Yo [compro] el pan en la tienda de la esquina.|我在街角的小店买面包。
+comprar.present.2|Tú [compras] solo lo que aparece en la lista.|你只买清单上列的东西。
+comprar.present.3|Mi padre [compra] fruta de temporada.|我父亲买当季水果。
+comprar.present.4|Nosotros [compramos] los billetes por internet.|我们在网上买票。
+comprar.present.5|Vosotros [compráis] ropa de segunda mano.|你们买二手衣服。
+comprar.present.6|Los vecinos [compran] juntos para ahorrar en el transporte.|邻居们一起采购以节省运费。
+comprar.preterite.1|Ayer yo [compré] una lámpara para el escritorio.|昨天我买了一盏书桌灯。
+comprar.preterite.2|Tú [compraste] los regalos antes de empezar el viaje.|你旅行开始前买好了礼物。
+comprar.preterite.3|Mi hermana [compró] su primera bicicleta el sábado.|我姐姐周六买了她的第一辆自行车。
+comprar.preterite.4|El mes pasado nosotros [compramos] una mesa más grande.|上个月我们买了一张更大的桌子。
+comprar.preterite.5|Vosotros [comprasteis] las entradas el día que salieron a la venta.|票开始发售那天，你们就买了。
+comprar.preterite.6|Los turistas [compraron] queso en el mercado ayer.|游客们昨天在市场买了奶酪。
+comprar.imperfect.1|Antes yo [compraba] el periódico cada mañana.|以前我每天早上买报纸。
+comprar.imperfect.2|Tú [comprabas] verduras cuando te vi en el mercado.|我在市场看见你时，你正在买菜。
+comprar.imperfect.3|Mi abuela [compraba] tela para hacer nuestra ropa.|我奶奶以前买布给我们做衣服。
+comprar.imperfect.4|Nosotros [comprábamos] leche en botellas de vidrio.|我们以前买玻璃瓶装的牛奶。
+comprar.imperfect.5|Vosotros [comprabais] libros en aquella librería antes de que cerrara.|那家书店关闭前，你们常在那里买书。
+comprar.imperfect.6|Los pescaderos [compraban] pescado fresco al amanecer.|鱼贩们以前天一亮就买新鲜鱼。
+comprar.future.1|Mañana yo [compraré] pilas para el reloj.|明天我会买钟用的电池。
+comprar.future.2|Tú [comprarás] el pan y yo prepararé la sopa.|你来买面包，我来做汤。
+comprar.future.3|La escuela [comprará] ordenadores nuevos el año próximo.|学校明年将购置新电脑。
+comprar.future.4|Nosotros [compraremos] los muebles cuando midamos el salón.|量好客厅后，我们会买家具。
+comprar.future.5|Vosotros [compraréis] los billetes de vuelta el lunes.|你们周一将买回程票。
+comprar.future.6|Mis padres [comprarán] una casa más pequeña al jubilarse.|退休后我父母会买一栋小一些的房子。
+pagar.present.1|Yo [pago] el alquiler el primer día del mes.|我每月第一天付房租。
+pagar.present.2|Tú [pagas] con tarjeta y yo prefiero efectivo.|你用卡付款，我更喜欢现金。
+pagar.present.3|La empresa [paga] el transporte de sus empleados.|公司支付员工的交通费。
+pagar.present.4|Nosotros [pagamos] la cuenta a medias.|我们平摊账单。
+pagar.present.5|Vosotros [pagáis] menos por tener el abono mensual.|有月票，你们付得更少。
+pagar.present.6|Los menores no [pagan] entrada en este museo.|未成年人进这家博物馆不用买票。
+pagar.preterite.1|Ayer yo [pagué] la factura de la luz.|昨天我交了电费。
+pagar.preterite.2|Tú [pagaste] la cena de todos el sábado.|周六你付了大家的晚餐费。
+pagar.preterite.3|El cliente [pagó] al recibir el paquete.|顾客收到包裹时付了款。
+pagar.preterite.4|El mes pasado nosotros [pagamos] la última cuota del coche.|上个月我们付清了汽车的最后一期款。
+pagar.preterite.5|Vosotros [pagasteis] demasiado por ese taxi ayer.|昨天你们那趟出租车花得太多了。
+pagar.preterite.6|Los organizadores [pagaron] a los músicos después del concierto.|音乐会后，主办方向乐手支付了报酬。
+pagar.imperfect.1|Antes yo [pagaba] todas las facturas en el banco.|以前我到银行交所有账单。
+pagar.imperfect.2|Tú [pagabas] la compra cuando se fue la luz.|停电时，你正在结账。
+pagar.imperfect.3|Mi abuelo [pagaba] el periódico con monedas.|我爷爷以前用硬币买报纸。
+pagar.imperfect.4|Nosotros [pagábamos] poco alquiler en aquel barrio.|以前我们在那个社区付的房租很少。
+pagar.imperfect.5|Vosotros [pagabais] una cuota anual para usar la piscina.|你们以前付年费使用游泳池。
+pagar.imperfect.6|Los pasajeros [pagaban] al conductor al subir al autobús.|乘客们以前上公交车时向司机付钱。
+pagar.future.1|Yo [pagaré] la reparación cuando esté terminada.|维修完成后，我会付款。
+pagar.future.2|Tú [pagarás] menos si reservas con antelación.|提前预订，你会付得更少。
+pagar.future.3|El seguro [pagará] los daños de la tormenta.|保险将赔付暴风雨造成的损失。
+pagar.future.4|Nosotros [pagaremos] el resto del viaje en junio.|我们将于六月付清旅行的余款。
+pagar.future.5|Vosotros [pagaréis] al salir del aparcamiento.|你们离开停车场时将付款。
+pagar.future.6|Los asistentes [pagarán] cinco euros por el taller del sábado.|参加者将为周六的工作坊付五欧元。
+abrir.present.1|Yo [abro] las ventanas cada mañana.|我每天早上开窗。
+abrir.present.2|Tú [abres] el correo antes de desayunar.|你早餐前查看邮件。
+abrir.present.3|La biblioteca [abre] a las nueve.|图书馆九点开门。
+abrir.present.4|Nosotros [abrimos] las cajas con cuidado.|我们小心地打开箱子。
+abrir.present.5|Vosotros [abrís] la tienda los domingos.|你们每周日开店。
+abrir.present.6|Los niños [abren] sus regalos junto al árbol.|孩子们在树旁拆礼物。
+abrir.preterite.1|Ayer yo [abrí] la puerta al cartero.|昨天我给邮递员开了门。
+abrir.preterite.2|Tú [abriste] la botella durante la cena de anoche.|昨晚吃饭时，你打开了瓶子。
+abrir.preterite.3|Mi hermana [abrió] una cuenta en el banco el lunes.|我姐姐周一在银行开了账户。
+abrir.preterite.4|El sábado nosotros [abrimos] todas las ventanas para ventilar.|周六我们打开所有窗户通风。
+abrir.preterite.5|Vosotros [abristeis] el paquete equivocado ayer.|昨天你们拆错了包裹。
+abrir.preterite.6|Los dueños [abrieron] el restaurante hace diez años.|店主们十年前开了这家餐馆。
+abrir.imperfect.1|Yo [abría] la tienda mientras mi compañero preparaba el café.|同事准备咖啡时，我在开店门。
+abrir.imperfect.2|Antes tú [abrías] la ventana incluso en invierno.|以前即使是冬天，你也会开窗。
+abrir.imperfect.3|El panadero [abría] a las seis de la mañana.|那个面包师以前早上六点开门营业。
+abrir.imperfect.4|Nosotros [abríamos] los regalos después de cenar cada Navidad.|以前每年圣诞节我们晚饭后拆礼物。
+abrir.imperfect.5|Vosotros [abríais] el mapa cada vez que llegabais a un cruce.|你们以前每到一个路口就打开地图。
+abrir.imperfect.6|Las flores [abrían] sus pétalos con la luz del sol.|那些花当时随着阳光展开花瓣。
+abrir.future.1|Mañana yo [abriré] la sala antes de la reunión.|明天我会在开会前打开会议室。
+abrir.future.2|Tú [abrirás] la caja cuando lleguen todos.|大家到齐时，你来打开盒子。
+abrir.future.3|El museo [abrirá] una nueva exposición el viernes.|博物馆周五将推出新展览。
+abrir.future.4|Nosotros [abriremos] las inscripciones la próxima semana.|我们下周将开放报名。
+abrir.future.5|Vosotros [abriréis] las puertas a las ocho en punto.|你们将于八点整开门。
+abrir.future.6|Los comerciantes [abrirán] sus puestos al amanecer.|商贩们将在天亮时开摊。
+cerrar.present.1|Yo [cierro] el grifo mientras me cepillo los dientes.|我刷牙时关着水龙头。
+cerrar.present.2|Tú [cierras] siempre la puerta con llave.|你总是用钥匙锁门。
+cerrar.present.3|La farmacia [cierra] a las diez de la noche.|药房晚上十点关门。
+cerrar.present.4|Nosotros [cerramos] las cortinas cuando da el sol.|太阳照进来时，我们拉上窗帘。
+cerrar.present.5|Vosotros [cerráis] la maleta entre los dos.|你们两个人一起合上行李箱。
+cerrar.present.6|Los bancos [cierran] temprano los viernes.|银行每周五提早关门。
+cerrar.preterite.1|Anoche yo [cerré] todas las ventanas antes de dormir.|昨晚睡前我关好了所有窗户。
+cerrar.preterite.2|Tú [cerraste] el libro al oír tu nombre.|听到自己的名字时，你合上了书。
+cerrar.preterite.3|El camarero [cerró] la terraza cuando empezó a llover.|下雨时，服务员关闭了露台。
+cerrar.preterite.4|El lunes nosotros [cerramos] la tienda por inventario.|周一我们关店盘点了库存。
+cerrar.preterite.5|Vosotros [cerrasteis] el garaje antes de salir ayer.|昨天你们出门前关了车库。
+cerrar.preterite.6|Las autoridades [cerraron] el puente después de la tormenta.|暴风雨后，当局关闭了桥梁。
+cerrar.imperfect.1|Yo [cerraba] las cajas cuando encontré tu reloj.|我收拢箱子时发现了你的手表。
+cerrar.imperfect.2|De niño tú [cerrabas] los ojos al escuchar un cuento.|你小时候听故事会闭上眼睛。
+cerrar.imperfect.3|La antigua tienda [cerraba] al mediodía.|以前那家商店中午关门休息。
+cerrar.imperfect.4|Nosotros [cerrábamos] el patio por las noches.|我们以前晚上关上院门。
+cerrar.imperfect.5|Vosotros [cerrabais] las mochilas mientras el guía esperaba.|导游等待时，你们在拉上背包拉链。
+cerrar.imperfect.6|Los vecinos [cerraban] las persianas para evitar el calor.|邻居们以前关百叶窗来挡热气。
+cerrar.future.1|Yo [cerraré] la oficina después de la última visita.|最后一位访客离开后，我会关办公室。
+cerrar.future.2|Tú [cerrarás] el paraguas al entrar en el autobús.|你上公交车时要收伞。
+cerrar.future.3|El plazo de inscripción [cerrará] el próximo lunes.|报名将于下周一截止。
+cerrar.future.4|Nosotros [cerraremos] el negocio durante las vacaciones.|假期期间我们将歇业。
+cerrar.future.5|Vosotros [cerraréis] la puerta al salir del aula.|你们离开教室时将关门。
+cerrar.future.6|Los operarios [cerrarán] la carretera mañana por obras.|工人们明天将因施工封闭道路。
+buscar.present.1|Yo [busco] mis gafas debajo del sofá.|我正在沙发底下找眼镜。
+buscar.present.2|Tú [buscas] un trabajo cerca de casa.|你在找离家近的工作。
+buscar.present.3|El perro [busca] su pelota en el jardín.|狗在花园里找球。
+buscar.present.4|Nosotros [buscamos] un restaurante con terraza.|我们在找有露台的餐馆。
+buscar.present.5|Vosotros [buscáis] información para el viaje.|你们在查找旅行资料。
+buscar.present.6|Los bomberos [buscan] una entrada segura al edificio.|消防员们在寻找安全进入楼内的入口。
+buscar.preterite.1|Ayer yo [busqué] tu dirección en mi agenda.|昨天我在通讯录里找了你的地址。
+buscar.preterite.2|Tú [buscaste] las llaves en todos los bolsillos anoche.|昨晚你翻遍所有口袋找钥匙。
+buscar.preterite.3|Mi hermana [buscó] alojamiento antes de comprar el billete.|我姐姐买票前找过住宿。
+buscar.preterite.4|El sábado nosotros [buscamos] setas en el bosque.|周六我们去森林里找了蘑菇。
+buscar.preterite.5|Vosotros [buscasteis] una farmacia de guardia el domingo.|周日你们找了一家值班药房。
+buscar.preterite.6|Los vecinos [buscaron] al gato hasta medianoche ayer.|昨天邻居们找猫找到半夜。
+buscar.imperfect.1|Yo [buscaba] una cuchara cuando encontré el anillo.|我找勺子时发现了戒指。
+buscar.imperfect.2|Tú [buscabas] piso cuando te ofrecí la habitación.|我提出把房间给你住时，你正在找公寓。
+buscar.imperfect.3|Mi abuelo [buscaba] sombra bajo los árboles en verano.|以前夏天爷爷会在树下找阴凉处。
+buscar.imperfect.4|Nosotros [buscábamos] la salida cuando apareció el guardia.|保安出现时，我们正在找出口。
+buscar.imperfect.5|Vosotros [buscabais] fotos antiguas para el aniversario.|你们当时在为周年纪念找旧照片。
+buscar.imperfect.6|Los excursionistas [buscaban] agua cuando los vimos.|我们看到远足者时，他们正在找水。
+buscar.future.1|Mañana yo [buscaré] el recibo en la oficina.|明天我会在办公室找收据。
+buscar.future.2|Tú [buscarás] los horarios y yo reservaré el hotel.|你来查时刻表，我来订酒店。
+buscar.future.3|La policía [buscará] al dueño de la cartera.|警察将寻找钱包的主人。
+buscar.future.4|Nosotros [buscaremos] un sitio tranquilo para comer.|我们会找个安静的地方吃饭。
+buscar.future.5|Vosotros [buscaréis] las diferencias entre las dos fotos en la actividad.|活动中你们将寻找两张照片的不同之处。
+buscar.future.6|Los científicos [buscarán] señales de vida en el lago.|科学家们将寻找湖中的生命迹象。
+encontrar.present.1|Yo [encuentro] monedas en el sofá de vez en cuando.|我偶尔会在沙发里找到硬币。
+encontrar.present.2|Tú [encuentras] una solución incluso en los días difíciles.|即使遇到困难，你也能找到解决办法。
+encontrar.present.3|Mi perro [encuentra] la pelota aunque la esconda.|即使我把球藏起来，我的狗也找得到。
+encontrar.present.4|Nosotros [encontramos] fruta fresca en este mercado todo el año.|我们全年都能在这个市场找到新鲜水果。
+encontrar.present.5|Vosotros [encontráis] errores en la cuenta cada mes.|你们每个月都会在账单里发现错误。
+encontrar.present.6|Los turistas [encuentran] ayuda en la oficina de información.|游客们在咨询处得到帮助。
+encontrar.preterite.1|Ayer yo [encontré] tu bufanda en el coche.|昨天我在车里找到了你的围巾。
+encontrar.preterite.2|Tú [encontraste] el camino correcto después de cruzar el puente.|过桥后，你找到了正确的路。
+encontrar.preterite.3|La niña [encontró] una concha grande en la playa el sábado.|周六那个女孩在海滩上找到一个大贝壳。
+encontrar.preterite.4|Anoche nosotros [encontramos] una mesa libre junto a la ventana.|昨晚我们找到了一张靠窗的空桌。
+encontrar.preterite.5|Vosotros [encontrasteis] trabajo poco después de mudaros.|你们搬家后不久就找到了工作。
+encontrar.preterite.6|Los arqueólogos [encontraron] una vasija durante la excavación.|考古学家在发掘中找到了一个陶罐。
+encontrar.imperfect.1|Antes yo [encontraba] aparcamiento con facilidad en esta calle.|以前我在这条街上很容易找到车位。
+encontrar.imperfect.2|Tú [encontrabas] flores silvestres en cada paseo.|以前你每次散步都能发现野花。
+encontrar.imperfect.3|Mi abuelo [encontraba] tranquilidad en su huerto.|我爷爷以前在菜园里感到宁静。
+encontrar.imperfect.4|Nosotros [encontrábamos] libros baratos en aquel puesto.|我们以前在那个摊位上能找到便宜书。
+encontrar.imperfect.5|Vosotros [encontrabais] siempre una excusa para quedaros más tiempo.|你们以前总能找到借口多待一会儿。
+encontrar.imperfect.6|Los viajeros [encontraban] refugio en esa posada durante el invierno.|以前冬天旅客们在那家客栈找到落脚处。
+encontrar.future.1|Yo [encontraré] el documento antes de la reunión.|我会在开会前找到文件。
+encontrar.future.2|Tú [encontrarás] la farmacia al final de la calle.|你在街道尽头会找到药房。
+encontrar.future.3|El repartidor [encontrará] el portal junto a la panadería.|送货员会在面包店旁找到楼门。
+encontrar.future.4|Nosotros [encontraremos] otra fecha para vernos.|我们会另找时间见面。
+encontrar.future.5|Vosotros [encontraréis] las instrucciones dentro de la caja.|你们会在盒子里找到说明书。
+encontrar.future.6|Los visitantes [encontrarán] agua potable en la entrada.|游客们会在入口处找到饮用水。
+querer.present.1|Yo [quiero] una habitación que dé al patio.|我想要一间朝院子的房间。
+querer.present.2|Tú [quieres] terminar antes de que anochezca.|你想在天黑前完成。
+querer.present.3|Mi hija [quiere] aprender a patinar.|我女儿想学滑冰。
+querer.present.4|Nosotros [queremos] pasar más tiempo con la familia.|我们想多花点时间陪家人。
+querer.present.5|Vosotros [queréis] sentaros cerca del escenario.|你们想坐得离舞台近些。
+querer.present.6|Los vecinos [quieren] un parque para los niños.|邻居们希望有一个供孩子玩耍的公园。
+querer.preterite.1|Ayer yo [quise] ayudarte, pero llegué demasiado tarde.|昨天我本想帮你，但来得太晚。
+querer.preterite.2|Tú [quisiste] probar el plato nuevo durante la cena de ayer.|昨天晚饭时，你想尝尝那道新菜。
+querer.preterite.3|El niño no [quiso] entrar en el agua ayer.|昨天那个孩子不肯下水。
+querer.preterite.4|Nosotros [quisimos] visitar el museo el lunes, pero estaba cerrado.|周一我们想参观博物馆，但它关门了。
+querer.preterite.5|Vosotros [quisisteis] quedaros una noche más al final del viaje.|旅行结束时，你们想再住一晚。
+querer.preterite.6|Mis padres no [quisieron] vender la casa cuando recibieron la oferta.|收到报价后，我父母不愿卖房。
+querer.imperfect.1|De pequeño yo [quería] ser astronauta.|小时候我想当宇航员。
+querer.imperfect.2|Tú [querías] hablar conmigo cuando nos interrumpieron.|有人打断我们时，你正想和我说话。
+querer.imperfect.3|Mi abuela [quería] mucho a su hermana.|我奶奶以前很爱她的妹妹。
+querer.imperfect.4|Nosotros [queríamos] vivir cerca del mar en aquella época.|那时候我们想住在海边。
+querer.imperfect.5|Vosotros [queríais] una mesa más grande cuando vimos aquella tienda.|我们看到那家店时，你们正想要张大桌子。
+querer.imperfect.6|Los niños [querían] seguir jugando cuando llegó la hora de cenar.|到晚饭时间时，孩子们还想继续玩。
+querer.future.1|Después de este viaje, yo [querré] descansar unos días.|这次旅行后，我会想休息几天。
+querer.future.2|Cuando pruebes el pastel, tú [querrás] la receta.|尝过蛋糕后，你会想要食谱。
+querer.future.3|El médico [querrá] saber cuándo empezó el dolor.|医生会想知道疼痛是什么时候开始的。
+querer.future.4|Nosotros [querremos] volver a este pueblo el próximo verano.|明年夏天我们还会想回到这个村庄。
+querer.future.5|Vosotros [querréis] ver las fotos cuando regresemos.|我们回来时，你们会想看照片。
+querer.future.6|Los invitados [querrán] conocer el horario de mañana.|客人们会想知道明天的安排。
+poder.present.1|Yo [puedo] llevarte a la estación en mi coche.|我可以开车送你去车站。
+poder.present.2|Tú [puedes] usar mi ordenador esta tarde.|你今天下午可以用我的电脑。
+poder.present.3|La niña ya [puede] atarse los zapatos sola.|那个女孩已经能自己系鞋带了。
+poder.present.4|Nosotros [podemos] esperar dentro si llueve.|如果下雨，我们可以在里面等。
+poder.present.5|Vosotros [podéis] elegir entre sopa y ensalada.|你们可以在汤和沙拉中选一种。
+poder.present.6|Los socios [pueden] entrar sin pagar.|会员可以免费进入。
+poder.preterite.1|Ayer yo [pude] terminar el informe a tiempo.|昨天我成功按时完成了报告。
+poder.preterite.2|Tú no [pudiste] venir a la boda por el trabajo.|因为工作，你没能来参加婚礼。
+poder.preterite.3|El mecánico [pudo] arreglar el coche antes del viernes.|修车师傅在周五之前修好了车。
+poder.preterite.4|Nosotros [pudimos] subir al último tren anoche.|昨晚我们赶上了最后一班火车。
+poder.preterite.5|Vosotros [pudisteis] abrir la puerta con la llave de repuesto.|你们用备用钥匙成功打开了门。
+poder.preterite.6|Los bomberos [pudieron] rescatar a todos los vecinos.|消防员成功救出了所有居民。
+poder.imperfect.1|Antes yo [podía] correr diez kilómetros sin parar.|以前我能连续跑十公里。
+poder.imperfect.2|Tú [podías] ver el río desde tu antiguo balcón.|你从以前的阳台能看到河流。
+poder.imperfect.3|El niño no [podía] dormir por el ruido aquella noche.|那天晚上孩子被噪声吵得睡不着。
+poder.imperfect.4|Nosotros [podíamos] visitar el museo gratis cuando éramos estudiantes.|我们当学生时可以免费参观博物馆。
+poder.imperfect.5|Vosotros [podíais] salir antes los viernes en vuestro antiguo trabajo.|你们以前那份工作周五可以早下班。
+poder.imperfect.6|Los viajeros no [podían] cruzar el río porque el puente estaba roto.|桥坏了，旅客们当时无法过河。
+poder.future.1|Mañana yo [podré] ayudarte con la mudanza.|明天我将能帮你搬家。
+poder.future.2|Tú [podrás] recoger el paquete a partir del lunes.|周一起你就可以取包裹。
+poder.future.3|Mi padre [podrá] caminar mejor después de la operación.|手术后我父亲将能走得更好。
+poder.future.4|Nosotros [podremos] comer fuera cuando deje de llover.|雨停后，我们就能在外面吃饭。
+poder.future.5|Vosotros [podréis] hacer preguntas al final de la charla.|讲座结束时，你们将可以提问。
+poder.future.6|Los visitantes [podrán] subir a la torre desde mañana.|从明天起，游客将能登塔。
+necesitar.present.1|Yo [necesito] una silla más para la cena.|晚餐我还需要一把椅子。
+necesitar.present.2|Tú [necesitas] descansar después de tantas horas de viaje.|旅行了这么久，你需要休息。
+necesitar.present.3|Esta planta [necesita] más luz.|这株植物需要更多光照。
+necesitar.present.4|Nosotros [necesitamos] el permiso de los padres para la excursión.|这次远足我们需要家长许可。
+necesitar.present.5|Vosotros [necesitáis] calzado cómodo para esta ruta.|走这条路线你们需要舒适的鞋。
+necesitar.present.6|Los animales [necesitan] agua limpia todos los días.|动物每天都需要干净的水。
+necesitar.preterite.1|Ayer yo [necesité] ayuda para subir la maleta.|昨天我把行李箱搬上去时需要别人帮忙。
+necesitar.preterite.2|Tú [necesitaste] tres intentos para abrir la caja.|你试了三次才打开盒子。
+necesitar.preterite.3|El equipo [necesitó] dos días para reparar el puente.|团队用了两天修桥。
+necesitar.preterite.4|Durante el viaje pasado nosotros [necesitamos] una manta extra.|上次旅行中，我们需要额外一条毯子。
+necesitar.preterite.5|Vosotros [necesitasteis] un taxi al perder el último autobús.|错过末班公交车后，你们需要坐出租车。
+necesitar.preterite.6|Los heridos [necesitaron] atención médica después del accidente.|事故后，伤者需要医疗救助。
+necesitar.imperfect.1|Yo [necesitaba] silencio para estudiar cuando vivía con mis hermanos.|和兄弟姐妹同住时，我学习需要安静。
+necesitar.imperfect.2|Tú [necesitabas] gafas de pequeño.|你小时候需要戴眼镜。
+necesitar.imperfect.3|La casa [necesitaba] una reforma cuando la compramos.|我们买下房子时，它需要翻修。
+necesitar.imperfect.4|Nosotros [necesitábamos] un mapa antes de conocer bien la ciudad.|熟悉城市之前，我们需要地图。
+necesitar.imperfect.5|Vosotros [necesitabais] más espacio cuando los niños eran pequeños.|孩子们还小时，你们需要更大的空间。
+necesitar.imperfect.6|Las plantas [necesitaban] agua cuando volvimos de vacaciones.|我们度假回来时，植物需要浇水。
+necesitar.future.1|Mañana yo [necesitaré] tu coche para llevar las cajas.|明天我会需要你的车来运箱子。
+necesitar.future.2|Tú [necesitarás] el pasaporte para entrar en ese país.|进入那个国家你将需要护照。
+necesitar.future.3|El bebé [necesitará] una cama más grande cuando crezca.|宝宝长大后会需要更大的床。
+necesitar.future.4|Nosotros [necesitaremos] más tiempo para revisar el contrato.|我们会需要更多时间审核合同。
+necesitar.future.5|Vosotros [necesitaréis] monedas para las taquillas mañana.|明天用储物柜时，你们会需要硬币。
+necesitar.future.6|Los excursionistas [necesitarán] ropa de abrigo en la cima.|远足者们到山顶时会需要保暖衣物。
+ayudar.present.1|Yo [ayudo] a mi vecino a llevar la compra.|我帮邻居提买来的东西。
+ayudar.present.2|Tú [ayudas] a los niños con sus deberes.|你帮孩子们做作业。
+ayudar.present.3|Esta lámpara me [ayuda] a leer por la noche.|这盏灯方便我晚上看书。
+ayudar.present.4|Nosotros [ayudamos] en el comedor del barrio los sábados.|我们每周六在社区食堂帮忙。
+ayudar.present.5|Vosotros [ayudáis] a mantener limpio el parque.|你们帮忙保持公园整洁。
+ayudar.present.6|Los perros guía [ayudan] a las personas con discapacidad visual.|导盲犬帮助有视力障碍的人。
+ayudar.preterite.1|Ayer yo [ayudé] a una turista a encontrar el museo.|昨天我帮一名游客找到了博物馆。
+ayudar.preterite.2|Tú me [ayudaste] mucho durante la mudanza del sábado.|周六搬家时，你帮了我很大的忙。
+ayudar.preterite.3|El camarero [ayudó] al anciano a subir el escalón.|服务员帮老人上了台阶。
+ayudar.preterite.4|El domingo nosotros [ayudamos] a limpiar la playa.|周日我们帮忙清理了海滩。
+ayudar.preterite.5|Vosotros [ayudasteis] a preparar la comida de la fiesta.|你们帮忙准备了聚会的食物。
+ayudar.preterite.6|Los vecinos [ayudaron] a sacar los muebles tras la inundación.|洪水过后，邻居们帮忙搬出了家具。
+ayudar.imperfect.1|De niño yo [ayudaba] a mi abuelo en el huerto.|小时候我在菜园里帮爷爷干活。
+ayudar.imperfect.2|Tú [ayudabas] en la tienda familiar durante las vacaciones.|你以前假期时在家里的店里帮忙。
+ayudar.imperfect.3|Mi hermana me [ayudaba] a estudiar matemáticas.|我姐姐以前帮我学数学。
+ayudar.imperfect.4|Nosotros [ayudábamos] a repartir alimentos cada viernes.|我们以前每周五帮忙分发食物。
+ayudar.imperfect.5|Vosotros [ayudabais] al profesor mientras los demás guardaban las sillas.|其他人收椅子时，你们在帮老师。
+ayudar.imperfect.6|Los voluntarios [ayudaban] a los viajeros cuando se averió el tren.|火车出故障时，志愿者们正在帮助旅客。
+ayudar.future.1|Mañana yo te [ayudaré] a montar la estantería.|明天我会帮你组装书架。
+ayudar.future.2|Tú [ayudarás] a tu hermana a elegir los libros.|你会帮姐姐挑书。
+ayudar.future.3|La guía nos [ayudará] a organizar la visita.|导游会帮我们安排参观。
+ayudar.future.4|Nosotros [ayudaremos] en la cocina durante la fiesta.|聚会期间我们会在厨房帮忙。
+ayudar.future.5|Vosotros [ayudaréis] a recibir a los invitados el sábado.|周六你们将帮忙迎接宾客。
+ayudar.future.6|Los estudiantes [ayudarán] a plantar árboles la próxima semana.|学生们下周将帮忙种树。
+caminar.present.1|Yo [camino] media hora después de comer.|我吃完饭走半小时路。
+caminar.present.2|Tú [caminas] muy rápido para llevar una mochila tan pesada.|背着这么重的包，你走得还很快。
+caminar.present.3|Mi abuelo [camina] con bastón desde la operación.|手术后，我爷爷拄着拐杖走路。
+caminar.present.4|Nosotros [caminamos] hasta el trabajo cuando hace buen tiempo.|天气好时，我们走路上班。
+caminar.present.5|Vosotros [camináis] por la sombra para evitar el calor.|你们在阴凉处走，避开热气。
+caminar.present.6|Los turistas [caminan] por las calles del casco antiguo.|游客们漫步在老城区的街道上。
+caminar.preterite.1|Ayer yo [caminé] diez kilómetros junto al río.|昨天我沿河走了十公里。
+caminar.preterite.2|Tú [caminaste] hasta la farmacia anoche.|昨晚你走路去了药房。
+caminar.preterite.3|La niña [caminó] sola por primera vez el domingo.|那个女孩周日第一次独自走路了。
+caminar.preterite.4|El sábado nosotros [caminamos] hasta el faro.|周六我们走到了灯塔。
+caminar.preterite.5|Vosotros [caminasteis] durante dos horas antes de descansar.|你们走了两个小时才休息。
+caminar.preterite.6|Los viajeros [caminaron] hasta el pueblo después de perder el autobús.|错过公交车后，旅客们走到了村子。
+caminar.imperfect.1|Yo [caminaba] hacia casa cuando encontré tu cartera.|我往家走时发现了你的钱包。
+caminar.imperfect.2|Tú [caminabas] despacio porque te dolía el pie.|你当时脚疼，所以走得很慢。
+caminar.imperfect.3|Mi padre [caminaba] por la playa cada mañana aquel verano.|那年夏天，我父亲每天早上都沿海滩散步。
+caminar.imperfect.4|Nosotros [caminábamos] en silencio mientras amanecía.|天渐渐亮时，我们静静地走着。
+caminar.imperfect.5|Vosotros [caminabais] delante del grupo cuando empezó a nevar.|开始下雪时，你们走在队伍前面。
+caminar.imperfect.6|Los niños [caminaban] de la mano al salir del colegio.|孩子们放学出来时，手拉手走着。
+caminar.future.1|Mañana yo [caminaré] hasta la oficina en vez de coger el autobús.|明天我会走路去办公室，不坐公交车。
+caminar.future.2|Tú [caminarás] mejor con estos zapatos nuevos.|穿这双新鞋你会走得更舒服。
+caminar.future.3|La guía [caminará] delante para señalar la ruta.|导游将走在前面指路。
+caminar.future.4|Nosotros [caminaremos] junto al lago después de desayunar.|早饭后我们会沿湖散步。
+caminar.future.5|Vosotros [caminaréis] hasta el puente y allí nos esperaréis.|你们将走到桥边，在那里等我们。
+caminar.future.6|Los participantes [caminarán] cinco kilómetros durante la actividad.|活动中，参加者将步行五公里。
+correr.present.1|Yo [corro] por el parque antes de ir a trabajar.|我上班前在公园里跑步。
+correr.present.2|Tú [corres] más rápido que yo.|你跑得比我快。
+correr.present.3|El perro [corre] detrás de la pelota.|狗追着球跑。
+correr.present.4|Nosotros [corremos] juntos los domingos por la mañana.|我们每周日早上一起跑步。
+correr.present.5|Vosotros [corréis] por la pista del colegio.|你们在学校跑道上跑步。
+correr.present.6|Los niños [corren] hacia sus padres al salir de clase.|下课后，孩子们跑向父母。
+correr.preterite.1|Ayer yo [corrí] para alcanzar el autobús.|昨天我跑着去赶公交车。
+correr.preterite.2|Tú [corriste] tu primera carrera el mes pasado.|上个月你参加了第一次赛跑。
+correr.preterite.3|La niña [corrió] a abrazar a su abuela cuando llegó.|奶奶到时，女孩跑过去拥抱了她。
+correr.preterite.4|Nosotros [corrimos] diez kilómetros el sábado.|周六我们跑了十公里。
+correr.preterite.5|Vosotros [corristeis] al refugio cuando empezó la tormenta.|暴风雨开始时，你们跑到了避雨处。
+correr.preterite.6|Los jugadores [corrieron] hasta el vestuario después del partido.|比赛后，球员们跑回了更衣室。
+correr.imperfect.1|Yo [corría] junto al río cuando empezó a llover.|开始下雨时，我正在河边跑步。
+correr.imperfect.2|De pequeño tú [corrías] descalzo por el jardín.|你小时候光着脚在花园里跑。
+correr.imperfect.3|El agua [corría] por la calle durante la tormenta.|暴风雨期间，水在街道上流淌。
+correr.imperfect.4|Nosotros [corríamos] cada tarde antes de lesionarnos.|受伤前，我们每天下午跑步。
+correr.imperfect.5|Vosotros [corríais] hacia la estación cuando os vi.|我看见你们时，你们正往车站跑。
+correr.imperfect.6|Los caballos [corrían] por el campo mientras los observábamos.|我们观察时，马群正在田野里奔跑。
+correr.future.1|El domingo yo [correré] una carrera de cinco kilómetros.|周日我将参加五公里赛跑。
+correr.future.2|Tú [correrás] en la segunda serie mañana.|明天你将在第二组跑。
+correr.future.3|Mi hermana [correrá] el maratón el año que viene.|我姐姐明年将跑马拉松。
+correr.future.4|Nosotros [correremos] por la playa al amanecer.|我们将在天亮时沿海滩跑步。
+correr.future.5|Vosotros [correréis] detrás del entrenador durante el calentamiento.|热身时你们将跟在教练后面跑。
+correr.future.6|Los atletas [correrán] la final el sábado.|运动员们将于周六参加决赛。

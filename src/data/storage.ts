@@ -6,16 +6,19 @@ import type {
   VocabularyEntry,
   WordProgress,
 } from '../types'
-import { vocabulary } from './vocabulary'
+import { spanishVocabulary } from '../spanish/vocabulary'
 import { englishVocabulary } from './englishVocabulary'
 import { DEFAULT_AI_SETTINGS, type AiSettings, type EncryptedCredential, type WordAiAnalysis } from '../ai/types'
 
 import type { WordleDictionaryEntry, WordleGame } from '../wordle/types'
+import type { SpanishDailyRecord, SpanishDailyUpdate } from '../spanish/sessionTypes'
 
-const DB_VERSION = 5
+const DB_VERSION = 6
+const STORE_SPANISH_DAYS = 'spanishDays'
 const STORE_WORDLE = 'wordleGame'
 const STORE_WORDLE_DICTIONARY = 'wordleDictionary'
-const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 1, en: 4 }
+// Revision 2 was used by local previews before the final sentence/cue audit.
+const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 3, en: 4 }
 const STORE_PROGRESS = 'wordProgress'
 const STORE_SESSIONS = 'sessions'
 const STORE_SETTINGS = 'settings'
@@ -47,6 +50,7 @@ interface PalabraStorageOptions {
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
+  spanishDailyGoal: 50,
   id: 'settings',
   dailyNewWords: 10,
   enableChoice: true,
@@ -66,6 +70,28 @@ export class StaleStudySessionError extends Error {
 function isCurrentSession(stored: ActiveSession | undefined, next: ActiveSession): boolean {
   return Boolean(stored && stored.startedAt === next.startedAt
     && (stored.revision ?? 0) === (next.revision ?? 0) - 1)
+}
+
+function putSpanishDailyUpdate(transaction: IDBTransaction, update: SpanishDailyUpdate): void {
+  putSpanishDailyUpdates(transaction, [update])
+}
+
+function putSpanishDailyUpdates(transaction: IDBTransaction, updates: readonly SpanishDailyUpdate[]): void {
+  const grouped = new Map<string, SpanishDailyUpdate[]>()
+  for (const update of updates) grouped.set(update.date, [...(grouped.get(update.date) ?? []), update])
+  for (const [date, entries] of grouped) {
+    const store = transaction.objectStore(STORE_SPANISH_DAYS)
+    const request = store.get(date) as IDBRequest<SpanishDailyRecord | undefined>
+    request.onsuccess = () => {
+      const record = request.result ?? { id: date, entries: {} }
+      for (const update of entries) {
+        const prior = record.entries[update.wordId]
+        if (prior && update.entry.outcome === 'legacy') continue
+        record.entries[update.wordId] = { ...update.entry, kind: prior?.kind ?? update.entry.kind }
+      }
+      store.put(record)
+    }
+  }
 }
 
 function requestResult<T>(request: IDBRequest<T>): Promise<T> {
@@ -182,7 +208,7 @@ export class PalabraStorage {
     private readonly databaseName = 'palabra-db',
     options: PalabraStorageOptions = {},
   ) {
-    const legacySpanishSeed = options.vocabularySeed ?? vocabulary
+    const legacySpanishSeed = options.vocabularySeed ?? spanishVocabulary
     this.vocabularySeeds = {
       es: options.vocabularySeeds?.es ?? legacySpanishSeed,
       en: options.vocabularySeeds?.en ?? englishVocabulary,
@@ -200,6 +226,7 @@ export class PalabraStorage {
         let blocked = false
         request.onupgradeneeded = (event) => {
           const database = request.result
+          if (!database.objectStoreNames.contains(STORE_SPANISH_DAYS)) database.createObjectStore(STORE_SPANISH_DAYS, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_WORDLE)) database.createObjectStore(STORE_WORDLE, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_WORDLE_DICTIONARY)) database.createObjectStore(STORE_WORDLE_DICTIONARY, { keyPath: 'term' })
           if (!database.objectStoreNames.contains(STORE_PROGRESS)) database.createObjectStore(STORE_PROGRESS, { keyPath: 'wordId' })
@@ -218,7 +245,7 @@ export class PalabraStorage {
             request.result.close()
             return
           }
-          request.result.onversionchange = () => request.result.close()
+        request.result.onversionchange = () => { request.result.close(); this.databasePromise = undefined; this.vocabularyInitialization = undefined }
           resolve(request.result)
         }
         request.onerror = () => reject(request.error)
@@ -364,9 +391,10 @@ export class PalabraStorage {
     return result
   }
 
-  async commitStudyStep(progress: WordProgress | undefined, active: ActiveSession): Promise<void> {
+  async commitStudyStep(progress: WordProgress | undefined, active: ActiveSession, daily?: SpanishDailyUpdate): Promise<void> {
+    if (daily && active.language !== 'es') throw new Error('Spanish daily entry requires Spanish session')
     const database = await this.open()
-    const transaction = database.transaction([STORE_PROGRESS, STORE_ACTIVE], 'readwrite')
+    const transaction = database.transaction([STORE_PROGRESS, STORE_ACTIVE, ...(daily ? [STORE_SPANISH_DAYS] : [])], 'readwrite')
     const activeStore = transaction.objectStore(STORE_ACTIVE)
     const request = activeStore.get(activeSessionId(active.language)) as IDBRequest<ActiveSession | undefined>
     let stale = false
@@ -378,6 +406,7 @@ export class PalabraStorage {
       }
       if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
       activeStore.put({ ...active, id: activeSessionId(active.language) })
+      if (daily) putSpanishDailyUpdate(transaction, daily)
     }
     try {
       await transactionDone(transaction)
@@ -387,15 +416,18 @@ export class PalabraStorage {
     }
   }
 
-  async completeStudyGroup(completed: StudySession, language: LearningLanguage, progress?: WordProgress, finalSession?: ActiveSession): Promise<void> {
+  async completeStudyGroup(completed: StudySession, language: LearningLanguage, progress?: WordProgress, finalSession?: ActiveSession, daily?: SpanishDailyUpdate | readonly SpanishDailyUpdate[]): Promise<void> {
+    if (daily && language !== 'es') throw new Error('Spanish daily entry requires Spanish session')
     const database = await this.open()
     const stores = progress ? [STORE_SESSIONS, STORE_ACTIVE, STORE_PROGRESS] : [STORE_SESSIONS, STORE_ACTIVE]
+    if (daily) stores.push(STORE_SPANISH_DAYS)
     const transaction = database.transaction(stores, 'readwrite')
     const activeStore = transaction.objectStore(STORE_ACTIVE)
     const commit = () => {
       if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
       transaction.objectStore(STORE_SESSIONS).put({ ...completed, language })
       activeStore.delete(activeSessionId(language))
+      if (daily) putSpanishDailyUpdates(transaction, Array.isArray(daily) ? daily : [daily as SpanishDailyUpdate])
     }
     let stale = false
     if (finalSession) {
@@ -424,7 +456,8 @@ export class PalabraStorage {
 
   async clearLearningData(language: LearningLanguage = 'es'): Promise<void> {
     const database = await this.open()
-    const transaction = database.transaction([STORE_PROGRESS, STORE_SESSIONS, STORE_ACTIVE], 'readwrite')
+    const transaction = database.transaction([STORE_PROGRESS, STORE_SESSIONS, STORE_ACTIVE, STORE_SPANISH_DAYS], 'readwrite')
+    if (language === 'es') transaction.objectStore(STORE_SPANISH_DAYS).clear()
     const progressStore = transaction.objectStore(STORE_PROGRESS)
     const sessionsStore = transaction.objectStore(STORE_SESSIONS)
     const progressRequest = progressStore.getAll() as IDBRequest<WordProgress[]>
@@ -440,6 +473,38 @@ export class PalabraStorage {
   }
 
   get aiChannelName(): string { return `${this.databaseName}:ai-events` }
+
+  async getSpanishDay(date: string): Promise<SpanishDailyRecord> {
+    const db = await this.open()
+    return await requestResult<SpanishDailyRecord | undefined>(db.transaction(STORE_SPANISH_DAYS).objectStore(STORE_SPANISH_DAYS).get(date)) ?? { id: date, entries: {} }
+  }
+
+  async getSpanishDays(): Promise<SpanishDailyRecord[]> {
+    return this.getAll<SpanishDailyRecord>(STORE_SPANISH_DAYS)
+  }
+
+  /** One CAS transaction owns every effect of a cloze step, including the final step. */
+  async commitSpanishStep(active: ActiveSession, progress?: WordProgress, update?: SpanishDailyUpdate, completed?: StudySession): Promise<void> {
+    if (active.language !== 'es' || !active.spanish) throw new Error('Invalid Spanish session')
+    const db = await this.open()
+    const tx = db.transaction([STORE_ACTIVE, STORE_PROGRESS, STORE_SPANISH_DAYS, STORE_SESSIONS], 'readwrite')
+    const activeStore = tx.objectStore(STORE_ACTIVE)
+    const request = activeStore.get('active-session:es') as IDBRequest<ActiveSession | undefined>
+    let stale = false
+    request.onsuccess = () => {
+      if (!isCurrentSession(request.result, active)) { stale = true; tx.abort(); return }
+      if (progress) tx.objectStore(STORE_PROGRESS).put(progress)
+      if (completed) {
+        tx.objectStore(STORE_SESSIONS).put(completed)
+        activeStore.delete('active-session:es')
+      } else activeStore.put(active)
+      if (update) putSpanishDailyUpdate(tx, update)
+    }
+    try { await transactionDone(tx) } catch (error) {
+      if (stale) throw new StaleStudySessionError()
+      throw error
+    }
+  }
 
   async getAiConfiguration(): Promise<{ settings: AiSettings; credential?: EncryptedCredential }> {
     const database = await this.open()

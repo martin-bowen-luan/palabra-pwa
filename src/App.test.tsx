@@ -7,6 +7,7 @@ import { DEFAULT_SETTINGS, PalabraStorage } from './data/storage'
 import type { VocabularyEntry, WordProgress } from './types'
 import { pronunciationPlayer } from './audio/pronunciation'
 import { createPracticeQueue } from './domain/practiceQueue'
+import { vocabulary as legacySpanishVocabulary } from './data/vocabulary'
 
 const databaseWord: VocabularyEntry = {
   id: 'database-01',
@@ -44,7 +45,9 @@ async function renderApp(
 ) {
   const name = `palabra-app-${crypto.randomUUID()}`
   databaseNames.push(name)
-  const storage = new PalabraStorage(name, options)
+  // These regressions exercise the legacy Spanish flow and unchanged English
+  // flow. The v6 contextual course has separate SpanishApp integration tests.
+  const storage = new PalabraStorage(name, { vocabularySeed: legacySpanishVocabulary, ...options })
   storageClients.push(storage)
   await storage.saveSettings({ ...DEFAULT_SETTINGS, dailyNewWords: 5 })
   await prepare?.(storage)
@@ -399,7 +402,7 @@ describe('Palabra app', () => {
     await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
     await user.type(await screen.findByLabelText('西班牙语'), 'wrong')
     await user.click(screen.getByRole('button', { name: '检查答案' }))
-    await user.click(screen.getByRole('button', { name: '继续' }))
+    await user.click(await screen.findByRole('button', { name: '继续' }))
     await user.click(await screen.findByRole('button', { name: '标为熟练' }))
     expect(await screen.findByRole('heading', { name: '0%' })).toBeInTheDocument()
     expect((await storage.getSessions('es'))[0]).toMatchObject({ correctCount: 0, totalCount: 1 })

@@ -1,6 +1,9 @@
 export type ReviewRating = 'forgotten' | 'fuzzy' | 'known'
 export type LearningStatus = 'learning' | 'mastered'
 export type ThemeMode = 'system' | 'light' | 'dark'
+import type { SpanishLearningData } from './spanish/types'
+import type { SpanishSessionState } from './spanish/sessionTypes'
+
 export type LearningLanguage = 'es' | 'en'
 export type StudyMode = 'learn' | 'review'
 export type MemoryRound = 'choice' | 'context' | 'recall' | 'spelling'
@@ -31,6 +34,7 @@ export interface VocabularySource {
 }
 
 export interface VocabularyEntry {
+  spanishData?: SpanishLearningData
   id: string
   language: LearningLanguage
   term: string
@@ -69,6 +73,8 @@ export interface WordProgress {
 }
 
 export interface StudySession {
+  spanishDailyTracked?: boolean
+  spanishUntrackedCount?: number
   mode?: StudyMode
   skippedCount?: number
   language: LearningLanguage
@@ -83,6 +89,7 @@ export interface StudySession {
 }
 
 export interface UserSettings {
+  spanishDailyGoal?: 10 | 20 | 30 | 50
   id: 'settings'
   dailyNewWords: 5 | 10 | 15 | 20
   enableChoice: boolean
@@ -93,6 +100,8 @@ export interface UserSettings {
 }
 
 export interface ActiveSession {
+  spanishDailyIds?: string[]
+  spanish?: SpanishSessionState
   mode?: StudyMode
   memoryRound?: MemoryRound
   skippedWordIds?: string[]

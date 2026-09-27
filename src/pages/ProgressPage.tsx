@@ -2,18 +2,24 @@ import { useAppState } from '../app/AppState'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { recentSevenDays, summarizeStages } from '../domain/stats'
 import styles from '../styles/App.module.css'
+import { useSpanish } from '../spanish/SpanishProvider'
+import { calculateStreak } from '../domain/stats'
 
 export function ProgressPage() {
   const { progress, sessions, streak, settings } = useAppState()
-  const days = recentSevenDays(sessions)
-  const stages = summarizeStages(Object.values(progress), settings.learningLanguage === 'en' ? 7 : 5)
+  const spanish = useSpanish()
+  const legacySessions = sessions.filter(session=>!session.id.startsWith('es-cloze:')&&!session.spanishDailyTracked)
+    .map(session=>session.spanishUntrackedCount===undefined?session:{...session,newCount:session.spanishUntrackedCount,reviewCount:0})
+  const chartSessions = spanish.enabled ? [...legacySessions, ...spanish.days.map(day=>({id:`day:${day.id}`,language:'es' as const,date:day.id,completed:true,newCount:Object.values(day.entries).filter(e=>e.kind==='new').length,reviewCount:Object.values(day.entries).filter(e=>e.kind==='review').length,correctCount:0,totalCount:Object.keys(day.entries).length,durationSeconds:0}))] : sessions
+  const days = recentSevenDays(chartSessions)
+  const stages = summarizeStages(Object.values(progress), settings.learningLanguage === 'en' || spanish.enabled ? 7 : 5)
   const maxDay = Math.max(1, ...days.map((day) => day.count))
   const total = Object.keys(progress).length
 
   return <main className={styles.page}>
-    <header className={styles.pageHeader}><h1>进度</h1><span>连续 {streak} 天</span></header>
+    <header className={styles.pageHeader}><h1>进度</h1><span>连续 {spanish.enabled?calculateStreak(chartSessions):streak} 天</span></header>
     <LanguageSwitch />
-    {!sessions.length ? <div className={styles.emptyState}><h2>完成第一次学习后，<br />这里会出现趋势</h2><p>每天几分钟，就能让记忆慢慢留下来。</p></div> : <>
+    {!chartSessions.length ? <div className={styles.emptyState}><h2>完成第一次学习后，<br />这里会出现趋势</h2><p>每天几分钟，就能让记忆慢慢留下来。</p></div> : <>
       <section className={styles.chartSection}>
         <div className={styles.sectionHeading}><h2>最近 7 天</h2><span>共学习 {days.reduce((sum, day) => sum + day.count, 0)} 次</span></div>
         <div className={styles.barChart}>

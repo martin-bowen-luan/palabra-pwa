@@ -9,8 +9,12 @@ import { advanceMemoryRound, buildEnglishGroup } from '../domain/memoryRounds'
 import { scheduleEnglishReview } from '../domain/englishReview'
 import { buildSpellingHint } from '../domain/spellingHint'
 import type { ActiveSession, LearningLanguage, ReviewRating, StudyMode, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
+import type { SpanishDailyUpdate, SpanishOutcome } from '../spanish/sessionTypes'
+import { reconcileLegacySpanish } from '../spanish/legacy'
 
 interface AppStateValue {
+  acceptSpanishCommit: (active: ActiveSession | undefined, progress?: WordProgress, completed?: StudySession) => void
+  refreshLearningData: () => Promise<void>
   ready: boolean
   loadError?: string
   vocabulary: VocabularyEntry[]
@@ -163,6 +167,16 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   const startNextGroup = (mode?: StudyMode) => startSession(0, mode ?? sessions.at(-1)?.mode ?? 'learn')
 
+  const legacySpanishDailyUpdate = (session: ActiveSession, wordId: string, outcome: SpanishOutcome): SpanishDailyUpdate | undefined => {
+    const data = vocabulary.find(word => word.id === wordId)?.spanishData
+    if (session.language !== 'es' || session.spanish || !data) return undefined
+    const now = new Date()
+    return { date: toLocalDate(now), wordId, entry: {
+      kind: session.newWordIds.includes(wordId) && !progress[wordId] ? 'new' : 'review',
+      lemmaId: data.lemmaId, outcome, at: now.toISOString(),
+    } }
+  }
+
   const rateCurrentWord = async (rating: ReviewRating) => {
     if (!activeSession) return
     const queue = sessionQueue(activeSession)
@@ -188,8 +202,10 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
       revision: (activeSession.revision ?? 0) + 1,
     }
+    const daily = legacySpanishDailyUpdate(activeSession, wordId, rating === 'known' ? 'remembered' : 'forgotten')
+    if (daily) nextSession.spanishDailyIds = [...new Set([...(activeSession.spanishDailyIds ?? []), wordId])]
     try {
-      await storageClient.commitStudyStep(nextProgress, nextSession)
+      await storageClient.commitStudyStep(nextProgress, nextSession, daily)
     } catch (error) {
       if (await recoverStaleSession(error, activeSession.language)) return
       throw error
@@ -198,10 +214,12 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     setActiveSession(nextSession)
   }
 
-  const finishSession = async (session: ActiveSession, progressUpdate?: WordProgress) => {
+  const finishSession = async (session: ActiveSession, progressUpdate?: WordProgress, daily?: SpanishDailyUpdate) => {
     const now = new Date()
+    const reconciliation = reconcileLegacySpanish(session, vocabulary, progressUpdate ? { ...progress, [progressUpdate.wordId]: progressUpdate } : progress, daily)
     const answers = session.phase === 'quiz' ? Object.values(session.practice?.firstAnswers ?? {}) : []
     const completed: StudySession = {
+      ...(reconciliation ? { spanishDailyTracked: reconciliation.untracked === 0, spanishUntrackedCount: reconciliation.untracked } : {}),
       id: `${toLocalDate(now)}-${now.getTime()}`,
       language: session.language,
       date: toLocalDate(now),
@@ -215,7 +233,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       skippedCount: session.skippedWordIds?.length ?? 0,
     }
     try {
-      await storageClient.completeStudyGroup(completed, session.language, progressUpdate, session)
+      await storageClient.completeStudyGroup(completed, session.language, progressUpdate, session, reconciliation?.updates ?? daily)
     } catch (error) {
       if (await recoverStaleSession(error, session.language)) return false
       throw error
@@ -253,11 +271,13 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       nextProgress.scheduleVersion = 1
       return persistMemoryStep(result.session, result.finished, nextProgress)
     }
+    const daily = legacySpanishDailyUpdate(activeSession, wordId, 'fluent')
+    if (daily) nextSession.spanishDailyIds = [...new Set([...(activeSession.spanishDailyIds ?? []), wordId])]
     if (!nextSession.wordIds.length || (nextSession.phase === 'quiz' && !nextSession.practice?.pendingIds.length && !nextSession.practice?.delayed.length)) {
-      return finishSession(nextSession, nextProgress)
+      return finishSession(nextSession, nextProgress, daily)
     }
     try {
-      await storageClient.commitStudyStep(nextProgress, nextSession)
+      await storageClient.commitStudyStep(nextProgress, nextSession, daily)
     } catch (error) {
       if (await recoverStaleSession(error, activeSession.language)) return false
       throw error
@@ -310,8 +330,10 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
       revision: (activeSession.revision ?? 0) + 1,
     }
+    const daily = legacySpanishDailyUpdate(activeSession, wordId, correct ? 'remembered' : 'forgotten')
+    if (daily) nextSession.spanishDailyIds = [...new Set([...(activeSession.spanishDailyIds ?? []), wordId])]
     try {
-      await storageClient.commitStudyStep(nextProgress, nextSession)
+      await storageClient.commitStudyStep(nextProgress, nextSession, daily)
     } catch (error) {
       if (await recoverStaleSession(error, activeSession.language)) return
       throw error
@@ -340,11 +362,13 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       const result = advanceMemoryRound(nextSession)
       return persistMemoryStep(result.session, result.finished, nextProgress)
     }
+    const daily = legacySpanishDailyUpdate(activeSession, activeSession.quizFeedback.wordId, activeSession.quizFeedback.correct ? 'remembered' : 'forgotten')
+    if (daily) nextSession.spanishDailyIds = [...new Set([...(activeSession.spanishDailyIds ?? []), daily.wordId])]
     if (!advanced.pendingIds.length && !advanced.delayed.length) {
-      return finishSession(nextSession)
+      return finishSession(nextSession, undefined, daily)
     }
     try {
-      await storageClient.commitStudyStep(undefined, nextSession)
+      await storageClient.commitStudyStep(undefined, nextSession, daily)
     } catch (error) {
       if (await recoverStaleSession(error, activeSession.language)) return false
       throw error
@@ -413,6 +437,13 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   }
 
   const value: AppStateValue = {
+    acceptSpanishCommit: (active, nextProgress, completed) => {
+      if (settings.learningLanguage !== 'es') return
+      setActiveSession(active)
+      if (nextProgress) setProgress(current => ({ ...current, [nextProgress.wordId]: nextProgress }))
+      if (completed) setSessions(current => [...current.filter(session => session.id !== completed.id), completed])
+    },
+    refreshLearningData: () => refreshLearningState(settings.learningLanguage),
     ready,
     loadError,
     vocabulary,
