@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { PronunciationButton } from '../components/PronunciationButton'
 import { SpellingComparison } from '../components/SpellingComparison'
@@ -48,8 +48,16 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
   const { vocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord } = useAppState()
   const { settings: aiSettings } = useAi()
   const [answer, setAnswer] = useState('')
-  const [checking, setChecking] = useState(false)
-  const [hinted, setHinted] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const promptId = `${session.startedAt}:${session.memoryRound}:${session.practice?.promptNumber}:${word.id}`
+  // Keep an unfinished self-assessment on this history entry while looking up related words.
+  const checking = location.state?.studyReveal?.promptId === promptId
+  const hinted = checking && location.state.studyReveal.hinted === true
+  const reveal = (useHint: boolean) => navigate(location.pathname + location.search, {
+    replace: true,
+    state: { ...location.state, studyReveal: { promptId, hinted: useHint } },
+  })
   const round = session.memoryRound!
   const feedback = session.quizFeedback
   const choices = useMemo(() => {
@@ -78,12 +86,12 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
     {round === 'context' && !revealed && <><blockquote className={styles.contextSentence} lang="en">{word.examples[0]?.text || '这个词暂未收录例句，请直接回忆词义。'}</blockquote>{aiSettings.enabled && word.examples[0] && <SentenceSpeechButton text={word.examples[0].text} />}</>}
     {round === 'recall' && !revealed && <p className={styles.recallInstruction}>先在心里说出词义，再核对答案。</p>}
     {round === 'choice' && choices && !feedback && <><div className={styles.memoryChoices} role="group" aria-label="选择释义">{choices.map(option => <button key={option.id} disabled={busy} onClick={() => void submit(option.id === word.id, option.meaningZh, option.id)}><small>{option.partOfSpeech}</small>{option.meaningZh}</button>)}</div><button className={styles.textButton} disabled={busy} onClick={() => void submit(false, '没有想起')}>看答案</button></>}
-    {recall && !revealed && <div className={styles.recallActions}><button className={styles.textButton} disabled={busy} onClick={() => { setChecking(true); setHinted(true) }}>提示一下</button><div><button disabled={busy} onClick={() => setChecking(true)}>认识</button><button disabled={busy} onClick={() => void submit(false, '不认识')}>不认识</button></div></div>}
+    {recall && !revealed && <div className={styles.recallActions}><button className={styles.textButton} disabled={busy} onClick={() => reveal(true)}>提示一下</button><div><button disabled={busy} onClick={() => reveal(false)}>认识</button><button disabled={busy} onClick={() => void submit(false, '不认识')}>不认识</button></div></div>}
     {revealed && round !== 'spelling' && <div className={styles.memoryDefinition}>
       <p><small>{word.partOfSpeech}</small><strong>{word.meaningZh}</strong></p>
       {word.examples[0] && <><blockquote lang="en">{word.examples[0].text}</blockquote>{aiSettings.enabled && <SentenceSpeechButton text={word.examples[0].text} />}<p>{word.examples[0].translationZh}</p></>}
       {selectedWord && !feedback?.correct && <div className={styles.choiceComparison}><small>你选的是</small><strong lang="en">{selectedWord.term}</strong><p>{selectedWord.meaningZh}</p><small>本题单词</small><strong lang="en">{word.term}</strong><p>{word.meaningZh}</p></div>}
-      <WordRelations word={word} />
+      <WordRelations word={word} vocabulary={vocabulary} />
     </div>}
     {checking && !feedback && <div className={styles.recallActions}><p>{hinted ? '看过提示后，再练习一次。' : '和你刚才回忆的意思一致吗？'}</p><div>{!hinted && <button disabled={busy} onClick={() => void submit(true, '记对了')}>记对了</button>}<button disabled={busy} onClick={() => void submit(false, hinted ? '使用提示' : '记错了')}>{hinted ? '继续练习' : '记错了'}</button></div></div>}
     {round === 'spelling' && !feedback && <form className={styles.spellingForm} onSubmit={e => { e.preventDefault(); if (answer.trim()) void submit(isCorrectSpelling(answer, word.term, word.spellingVariants), answer) }}>

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import type { VocabularyEntry } from '../types'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { BackIcon, SearchIcon } from '../components/Icons'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { PronunciationButton } from '../components/PronunciationButton'
@@ -7,6 +7,7 @@ import { WordRelations } from '../components/WordRelations'
 import { SentenceSpeechButton } from '../components/SentenceSpeechButton'
 import { useAi } from '../ai/AiProvider'
 import { useAppState } from '../app/AppState'
+import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
 
 export function LibraryPage() {
@@ -14,7 +15,18 @@ export function LibraryPage() {
   const { settings: aiSettings } = useAi()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('全部')
-  const [selected, setSelected] = useState<VocabularyEntry>()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const selectedId = searchParams.get('word')
+  const selected = vocabulary.find(word => word.id === selectedId)
+  const heading = useRef<HTMLHeadingElement>(null)
+  const from = location.state?.wordLinkFrom
+  const backLabel = from === '/study' ? '返回学习' : typeof from === 'string' && from.startsWith('/library?') ? '返回上一词' : '返回词库'
+  const goBack = () => {
+    if (from === '/study' || from === '/library' || typeof from === 'string' && from.startsWith('/library?')) navigate(-1)
+    else navigate('/library', { replace: true })
+  }
   const [visibleCount, setVisibleCount] = useState(80)
   const [view, setView] = useState<'all' | 'learned'>('all')
   const filtered = useMemo(() => {
@@ -28,19 +40,28 @@ export function LibraryPage() {
   useEffect(() => {
     setVisibleCount(80)
     setCategory('全部')
-    setSelected(undefined)
     setView('all')
   }, [settings.learningLanguage])
   useEffect(() => setVisibleCount(80), [category, query, view])
+  useEffect(() => () => pronunciationPlayer.stop(), [selectedId])
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true })
+    heading.current?.closest('main')?.scrollIntoView?.({ block: 'start', behavior: 'instant' })
+  }, [selectedId])
   const visibleWords = filtered.slice(0, visibleCount)
+
+  if (selectedId && !selected) return <main className={styles.page}>
+    <button className={styles.backButton} onClick={goBack}><BackIcon />{backLabel}</button>
+    <div className={styles.emptyState}><h1>词库未收录这个词</h1><p>请返回词库搜索当前语言的词汇。</p></div>
+  </main>
 
   if (selected) {
     const stage = progress[selected.id]?.stage
     return <main className={styles.page}>
-      <button className={styles.backButton} onClick={() => setSelected(undefined)}><BackIcon />返回词库</button>
+      <button className={styles.backButton} onClick={goBack}><BackIcon />{backLabel}</button>
       <section className={styles.wordDetail}>
         <p>{selected.category}</p>
-        <h1 lang={selected.language}>{selected.term}</h1>
+        <h1 ref={heading} tabIndex={-1} lang={selected.language}>{selected.term}</h1>
         {selected.language === 'en' && <div className={styles.pronunciationRow}>
           <span>{selected.pronunciation?.ipa || '美式发音'}</span>
           <PronunciationButton word={selected} />
@@ -52,7 +73,7 @@ export function LibraryPage() {
           {aiSettings.enabled && selected.language === 'en' && <SentenceSpeechButton text={example.text} />}
           <p>{example.translationZh}</p>
         </div>)}
-        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} onSelectTerm={word => { setSelected(word); window.scrollTo?.(0, 0) }} />
+        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} />
         <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / ${progress[selected.id]?.scheduleVersion === 1 ? 7 : 5}`}{progress[selected.id]?.reviewPriority === 'skipped' && ' · 拼写跳过，优先复习'}</footer>
       </section>
     </main>
@@ -73,7 +94,7 @@ export function LibraryPage() {
       {categories.map((item) => <button key={item} className={category === item ? styles.categoryActive : ''} onClick={() => setCategory(item)}>{item}</button>)}
     </div>
     <div className={styles.dictionaryList}>
-      {visibleWords.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSelected(word)}>
+      {visibleWords.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSearchParams({ word: word.id }, { state: { wordLinkFrom: '/library' } })}>
         <span><strong>{word.term}</strong><small>{word.partOfSpeech}</small></span>
         <span>{word.meaningZh}</span>
       </button>)}

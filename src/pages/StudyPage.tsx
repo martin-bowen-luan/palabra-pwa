@@ -149,7 +149,7 @@ function LegacyStudyPage() {
             <p lang={word.language}>{word.examples[0]?.text}</p>
             {aiSettings.enabled && word.language === 'en' && word.examples[0] && <SentenceSpeechButton key={word.id} text={word.examples[0].text} />}
             <span>{word.examples[0]?.translationZh}</span>
-            <WordRelations key={word.id} word={word} />
+            <WordRelations key={word.id} word={word} vocabulary={vocabulary} />
           </div>
         )}
         {revealed && <div className={styles.ratingBar} aria-label="记忆程度">

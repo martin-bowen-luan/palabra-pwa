@@ -1,10 +1,12 @@
 import { useId, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import type { VocabularyEntry } from '../types'
 import styles from '../styles/App.module.css'
 import { useWordAi } from '../ai/AiProvider'
-import { mergeRelations } from '../ai/merge'
+import { mergeRelations, relationKey } from '../ai/merge'
 
-export function WordRelations({ word, vocabulary = [], onSelectTerm }: { word: VocabularyEntry; vocabulary?: VocabularyEntry[]; onSelectTerm?: (word: VocabularyEntry) => void }) {
+export function WordRelations({ word, vocabulary = [] }: { word: VocabularyEntry; vocabulary?: VocabularyEntry[] }) {
+  const location = useLocation()
   const tabs = ['派生词', '词根', '近义词', '特殊变形'] as const
   const [tab, setTab] = useState<typeof tabs[number]>(word.relatedTerms?.length ? '近义词' : word.derivedTerms?.length ? '派生词' : word.roots?.length ? '词根' : '特殊变形')
   const id = useId()
@@ -28,9 +30,11 @@ export function WordRelations({ word, vocabulary = [], onSelectTerm }: { word: V
       {tab !== '特殊变形' && <>
         {tab === '词根' && rows.length > 0 && <p>词基与词缀，帮助理解构词。</p>}
         {rows.map(row => {
-          const target = vocabulary.find(w => w.term.toLocaleLowerCase('en') === row.term.toLocaleLowerCase('en'))
+          const key = relationKey(row.term)
+          const target = vocabulary.find(w => w.language === word.language && relationKey(w.term) === key)
+            ?? vocabulary.find(w => w.language === word.language && w.spellingVariants?.some(variant => relationKey(variant) === key))
           return <div key={row.term} className={styles.relationRow}>
-            {target && onSelectTerm && tab !== '词根' ? <button className={styles.quietButton} onClick={() => onSelectTerm(target)}><strong lang="en">{row.term}</strong></button> : <strong lang="en">{row.term}</strong>}
+            {target && tab !== '词根' ? <Link className={styles.relationLink} to={`/library?${new URLSearchParams({ word: target.id })}`} state={{ wordLinkFrom: location.pathname + location.search }}><strong lang="en">{row.term}</strong></Link> : <strong lang="en">{row.term}</strong>}
             {row.dictionary && <>{ai.enabled && <small className={styles.aiSource}>词库资料</small>}{row.meaningZh && <p>{row.meaningZh}</p>}</>}
             {(row.aiMeaning || row.explanation || row.conflictNote) && <div className={styles.aiSupplement}>
               <small>{row.conflict ? 'AI 不同分析，未核实' : row.kind === 'mnemonic' ? 'AI 记忆联想，非词源' : 'AI 补充，未核实'}</small>

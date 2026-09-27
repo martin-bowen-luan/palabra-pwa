@@ -16,14 +16,24 @@ const response=()=>new Response(JSON.stringify({choices:[{finish_reason:'stop',m
 const stores:PalabraStorage[]=[]
 beforeEach(()=>vi.stubGlobal('crypto',webcrypto))
 afterEach(()=>{cleanup();stores.splice(0).forEach(db=>db.close());vi.restoreAllMocks();vi.unstubAllGlobals()})
-async function mount(path='/library', cached=false, round?: ActiveSession['memoryRound']) {
-  const db=new PalabraStorage(`ai-ui-${crypto.randomUUID()}`,{vocabularySeeds:{en:[word]}});stores.push(db)
+async function mount(path='/library', cached=false, round?: ActiveSession['memoryRound'], extraWords: VocabularyEntry[] = []) {
+  const db=new PalabraStorage(`ai-ui-${crypto.randomUUID()}`,{vocabularySeeds:{en:[word, ...extraWords]}});stores.push(db)
   await db.saveSettings({...DEFAULT_SETTINGS,learningLanguage:'en'})
   if(cached){const service=new AiService(db,async()=>response());await service.load();await service.configure({...DEFAULT_AI_SETTINGS,enabled:true,consentVersion:1,baseUrl:'https://example.test/v1',model:'test'},'fake-key','password123');await service.analyze(word);service.dispose()}
   if(round) await db.saveActiveSession({id:'active-session:en',language:'en',mode:'learn',memoryRound:round,wordIds:[word.id],newWordIds:[word.id],reviewWordIds:[],currentIndex:0,phase:'quiz',practice:createPracticeQueue([word.id]),correctCount:0,answeredCount:0,startedAt:new Date().toISOString(),revision:0})
   render(<MemoryRouter initialEntries={[path]}><App storageClient={db}/></MemoryRouter>);return db
 }
 describe('optional AI integration',()=>{
+  it('links collected AI-only derivatives without linking uncollected dictionary terms',async()=>{
+    const user=userEvent.setup()
+    await mount('/library',true,undefined,[{...word,id:'en:happily',term:'happily',meaningZh:'快乐地',derivedTerms:[]}])
+    await user.click(await screen.findByRole('button',{name:/^happy/}))
+    const link=await screen.findByRole('link',{name:'happily'})
+    expect(link).toHaveAttribute('href','/library?word=en%3Ahappily')
+    expect(screen.queryByRole('link',{name:'happiness'})).not.toBeInTheDocument()
+    await user.click(link)
+    expect(await screen.findByRole('heading',{name:'happily'})).toBeInTheDocument()
+  })
   it('configures encrypted credentials, locks and unlocks entirely through the settings UI',async()=>{
     const user=userEvent.setup(); const db=await mount('/settings')
     await user.click(await screen.findByRole('checkbox',{name:/我已了解/}))
