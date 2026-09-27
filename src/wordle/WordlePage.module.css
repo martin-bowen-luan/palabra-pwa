@@ -1,0 +1,47 @@
+.page { padding: max(12px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom)); min-height: 100dvh; }
+.header { display: flex; align-items: center; justify-content: space-between; min-height: 48px; border-bottom: 1px solid var(--line); }
+.header a { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; color: var(--muted); }
+.header h1 { margin: 0; font: 550 27px/1 'Source Serif 4 Variable', serif; }
+.header > span { color: var(--muted); font-size: 13px; min-width: 44px; text-align: right; }
+.definition { height: 152px; overflow-y: auto; padding: 16px 6px 12px; margin: 0 0 16px; scrollbar-width: thin; }
+.term { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; }
+.term h2 { margin: 0; font: 550 32px/1.2 'Source Serif 4 Variable', serif; }
+.term > span { color: var(--blue); font: 18px/1.4 'Source Serif 4 Variable', serif; }
+.definition p { margin: 6px 0; font-size: 14px; line-height: 1.65; }
+.definition p > span, .definition small { color: var(--muted); font-size: 12px; }
+.definition p[lang='en'] { font: 18px/1.4 'Source Serif 4 Variable', serif; }
+.intro { padding-top: 8px; }
+.intro p { font-size: 20px; margin: 0 0 12px; }
+.intro > span { color: var(--muted); font-size: 14px; line-height: 1.7; }
+.source { display: flex; flex-wrap: wrap; column-gap: 12px; font-size: 11px; }
+.source a { color: var(--blue); min-height: 44px; display: inline-flex; align-items: center; }
+.board { width: min(100%, 294px); margin: 0 auto; display: grid; gap: 6px; }
+.row { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; border: 0; background: none; padding: 0; width: 100%; }
+button.row { cursor: pointer; }
+.cell { display: grid; place-items: center; aspect-ratio: 1; border: 1px solid var(--line); font: 600 29px/1 'Noto Sans SC Variable', sans-serif; color: var(--ink); }
+.active .cell { border-bottom: 2px solid var(--blue); }
+.row:focus-within { outline: 2px solid var(--blue); outline-offset: 3px; }
+.input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: text; }
+.status { text-align: center; min-height: 38px; padding: 10px 0; font-size: 12px; color: var(--muted); }
+.status [role='alert'] { color: var(--red); }
+.keyboard { display: grid; gap: 6px; }
+.keyRow { display: flex; justify-content: center; gap: 4px; }
+.keyRow button { flex: 1; min-width: 0; max-width: 40px; min-height: 46px; border: 1px solid var(--line); border-radius: 5px; background: transparent; color: var(--ink); padding: 0; font-size: 16px; font-weight: 550; cursor: pointer; }
+.keyRow .wideKey { max-width: 62px; flex: 1.55; font-size: 12px; }
+.keyRow button:disabled { cursor: default; }
+.cell.correct, .keyRow .correct, .legend .correct { background: #247461; border-color: #247461; color: #fff; }
+.cell.present, .keyRow .present, .legend .present { background: #e8c77e; border-color: #e8c77e; color: #172128; }
+.cell.absent, .keyRow .absent, .legend .absent { background: var(--line); border-color: var(--line); color: var(--ink); }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; font-size: 11px; color: var(--muted); padding: 16px 0 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 10px; height: 10px; display: inline-block; }
+.rules { border-top: 1px solid var(--line); margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.rules summary { cursor: pointer; min-height: 44px; padding: 12px 0; }
+.rules p { margin: 0 0 12px; }
+.result { border-top: 1px solid var(--line); margin: 6px 0 20px; padding-top: 18px; }
+.result > p { font-size: 14px; margin: 4px 0; }
+.result > strong { font: 550 36px/1.3 'Source Serif 4 Variable', serif; color: var(--blue); }
+.result > div { display: flex; gap: 12px; margin-top: 16px; }
+.result button, .failure button { min-height: 46px; flex: 1; background: transparent; border: 1px solid var(--blue); border-radius: 6px; color: var(--blue); cursor: pointer; }
+.result button:last-child { background: var(--blue); color: var(--paper); }
+@media (max-height: 760px) { .definition { height: 126px; margin-bottom: 10px; } .board { width: min(100%, 250px); } }

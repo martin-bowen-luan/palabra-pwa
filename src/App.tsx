@@ -10,11 +10,12 @@ import { StudyPage } from './pages/StudyPage'
 import { TodayPage } from './pages/TodayPage'
 import styles from './styles/App.module.css'
 import { AiProvider } from './ai/AiProvider'
+import { WordlePage } from './wordle/WordlePage'
 
-function AppRoutes() {
+function AppRoutes({ storageClient }: { storageClient?: PalabraStorage }) {
   const { loadError, ready } = useAppState()
   const location = useLocation()
-  const immersive = location.pathname === '/study' || location.pathname === '/result'
+  const immersive = location.pathname === '/study' || location.pathname === '/result' || location.pathname === '/wordle'
   if (loadError) return <main className={styles.loadError}>
     <span className={styles.brand}>palabra</span>
     <div><h1>{loadError}</h1><p>请刷新页面重试，或检查浏览器是否允许本地存储。</p></div>
@@ -27,6 +28,7 @@ function AppRoutes() {
       <Route path="/study" element={<StudyPage />} />
       <Route path="/result" element={<ResultPage />} />
       <Route path="/library" element={<LibraryPage />} />
+      <Route path="/wordle" element={<WordlePage storageClient={storageClient} />} />
       <Route path="/progress" element={<ProgressPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="*" element={<Navigate to="/today" replace />} />
@@ -36,5 +38,5 @@ function AppRoutes() {
 }
 
 export default function App({ storageClient }: { storageClient?: PalabraStorage }) {
-  return <AppStateProvider storageClient={storageClient}><AiProvider storageClient={storageClient}><AppRoutes /></AiProvider></AppStateProvider>
+  return <AppStateProvider storageClient={storageClient}><AiProvider storageClient={storageClient}><AppRoutes storageClient={storageClient} /></AiProvider></AppStateProvider>
 }

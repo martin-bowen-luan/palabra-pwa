@@ -132,6 +132,8 @@
 .relationRow { padding: 5px 0; color: var(--muted); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
 .relationPanel .relationLink { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; max-width: 100%; color: var(--blue); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 .relationPanel .relationLink strong { color: inherit; }
+.wordleEntry { display: flex; flex-direction: column; gap: 8px; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--blue); text-decoration: none; }
+.wordleEntry small { color: var(--muted); font-size: 12px; }
 .relationSource { display: inline-flex; min-height: 44px; align-items: center; color: var(--blue); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
 .ratingBar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: auto; padding-top: 24px; }
 .ratingBar button, .choiceList button { min-height: 52px; border: 1px solid var(--line); border-radius: 8px; background: transparent; cursor: pointer; }

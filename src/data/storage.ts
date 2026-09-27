@@ -10,7 +10,11 @@ import { vocabulary } from './vocabulary'
 import { englishVocabulary } from './englishVocabulary'
 import { DEFAULT_AI_SETTINGS, type AiSettings, type EncryptedCredential, type WordAiAnalysis } from '../ai/types'
 
-const DB_VERSION = 4
+import type { WordleDictionaryEntry, WordleGame } from '../wordle/types'
+
+const DB_VERSION = 5
+const STORE_WORDLE = 'wordleGame'
+const STORE_WORDLE_DICTIONARY = 'wordleDictionary'
 const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 1, en: 4 }
 const STORE_PROGRESS = 'wordProgress'
 const STORE_SESSIONS = 'sessions'
@@ -196,6 +200,8 @@ export class PalabraStorage {
         let blocked = false
         request.onupgradeneeded = (event) => {
           const database = request.result
+          if (!database.objectStoreNames.contains(STORE_WORDLE)) database.createObjectStore(STORE_WORDLE, { keyPath: 'id' })
+          if (!database.objectStoreNames.contains(STORE_WORDLE_DICTIONARY)) database.createObjectStore(STORE_WORDLE_DICTIONARY, { keyPath: 'term' })
           if (!database.objectStoreNames.contains(STORE_PROGRESS)) database.createObjectStore(STORE_PROGRESS, { keyPath: 'wordId' })
           if (!database.objectStoreNames.contains(STORE_SESSIONS)) database.createObjectStore(STORE_SESSIONS, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_SETTINGS)) database.createObjectStore(STORE_SETTINGS, { keyPath: 'id' })
@@ -539,6 +545,38 @@ export class PalabraStorage {
         cursor.continue()
       }
     }
+    await transactionDone(tx)
+  }
+
+  async getWordleGame(): Promise<WordleGame | undefined> {
+    const db = await this.open()
+    return requestResult(db.transaction(STORE_WORDLE).objectStore(STORE_WORDLE).get('current'))
+  }
+
+  async saveWordleGame(game: WordleGame, expectedRevision: number | undefined): Promise<boolean> {
+    const db = await this.open()
+    const tx = db.transaction(STORE_WORDLE, 'readwrite')
+    const store = tx.objectStore(STORE_WORDLE)
+    const request = store.get('current') as IDBRequest<WordleGame | undefined>
+    let saved = false
+    request.onsuccess = () => {
+      if (request.result?.revision !== expectedRevision) return
+      if (game.revision !== (expectedRevision === undefined ? 0 : expectedRevision + 1)) return
+      store.put(game); saved = true
+    }
+    await transactionDone(tx)
+    return saved
+  }
+
+  async getWordleDictionaryEntry(term: string): Promise<WordleDictionaryEntry | undefined> {
+    const db = await this.open()
+    return requestResult(db.transaction(STORE_WORDLE_DICTIONARY).objectStore(STORE_WORDLE_DICTIONARY).get(term))
+  }
+
+  async saveWordleDictionaryEntry(entry: WordleDictionaryEntry): Promise<void> {
+    const db = await this.open()
+    const tx = db.transaction(STORE_WORDLE_DICTIONARY, 'readwrite')
+    tx.objectStore(STORE_WORDLE_DICTIONARY).put(entry)
     await transactionDone(tx)
   }
 
