@@ -4,6 +4,7 @@ import { useAppState } from '../app/AppState'
 import { SpellingComparison } from '../components/SpellingComparison'
 import { currentSpanishWord, normalizeSpanish, spanishHint } from './course'
 import { useSpanish } from './SpanishProvider'
+import { SpanishPrompt } from './SpanishPrompt'
 import base from '../styles/App.module.css'
 import styles from './Spanish.module.css'
 
@@ -37,12 +38,7 @@ export function SpanishStudyPage() {
     </header>
     <div className={base.studyProgress}><span style={{width:`${state.resolvedIds.length/activeSession.wordIds.length*100}%`}}/></div>
     {course.error&&<p role="alert" className={styles.error}>{course.error}{course.error.includes('请刷新页面后继续')&&<button className={base.textButton} onClick={()=>window.location.reload()}>刷新页面</button>}</p>}
-    <section className={styles.prompt} aria-label="西语句子填词">
-      <p className={styles.grammar}>{word.spanishData!.grammarLabel}</p>
-      <h1 lang="es" className={styles.sentence}>{question.before}<span className={styles.blank}>{feedback?question.answer:'____'}</span>{question.after}</h1>
-      <p className={styles.translation}>{question.translationZh}</p>
-      <p className={styles.cue}>填入：{question.cueZh}</p>
-    </section>
+    <SpanishPrompt word={word} revealed={Boolean(feedback)}/>
     {!feedback?<form className={styles.answer} onSubmit={event=>{event.preventDefault();void course.submit(input)}}>
       <label className={styles.inputLabel} htmlFor="spanish-answer">填写缺少的西语词</label>
       <input ref={inputRef} id="spanish-answer" lang="es" value={input} onChange={event=>edit(event.target.value)} disabled={course.busy} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} maxLength={100} enterKeyHint="done"/>

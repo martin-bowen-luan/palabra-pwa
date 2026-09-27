@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
@@ -21,6 +21,29 @@ async function setup(prepare?:(db:PalabraStorage)=>Promise<void>, words=[spanish
   return {db,user}
 }
 describe('Spanish contextual course',()=>{
+  it.each([
+    ['本句：再见；感叹词 · 不变形','感叹词 · 不变形','再见',''],
+    ['原形 hablar；本句：说；讲话；陈述式现在时 · 第一人称单数（yo）','陈述式现在时 · 第一人称单数（yo）','说；讲话','原形 hablar'],
+    ['本题使用以 -í 结尾的地点副词；本句：这里；副词 · 不变形','副词 · 不变形','这里','本题使用以 -í 结尾的地点副词'],
+    ['说（西班牙语）','陈述式现在时 · 第一人称单数（yo）','说（西班牙语）',''],
+  ])('promotes contextual meaning without losing saved cue details: %s',async(cue,grammar,meaning,instruction)=>{
+    const word=spanishFixture()
+    word.spanishData!.grammarLabel=grammar
+    word.spanishData!.cloze.cueZh=cue
+    const {user}=await setup(undefined,[word])
+    await user.click(screen.getByRole('button',{name:'开始今天的学习'}))
+    const prompt=within(await screen.findByRole('region',{name:'西语句子填词'}))
+    expect(prompt.getByRole('heading',{level:1,name:meaning})).toBeInTheDocument()
+    expect(prompt.getAllByText(grammar,{exact:true})).toHaveLength(1)
+    if(instruction)expect(prompt.getByText(instruction,{exact:true})).toBeInTheDocument()
+    expect(prompt.queryByText(/填入：|本句：/)).not.toBeInTheDocument()
+    expect(prompt.getByText(/____/)).not.toHaveTextContent('hablo')
+    await user.type(screen.getByRole('textbox',{name:'填写缺少的西语词'}),'ha')
+    await user.click(screen.getByRole('button',{name:'结束'}))
+    await user.click(await screen.findByRole('button',{name:'继续本组'}))
+    expect(await screen.findByRole('heading',{level:1,name:meaning})).toBeInTheDocument()
+    expect(screen.getByRole('textbox',{name:'填写缺少的西语词'})).toHaveValue('ha')
+  })
   it('reconciles pre-upgrade saved feedback and known earlier practice exactly once on completion',async()=>{
     const words=[spanishFixture(),spanishFixture('es:prior','duermo','dormir'),...Array.from({length:10},(_,i)=>spanishFixture(`es:new${i}`,'hablo',`f${i}`))]
     const {db,user}=await setup(async db=>{
