@@ -623,7 +623,7 @@ describe('Palabra app', () => {
     expect(screen.getByRole('button', { name: '播放 altitude 发音' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: '结束' }))
-    await user.click(screen.getByRole('link', { name: '设置' }))
+    await user.click(await screen.findByRole('link', { name: '设置' }))
     expect(await screen.findByRole('heading', { name: '英语离线发音' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '下载离线发音包' })).toBeInTheDocument()
   })
