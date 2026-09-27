@@ -63,7 +63,8 @@ export class WiktionaryClient {
     const query = async (extra: Record<string, string>) => {
       const url = new URL('https://en.wiktionary.org/w/api.php')
       url.search = new URLSearchParams({ action: 'parse', page: term, format: 'json', formatversion: '2', redirects: '1', origin: '*', ...extra }).toString()
-      const response = await this.fetcher(url.href, { signal: controller.signal, credentials: 'omit', referrerPolicy: 'no-referrer' })
+      const fetcher = this.fetcher
+      const response = await fetcher(url.href, { signal: controller.signal, credentials: 'omit', referrerPolicy: 'no-referrer' })
       if (!response.ok) throw unavailable()
       const data = await response.json()
       if (data.error?.code === 'missingtitle') throw missing()
@@ -75,6 +76,7 @@ export class WiktionaryClient {
         const toc = await query({ prop: 'tocdata' })
         const sections: unknown = toc.tocdata?.sections
         if (!Array.isArray(sections)) throw unavailable()
+        if (sections.some(section => !section || typeof section.line !== 'string' || !Number.isInteger(section.hLevel) || typeof section.index !== 'string')) throw unavailable()
         const english = sections.find(section => section?.hLevel === 2 && section.line === 'English')
         if (!english) throw missing()
         if (typeof english.index !== 'string' || !/^\d+$/.test(english.index)) throw unavailable()

@@ -94,6 +94,7 @@ export class WordleController {
       if (!term) throw new Error('请输入五个英文字母。')
       if (game.guesses.some(guess => guess.term === term)) throw new Error('这个词已经猜过了，换一个试试。')
       let entry = localEntry(term, this.vocabulary) ?? await this.db.getWordleDictionaryEntry(term)
+      if (this.disposed) return
       if (!entry) {
         if (!this.online()) throw new Error('这个词尚未缓存，需要联网验证；本次不扣次数。')
         this.request = new AbortController()

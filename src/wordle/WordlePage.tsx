@@ -41,7 +41,7 @@ export function WordlePage({ storageClient = defaultStorage }: { storageClient?:
       if (!controller || event.isComposing || event.ctrlKey || event.altKey || event.metaKey) return
       const target = event.target as HTMLElement
       if (target.matches('input,textarea') || target.isContentEditable) return
-      if (event.key === 'Enter' && target.closest('button,a,summary') && !target.closest('[data-wordle-key]')) return
+      if (event.key === 'Enter' && target.closest('button,a,summary')) return
       const current = controller.getSnapshot()
       if (current.busy || current.game?.status !== 'playing') return
       if (/^[a-z]$/i.test(event.key)) { event.preventDefault(); void controller.edit(current.draft + event.key.toLowerCase()) }

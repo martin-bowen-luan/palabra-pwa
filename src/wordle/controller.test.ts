@@ -15,6 +15,18 @@ async function setup(client=new WiktionaryClient(), online=()=>true, store?:Pala
   await controller.initialize();return {db,controller}
 }
 describe('Wordle controller',()=>{
+  it('does not start a lookup after leaving during a cache read',async()=>{
+    const client=new WiktionaryClient()
+    const lookup=vi.spyOn(client,'lookup').mockRejectedValue(new Error('unexpected lookup'))
+    const {db,controller}=await setup(client)
+    let release!:()=>void
+    const cache=vi.spyOn(db,'getWordleDictionaryEntry').mockImplementation(()=>new Promise(resolve=>{release=()=>resolve(undefined)}))
+    await controller.edit('wreck')
+    const pending=controller.submit()
+    await vi.waitFor(()=>expect(cache).toHaveBeenCalled())
+    controller.dispose();release();await pending
+    expect(lookup).not.toHaveBeenCalled()
+  })
   it('saves input, restores unfinished game and accepts local words offline without touching learning data',async()=>{
     const {db,controller}=await setup(undefined,()=>false)
     await controller.edit('gra')

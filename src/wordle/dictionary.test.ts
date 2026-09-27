@@ -6,6 +6,13 @@ const ok = (value: unknown) => new Response(JSON.stringify(value))
 const toc = (sections = [{hLevel:2,line:'English',index:'1'}]) => ({parse:{tocdata:{sections}}})
 afterEach(()=>vi.useRealTimers())
 describe('Wiktionary adapter',()=>{
+  it('does not bind native fetch to the dictionary client',async()=>{
+    const fetcher=vi.fn<typeof fetch>(function(this:unknown,input){
+      if(this!==undefined)throw new TypeError('Illegal invocation')
+      return Promise.resolve(ok(new URL(String(input)).searchParams.get('prop')==='tocdata'?toc():{parse:{text:html,revid:123}}))
+    })
+    await expect(new WiktionaryClient(fetcher).lookup('wreck')).resolves.toMatchObject({term:'wreck'})
+  })
   it('extracts only safe POS definitions and optional IPA with revision attribution',()=>{
     expect(parseEnglishEntry('wreck',html,123)).toMatchObject({term:'wreck',ipa:'/rɛk/',definitions:[{partOfSpeech:'Noun',text:'A destroyed ship.'},{partOfSpeech:'Noun',text:'A ruined thing.'}],source:'wiktionary',revisionId:123,sourceUrl:'https://en.wiktionary.org/w/index.php?title=wreck&oldid=123'})
     expect(parseEnglishEntry('wreck',html.replace('<span class="IPA">/rɛk/</span>',''),123).ipa).toBeUndefined()
@@ -28,7 +35,7 @@ describe('Wiktionary adapter',()=>{
     await expect(new WiktionaryClient(fetcher).lookup('zzzzz')).rejects.toThrow('未找到有效英语词条')
     expect(fetcher).toHaveBeenCalledTimes(1)
   })
-  it.each([new Response('no',{status:429}),ok({unexpected:true}),ok({error:{code:'ratelimited'}})])('reports service errors as unavailable with no automatic retry',async response=>{
+  it.each([new Response('no',{status:429}),ok({unexpected:true}),ok({error:{code:'ratelimited'}}),ok({parse:{tocdata:{sections:[{}]}}})])('reports service errors as unavailable with no automatic retry',async response=>{
     const fetcher=vi.fn<typeof fetch>().mockResolvedValue(response)
     await expect(new WiktionaryClient(fetcher).lookup('wreck')).rejects.toThrow('暂时无法验证')
     expect(fetcher).toHaveBeenCalledTimes(1)

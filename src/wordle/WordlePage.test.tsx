@@ -9,6 +9,17 @@ import type { VocabularyEntry } from '../types'
 const word=(term:string):VocabularyEntry=>({id:`en:${term}`,language:'en',term,partOfSpeech:'n.',meaningZh:term==='apple'?'苹果':'葡萄',category:'测试',examples:[]})
 const words=[word('apple'),word('grape'),word('wreck'),word('means'),word('build'),word('level'),word('there')]
 const stores:PalabraStorage[]=[]
+it('activates focused letter and delete buttons with Enter',async()=>{
+  const user=userEvent.setup();await mount()
+  const input=await screen.findByRole('textbox',{name:'输入五字母单词'})
+  screen.getByRole('button',{name:'输入 A'}).focus()
+  await user.keyboard('{Enter}')
+  expect(input).toHaveValue('a')
+  screen.getByRole('button',{name:'删除字母'}).focus()
+  await user.keyboard('{Enter}')
+  expect(input).toHaveValue('')
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+})
 afterEach(()=>{cleanup();stores.splice(0).forEach(s=>s.close())})
 async function mount(path='/wordle',language:'en'|'es'='en'){
   const db=new PalabraStorage(`wordle-ui-${crypto.randomUUID()}`,{vocabularySeeds:{en:words}});stores.push(db)
