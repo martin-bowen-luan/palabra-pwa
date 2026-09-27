@@ -22,3 +22,15 @@ Tested at `/palabra-pwa/` using an isolated Chromium profile, without modifying 
 ## Limits and delivery
 
 Real-device Safari and screen-reader checks were not performed. External dictionary availability still depends on the user's network and Wiktionary service. Changes remain local on `codex/wordle`; no push, merge or public deployment was performed.
+
+## ECDICT Chinese supplement — 2026-09-27
+
+- Branch `codex/wordle-chinese`, base `a754fbf` (the preceding Wordle release has since been deployed).
+- 285 tests / 35 files, TypeScript, production build and diff checks passed. Existing large-bundle warning remains.
+- Fixed upstream revision and SHA-256 checked; reproducible import produces 19,282 unique lowercase five-letter Chinese entries. Source CSV stays outside the repository. The 1,095.68 kB generated chunk compresses to 457.47 kB gzip in the production build.
+- Lookup remains original vocabulary first, then ECDICT, cache and Wiktionary. Restored guesses prefer Chinese without changing scores/drafts/answer pool. English-only fallback definitions are hidden.
+- Isolated Chromium at the production subpath: `wreck` shows Chinese with zero external requests; sampled submit-to-render time 33–35 ms on this host (not a mobile performance guarantee). Mobile light/dark screenshots inspected.
+- Service-worker offline reload restores the game, `quaff` works as a fresh offline guess, and the bundled MIT license remains available offline. No uncaught page errors.
+- Code review identified supplemental chunk failure blocking otherwise valid games. Regression test and browser fault injection now verify a visible notice with continued original-vocabulary/cache play. No important review findings remain open.
+- This change does not re-audit every upstream translation or establish rights to every underlying upstream source. Source attribution and upstream license are retained. Real-device Safari remains untested.
+- ECDICT change is local only: no push or deployment in this task.

@@ -1,8 +1,9 @@
 import type { PalabraStorage } from '../data/storage'
 import type { VocabularyEntry } from '../types'
 import { WiktionaryClient } from './dictionary'
+import { loadEcdict } from './ecdict'
 import { acceptGuess, createGame, localEntry, normalizeGuess, wordlePool } from './rules'
-import type { WordleGame } from './types'
+import type { WordleDictionaryEntry, WordleGame } from './types'
 
 export interface WordleState {
   loading: boolean
@@ -11,6 +12,7 @@ export interface WordleState {
   error: string
   game?: WordleGame
   candidateCount: number
+  dictionaryWarning?: string
 }
 export const initialWordleState: WordleState = { loading: true, busy: false, draft: '', error: '', candidateCount: 0 }
 class Conflict extends Error {}
@@ -18,12 +20,13 @@ class Conflict extends Error {}
 export class WordleController {
   private state: WordleState = initialWordleState
   private vocabulary: VocabularyEntry[] = []
+  private supplement: ReadonlyMap<string, WordleDictionaryEntry> = new Map()
   private listeners = new Set<() => void>()
   private jobs: Promise<void> = Promise.resolve()
   private request?: AbortController
   private disposed = false
   private generation = 0
-  constructor(private readonly db: PalabraStorage, private readonly dictionary = new WiktionaryClient(), private readonly random = Math.random, private readonly online = () => navigator.onLine) {}
+  constructor(private readonly db: PalabraStorage, private readonly dictionary = new WiktionaryClient(), private readonly random = Math.random, private readonly online = () => navigator.onLine, private readonly loadSupplement = loadEcdict) {}
   getSnapshot = () => this.state
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
   private update(patch: Partial<WordleState>) {
@@ -33,18 +36,32 @@ export class WordleController {
   async initialize() {
     this.update({ loading: true, error: '' })
     try {
-      const [vocabulary, saved] = await Promise.all([this.db.getVocabulary('en'), this.db.getWordleGame()])
+      const [vocabulary, saved, supplement] = await Promise.all([
+        this.db.getVocabulary('en'), this.db.getWordleGame(),
+        this.loadSupplement().catch(() => undefined),
+      ])
       if (this.disposed) return
       this.vocabulary = vocabulary
+      this.supplement = supplement ?? new Map()
       const pool = wordlePool(vocabulary)
       let game = saved
       if (!game) {
         game = createGame(pool, undefined, this.random)
         if (!await this.db.saveWordleGame(game, undefined)) game = await this.db.getWordleGame()
       }
-      this.update({ game, draft: game?.draft ?? '', candidateCount: pool.length })
+      this.update({
+        game: this.withChineseDefinitions(game), draft: game?.draft ?? '', candidateCount: pool.length,
+        dictionaryWarning: supplement ? undefined : 'ECDICT 扩展词典未能加载，请联网刷新后重试。仍可使用原词库和已缓存词，对局已保留。',
+      })
     } catch (error) { this.update({ error: error instanceof Error && error.message.includes('五字母') ? error.message : '无法读取或保存猜词游戏，请重试。' }) }
     finally { this.update({ loading: false }) }
+  }
+  private preferredEntry(term: string) {
+    return localEntry(term, this.vocabulary) ?? this.supplement.get(term)
+  }
+  private withChineseDefinitions(game?: WordleGame): WordleGame | undefined {
+    if (!game) return game
+    return { ...game, guesses: game.guesses.map(guess => ({ ...guess, entry: this.preferredEntry(guess.term) ?? guess.entry })) }
   }
   private async commit(next: WordleGame) {
     try {
@@ -60,7 +77,7 @@ export class WordleController {
       this.generation++
       try {
         const game = await this.db.getWordleGame()
-        this.update({ game, draft: game?.draft ?? '', error: '另一页面已更新这局游戏，已载入最新进度，请重新输入。' })
+        this.update({ game: this.withChineseDefinitions(game), draft: game?.draft ?? '', error: '另一页面已更新这局游戏，已载入最新进度，请重新输入。' })
       } catch { this.update({ error: '无法读取最新游戏，请刷新重试。' }) }
     } else if (!this.disposed) this.update({ error: error instanceof Error ? error.message : '操作未完成，请重试。' })
   }
@@ -93,7 +110,7 @@ export class WordleController {
       const term = normalizeGuess(this.state.draft)
       if (!term) throw new Error('请输入五个英文字母。')
       if (game.guesses.some(guess => guess.term === term)) throw new Error('这个词已经猜过了，换一个试试。')
-      let entry = localEntry(term, this.vocabulary) ?? await this.db.getWordleDictionaryEntry(term)
+      let entry = this.preferredEntry(term) ?? await this.db.getWordleDictionaryEntry(term)
       if (this.disposed) return
       if (!entry) {
         if (!this.online()) throw new Error('这个词尚未缓存，需要联网验证；本次不扣次数。')

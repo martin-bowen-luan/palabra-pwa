@@ -1,10 +1,11 @@
 import { afterEach, expect, it } from 'vitest'
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
 import { DEFAULT_SETTINGS, PalabraStorage } from '../data/storage'
-import { createGame } from './rules'
+import { acceptGuess, createGame } from './rules'
+import type { WordleGame } from './types'
 import type { VocabularyEntry } from '../types'
 const word=(term:string):VocabularyEntry=>({id:`en:${term}`,language:'en',term,partOfSpeech:'n.',meaningZh:term==='apple'?'苹果':'葡萄',category:'测试',examples:[]})
 const words=[word('apple'),word('grape'),word('wreck'),word('means'),word('build'),word('level'),word('there')]
@@ -21,12 +22,27 @@ it('activates focused letter and delete buttons with Enter',async()=>{
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 })
 afterEach(()=>{cleanup();stores.splice(0).forEach(s=>s.close())})
-async function mount(path='/wordle',language:'en'|'es'='en'){
+async function mount(path='/wordle',language:'en'|'es'='en',saved?:WordleGame){
   const db=new PalabraStorage(`wordle-ui-${crypto.randomUUID()}`,{vocabularySeeds:{en:words}});stores.push(db)
   await db.saveSettings({...DEFAULT_SETTINGS,learningLanguage:language})
-  await db.saveWordleGame(createGame([words[0]]),undefined)
+  await db.saveWordleGame({...saved??createGame([words[0]]),revision:0},undefined)
   render(<MemoryRouter initialEntries={[path]}><App storageClient={db}/></MemoryRouter>);return db
 }
+it('replaces old English definitions with ECDICT Chinese on restored guesses',async()=>{
+  const saved=acceptGuess(createGame([words[0]]),{term:'quaff',source:'wiktionary',definitions:[{partOfSpeech:'Verb',text:'To drink deeply.'}]})
+  await mount('/wordle','en',saved)
+  const region=await screen.findByRole('region',{name:'猜测词释义'})
+  expect(region).toHaveTextContent('狂饮')
+  expect(region).not.toHaveTextContent('To drink deeply')
+  expect(within(region).getByRole('link',{name:/ECDICT/})).toBeInTheDocument()
+})
+it('hides English fallback definitions for old guesses without a Chinese entry',async()=>{
+  const saved=acceptGuess(createGame([words[0]]),{term:'xyzzz',source:'wiktionary',definitions:[{partOfSpeech:'Noun',text:'English placeholder definition.'}]})
+  await mount('/wordle','en',saved)
+  const region=await screen.findByRole('region',{name:'猜测词释义'})
+  expect(region).toHaveTextContent('暂无中文释义')
+  expect(region).not.toHaveTextContent('English placeholder')
+})
 it('opens Wordle from English home, hides normal navigation and never reveals the answer initially',async()=>{
   const user=userEvent.setup();await mount('/today')
   await user.click(await screen.findByRole('link',{name:/Wordle 猜词/}))

@@ -5,7 +5,7 @@ export interface WordleDictionaryEntry {
   term: string
   definitions: Array<{ partOfSpeech: string; text: string }>
   ipa?: string
-  source: 'local' | 'wiktionary'
+  source: 'local' | 'wiktionary' | 'ecdict'
   sourceUrl?: string
   revisionId?: number
   fetchedAt?: string

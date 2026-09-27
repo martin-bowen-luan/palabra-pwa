@@ -12,7 +12,7 @@ export default defineConfig(({ command, isPreview }) => {
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      includeAssets: ['icon.svg', 'icon-maskable.svg'],
+      includeAssets: ['icon.svg', 'icon-maskable.svg', 'licenses/ECDICT.txt'],
       manifest: {
         name: 'palabra · 西语与英语背词',
         short_name: 'palabra',

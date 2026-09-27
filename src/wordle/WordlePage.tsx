@@ -15,8 +15,8 @@ const keyRows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
 
 function GuessDefinition({ entry }: { entry: WordleDictionaryEntry }) {
   return <><div className={styles.term}><h2 lang="en">{entry.term}</h2>{entry.ipa && <span>{entry.ipa}</span>}</div>
-    {entry.source === 'wiktionary' && <small>英文释义</small>}
-    {entry.definitions.slice(0, 3).map((definition, i) => <p key={i} lang={entry.source === 'wiktionary' ? 'en' : 'zh-CN'}><span>{definition.partOfSpeech}</span> {definition.text}</p>)}
+    {entry.source === 'wiktionary' ? <p>暂无中文释义；已通过英语词典验证。</p> : entry.definitions.slice(0, 3).map((definition, i) => <p key={i} lang="zh-CN"><span>{definition.partOfSpeech}</span> {definition.text}</p>)}
+    {entry.source === 'ecdict' && <div className={styles.source}><a href={entry.sourceUrl} target="_blank" rel="noopener noreferrer">ECDICT · 本地中文词典</a><a href={`${import.meta.env.BASE_URL}licenses/ECDICT.txt`} target="_blank" rel="noopener noreferrer">MIT 许可</a></div>}
     {entry.source === 'wiktionary' && <div className={styles.source}><a href={entry.sourceUrl} target="_blank" rel="noopener noreferrer">Wiktionary contributors · 词条版本 {entry.revisionId}</a><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0 · 已提取纯文本</a></div>}
   </>
 }
@@ -60,6 +60,7 @@ export function WordlePage({ storageClient = defaultStorage }: { storageClient?:
   return <main className={styles.page}>
     <header className={styles.header}><Link to="/today" aria-label="返回首页"><BackIcon /></Link><h1>Wordle</h1><span>{game?.guesses.length ?? 0} / 6</span></header>
     {loading ? <p role="status">正在打开猜词练习…</p> : !game ? <div className={styles.failure}><p role="alert">{error}</p><button onClick={() => void controller?.initialize()}>重试</button></div> : <>
+      {state.dictionaryWarning && <p role="status">{state.dictionaryWarning}</p>}
       <section className={styles.definition} aria-label="猜测词释义" tabIndex={0}>
         {entry ? <GuessDefinition entry={entry} /> : <div className={styles.intro}><p>五个字母，六次机会。</p><span>先猜一个词。每次有效猜测后，<br />这里会显示它的词义。</span></div>}
       </section>
@@ -83,7 +84,7 @@ export function WordlePage({ storageClient = defaultStorage }: { storageClient?:
         {row === 2 && <button data-wordle-key className={styles.wideKey} aria-label="提交猜测" disabled={busy || finished} onClick={() => void controller?.submit()}>确认</button>}
       </div>)}</div>
       <div className={styles.legend}>{(['correct', 'present', 'absent'] as const).map(color => <span key={color}><i className={styles[color]} />{colorNames[color]}</span>)}</div>
-      <details className={styles.rules}><summary>规则与词典来源</summary><p>答案来自高考 3500 本地词库中的 {state.candidateCount} 个五字母词。每局六次机会，不限局数，不计入背词进度。</p><p>重复字母按答案实际数量匹配。无效词、重复猜测或验证失败不扣次数。点击已猜行查看词义。</p><p>词库外猜测会将这个单词发送至 Wiktionary 验证，不发送学习记录。成功结果保存在本机；断网时可使用本地词和已验证的词。</p><p>页面中的本地词显示中文释义，Wiktionary 词条显示英文原释义，不使用 AI 翻译。外部文本由 Wiktionary contributors 提供，按 CC BY-SA 4.0 使用。</p></details>
+      <details className={styles.rules}><summary>规则与词典来源</summary><p>答案来自高考 3500 本地词库中的 {state.candidateCount} 个五字母词。每局六次机会，不限局数，不计入背词进度。</p><p>重复字母按答案实际数量匹配。无效词、重复猜测或验证失败不扣次数。点击已猜行查看词义。</p><p>释义优先使用原词库，其次使用 ECDICT 本地五字母中文词典。两者均未收录、也未缓存的猜测才发送至 Wiktionary 验证，不发送学习记录。成功验证保存在本机。</p><p>ECDICT 数据随应用离线缓存，采用 MIT 许可；它仅扩展可猜词，不改变题目范围。没有中文释义时明确提示，不显示英文解释，也不使用 AI 翻译。Wiktionary 缓存资料由 Wiktionary contributors 提供，按 CC BY-SA 4.0 使用。</p></details>
     </>}
   </main>
 }
