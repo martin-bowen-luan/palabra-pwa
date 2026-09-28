@@ -41,13 +41,13 @@ export function spanishHint(answer: string, count: number): {mask:string;limit:n
   let letters=0
   return {limit,mask:chars.map(c=>/[a-záéíóúüñ]/i.test(c)? ++letters<=Math.min(count,limit)?c:'_':c).join('')}
 }
-export function submitSpanish(session: ActiveSession, input: string): ActiveSession {
+export function submitSpanish(session: ActiveSession, input: string, answerRevealed = false): ActiveSession {
   const state=session.spanish!, word=currentSpanishWord(session)
-  if (!word || state.feedback || !input.trim()) return session
-  const correct=normalizeSpanish(input)===normalizeSpanish(word.spanishData!.cloze.answer)
+  if (!word || state.feedback || !answerRevealed && !input.trim()) return session
+  const correct=!answerRevealed && normalizeSpanish(input)===normalizeSpanish(word.spanishData!.cloze.answer)
   const assisted=state.hintCount>0
   const failedIds=!correct||assisted ? [...new Set([...state.failedIds,word.id])] : state.failedIds
-  return {...session,answeredCount:session.answeredCount+1,spanish:{...state,draft:input,failedIds,feedback:{correct,assisted,input,nextPractice:advancePractice(session.practice!,correct,assisted)}}}
+  return {...session,answeredCount:session.answeredCount+1,spanish:{...state,draft:input,failedIds,feedback:{correct,assisted,input,nextPractice:advancePractice(session.practice!,correct,assisted),...(answerRevealed?{answerRevealed:true}:{})}}}
 }
 export function advanceSpanish(session: ActiveSession): ActiveSession {
   const state=session.spanish!, feedback=state.feedback, word=currentSpanishWord(session)

@@ -2,9 +2,11 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { SpellingComparison } from '../components/SpellingComparison'
+import { SpellingAnswer } from '../components/SpellingAnswer'
 import { currentSpanishWord, normalizeSpanish, spanishHint } from './course'
 import { useSpanish } from './SpanishProvider'
 import { SpanishPrompt } from './SpanishPrompt'
+import { SpanishGrammarLabel } from './SpanishGrammarLabel'
 import base from '../styles/App.module.css'
 import styles from './Spanish.module.css'
 
@@ -46,16 +48,17 @@ export function SpanishStudyPage() {
       <div className={styles.hint} aria-live="polite" aria-atomic="true">{state.hintCount>0&&<><span lang="es">{hint.mask}</span><small>已提示 {state.hintCount} / {hint.limit} 个字母</small></>}</div>
       <button type="button" className={base.textButton} disabled={course.busy||state.hintCount>=hint.limit} onClick={()=>void course.hint()}>{state.hintCount>=hint.limit?'本词提示已用完':'提示字母'}</button>
       <button className={base.primaryButton} disabled={course.busy||!input.trim()}>检查答案</button>
+      <button type="button" className={base.textButton} disabled={course.busy} onClick={()=>void course.reveal(input)}>不认识</button>
       <button type="button" className={base.textButton} disabled={course.busy} onClick={()=>void finish(course.skip)}>跳过，稍后复习</button>
     </form>:<section className={styles.feedback} aria-label="答题反馈">
       <p className={feedback.correct?styles.correct:styles.error} role="status">{feedback.correct?'拼写正确':'再看一下这个词形'}</p>
       {feedback.assisted&&feedback.correct&&<p>稍后需要再无提示拼对一次。</p>}
-      {!feedback.correct&&<SpellingComparison input={feedback.input} word={{...word,term:question.answer,spellingVariants:[]}}/>}
-      {alternatives.length>0&&<div className={styles.grammarComparison}><h2>哪里不同</h2><p>你写的词形在词典中对应：</p>{alternatives.map(item=><p key={item.id}><span lang="es">{item.term}</span>：{item.spanishData!.lemma} · {item.spanishData!.grammarLabel}</p>)}<p>本题需要：{word.spanishData!.grammarLabel}</p></div>}
+      {!feedback.correct&&(feedback.answerRevealed?<SpellingAnswer answer={question.answer} language="es"/>:<SpellingComparison input={feedback.input} word={{...word,term:question.answer,spellingVariants:[]}}/>)}
+      {!feedback.answerRevealed&&alternatives.length>0&&<div className={styles.grammarComparison}><h2>哪里不同</h2><p>你写的词形在词典中对应：</p>{alternatives.map(item=><p key={item.id}><span lang="es">{item.term}</span>：{item.spanishData!.lemma} · <SpanishGrammarLabel data={item.spanishData!}/></p>)}<p>本题需要：<SpanishGrammarLabel data={word.spanishData!}/></p></div>}
       <p><span className={styles.grammar}>{word.partOfSpeech}</span>　{word.meaningZh}</p>
       <p className={styles.grammar}>原词：<span lang="es">{word.spanishData!.lemma}</span>{word.spanishData!.grammar.noteZh&&` · ${word.spanishData!.grammar.noteZh}`}</p>
       <button className={base.textButton} onClick={()=>navigate(`/library?word=${encodeURIComponent(word.id)}`,{state:{wordLinkFrom:'/study'}})}>查看词典与变化表</button>
-      <button className={base.primaryButton} disabled={course.busy} onClick={()=>void finish(course.next)}>{feedback.correct?'继续':'立即重做'}</button>
+      <button className={base.primaryButton} disabled={course.busy} onClick={()=>void finish(course.next)}>{feedback.correct?'继续':feedback.answerRevealed?'重新拼写':'立即重做'}</button>
       {!feedback.correct&&<button className={base.textButton} disabled={course.busy} onClick={()=>void finish(course.skip)}>跳过，稍后复习</button>}
     </section>}
   </main>

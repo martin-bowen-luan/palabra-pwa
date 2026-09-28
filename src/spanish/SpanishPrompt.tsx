@@ -1,5 +1,6 @@
 import type { VocabularyEntry } from '../types'
 import styles from './Spanish.module.css'
+import { SpanishGrammarLabel } from './SpanishGrammarLabel'
 
 /** Read the cue in saved sessions as well as the current corpus, without rewriting either. */
 function promptCue(cue: string, grammarLabel: string) {
@@ -16,7 +17,7 @@ export function SpanishPrompt({ word, revealed }: { word: VocabularyEntry; revea
   const { meaning, instruction } = promptCue(question.cueZh, grammarLabel)
   return <section className={styles.prompt} aria-label="西语句子填词">
     <h1 className={styles.meaning}>{meaning}</h1>
-    <p className={styles.promptGrammar}>{grammarLabel}</p>
+    <p className={styles.promptGrammar}><SpanishGrammarLabel data={word.spanishData!}/></p>
     {instruction && <p className={styles.cue}>{instruction}</p>}
     <p lang="es" className={styles.sentence}>
       {question.before}<span className={styles.blank}>{revealed ? question.answer : '____'}</span>{question.after}

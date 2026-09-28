@@ -21,6 +21,44 @@ async function setup(prepare?:(db:PalabraStorage)=>Promise<void>, words=[spanish
   return {db,user}
 }
 describe('Spanish contextual course',()=>{
+  it.each(['','hablo'])('reveals full Spanish answer from input "%s", restores and requires independent spelling',async(input)=>{
+    const {db,user}=await setup(undefined,[spanishFixture(),spanishFixture('es:second','duermo','dormir')])
+    await user.click(screen.getByRole('button',{name:'开始今天的学习'}))
+    const answerInput=await screen.findByRole('textbox',{name:'填写缺少的西语词'})
+    if(input)await user.type(answerInput,input)
+    await user.dblClick(screen.getByRole('button',{name:'不认识'}))
+    expect(await screen.findByRole('region',{name:'完整答案'})).toHaveTextContent('hablo')
+    expect(screen.getByRole('region',{name:'完整答案'})).toHaveFocus()
+    expect(screen.getByRole('region',{name:'西语句子填词'})).toHaveTextContent('Yo hablo español con mi vecina.')
+    expect(screen.queryByLabelText('拼写错误对比')).not.toBeInTheDocument()
+    expect((await db.getActiveSession('es'))?.spanish?.feedback).toMatchObject({correct:false,answerRevealed:true})
+    expect((await db.getAllProgress('es'))[0]).toMatchObject({wordId:'es:test:hablo',stage:0,status:'learning'})
+    cleanup();render(<MemoryRouter initialEntries={['/study']}><App storageClient={db}/></MemoryRouter>)
+    expect(await screen.findByRole('region',{name:'完整答案'})).toHaveTextContent('hablo')
+    await user.click(screen.getByRole('button',{name:'重新拼写'}))
+    expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument()
+    expect(screen.getByRole('textbox',{name:'填写缺少的西语词'})).toHaveValue('')
+    expect(screen.getByRole('region',{name:'西语句子填词'})).toHaveTextContent('____')
+    await user.type(screen.getByRole('textbox',{name:'填写缺少的西语词'}),'hablo')
+    await user.click(screen.getByRole('button',{name:'检查答案'}))
+    await user.click(await screen.findByRole('button',{name:'继续'}))
+    const saved=(await db.getActiveSession('es'))!
+    expect(saved.practice?.delayed).toEqual([{wordId:'es:test:hablo',remaining:3}])
+    expect(saved.practice?.firstAnswers['es:test:hablo']).toBe(false)
+  })
+  it('keeps a Spanish reveal hidden on save failure and retains skip priority after reveal',async()=>{
+    const {db,user}=await setup()
+    await user.click(screen.getByRole('button',{name:'开始今天的学习'}))
+    await screen.findByRole('button',{name:'不认识'})
+    vi.spyOn(db,'commitSpanishStep').mockRejectedValueOnce(new Error('quota'))
+    await user.click(screen.getByRole('button',{name:'不认识'}))
+    expect(await screen.findByRole('alert')).toHaveTextContent('保存失败')
+    expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button',{name:'不认识'}))
+    await screen.findByRole('region',{name:'完整答案'})
+    await user.click(screen.getByRole('button',{name:'跳过，稍后复习'}))
+    expect((await db.getAllProgress('es'))[0]).toMatchObject({wordId:'es:test:hablo',reviewPriority:'skipped',skipReview:false})
+  })
   it.each([
     ['本句：再见；感叹词 · 不变形','感叹词 · 不变形','再见',''],
     ['原形 hablar；本句：说；讲话；陈述式现在时 · 第一人称单数（yo）','陈述式现在时 · 第一人称单数（yo）','说；讲话','原形 hablar'],

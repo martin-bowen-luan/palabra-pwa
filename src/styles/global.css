@@ -12,6 +12,8 @@
   --line: #d8dde1;
   --green: #247461;
   --red: #b84c49;
+  --grammar-feminine: #8045a3;
+  --grammar-common: #146d73;
   --control: #ffffff;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -26,6 +28,8 @@
   --line: #343c42;
   --green: #65b59c;
   --red: #e58b85;
+  --grammar-feminine: #c6a0f1;
+  --grammar-common: #80cbcb;
   --control: #20262b;
   background: #0e1113;
 }
@@ -41,6 +45,8 @@
     --line: #343c42;
     --green: #65b59c;
     --red: #e58b85;
+    --grammar-feminine: #c6a0f1;
+    --grammar-common: #80cbcb;
     --control: #20262b;
     background: #0e1113;
   }

@@ -16,6 +16,7 @@ interface SpanishContextValue {
   draft: (value:string)=>void
   hint: ()=>Promise<void>
   submit: (value:string)=>Promise<void>
+  reveal: (value:string)=>Promise<void>
   next: ()=>Promise<boolean>
   skip: ()=>Promise<boolean>
   fluent: ()=>Promise<boolean>
@@ -153,12 +154,12 @@ export function SpanishProvider({children,storageClient=defaultStorage}:{childre
       await persist({...session,spanish:{...session.spanish,draft,hintCount:Math.min(limit,session.spanish.hintCount+1)}})
     },undefined)
   }
-  const submit=(value:string)=>{
+  const submit=(value:string,answerRevealed=false)=>{
     const prompt=displayedIdentity()
     return enqueue(async()=>{
       const session=active.current
-      if(!session?.spanish||prompt!==identity()||session.spanish.feedback||!value.trim())return
-      const next=submitSpanish(session,value)
+      if(!session?.spanish||prompt!==identity()||session.spanish.feedback||!answerRevealed&&!value.trim())return
+      const next=submitSpanish(session,value,answerRevealed)
       const feedback=next.spanish!.feedback!
       const outcome=!feedback.correct||feedback.assisted?'forgotten':'remembered'
       const update=dailyUpdate(session,outcome)
@@ -200,6 +201,6 @@ export function SpanishProvider({children,storageClient=defaultStorage}:{childre
     },undefined)
     return !saveFailed.current&&!recoveryRequired
   }
-  return <Context.Provider value={{enabled,days,day,busy:busy||recoveryRequired,error,start,draft,hint,submit,next,skip:()=>remove('skipped'),fluent:()=>remove('fluent'),flush}}>{children}</Context.Provider>
+  return <Context.Provider value={{enabled,days,day,busy:busy||recoveryRequired,error,start,draft,hint,submit,reveal:value=>submit(value,true),next,skip:()=>remove('skipped'),fluent:()=>remove('fluent'),flush}}>{children}</Context.Provider>
 }
 export function useSpanish() {const value=useContext(Context);if(!value)throw new Error('SpanishProvider required');return value}

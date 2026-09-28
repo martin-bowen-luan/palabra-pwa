@@ -2,6 +2,11 @@
 .prompt { padding: 24px 0 20px; text-align: left; }
 .meaning { margin: 0; font-size: 28px; font-weight: 650; line-height: 1.45; overflow-wrap: anywhere; }
 .promptGrammar { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.grammarLabel { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.grammarLabel [data-gender] { font-weight: 600; }
+.grammarLabel [data-gender='masculine'] { color: var(--blue); }
+.grammarLabel [data-gender='feminine'] { color: var(--grammar-feminine); }
+.grammarLabel [data-gender='common'], .grammarLabel [data-gender='variable'] { color: var(--grammar-common); }
 .grammar { color: var(--muted); font-size: 14px; line-height: 1.8; }
 .sentence { font-family: 'Source Serif 4 Variable', serif; font-size: clamp(26px, 6.7vw, 30px); font-weight: 400; line-height: 1.5; margin: 22px 0 10px; overflow-wrap: anywhere; }
 .blank { color: var(--blue); border-bottom: 2px solid var(--blue); padding: 0 3px; }

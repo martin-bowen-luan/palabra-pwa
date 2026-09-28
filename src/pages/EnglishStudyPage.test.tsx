@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
@@ -11,26 +11,174 @@ const words:VocabularyEntry[]=[
   {id:'en:soluble',language:'en',term:'soluble',partOfSpeech:'adj.',meaningZh:'[化] 可溶的',category:'测试',examples:[]},
   {id:'en:table',language:'en',term:'table',partOfSpeech:'n.',meaningZh:'桌子',category:'测试',examples:[]},
 ]
+const distractors:VocabularyEntry[]=[
+  {id:'en:stable',language:'en',term:'stable',partOfSpeech:'adj.',meaningZh:'稳定的',category:'测试',examples:[]},
+  {id:'en:subtle',language:'en',term:'subtle',partOfSpeech:'adj.',meaningZh:'微妙的',category:'测试',examples:[]},
+  {id:'en:trouble',language:'en',term:'trouble',partOfSpeech:'n.',meaningZh:'麻烦',category:'测试',examples:[]},
+]
 const stores:PalabraStorage[]=[]
-afterEach(()=>{cleanup();stores.splice(0).forEach(s=>s.close());vi.restoreAllMocks()})
+afterEach(()=>{cleanup();stores.splice(0).forEach(s=>s.close());vi.restoreAllMocks();vi.useRealTimers()})
 const mount=(db:PalabraStorage)=>render(<MemoryRouter initialEntries={['/study']}><App storageClient={db}/></MemoryRouter>)
-async function setup(round:MemoryRound='spelling'){
-  const db=new PalabraStorage(`hints-${crypto.randomUUID()}`,{vocabularySeeds:{en:words}});stores.push(db)
+async function setup(round:MemoryRound='spelling', seed=[...words,...distractors]){
+  const db=new PalabraStorage(`hints-${crypto.randomUUID()}`,{vocabularySeeds:{en:seed}});stores.push(db)
   await db.saveSettings({...DEFAULT_SETTINGS,learningLanguage:'en'})
   await db.saveActiveSession({id:'active-session:en',language:'en',mode:'learn',memoryRound:round,wordIds:words.map(w=>w.id),newWordIds:words.map(w=>w.id),reviewWordIds:[],phase:'quiz',currentIndex:0,correctCount:0,answeredCount:0,startedAt:new Date().toISOString(),practice:createPracticeQueue(words.map(w=>w.id))})
   mount(db);await screen.findByRole('button',{name:'结束'});return db
 }
-it('shows the separated first part of speech in the spelling prompt and both choice comparisons',async()=>{
+it.each(['','soluble'])('reveals full English spelling from input "%s" without credit, restores and retries',async(input)=>{
+  const user=userEvent.setup();const db=await setup()
+  if(input)await user.type(screen.getByRole('textbox',{name:'英语'}),input)
+  await user.dblClick(screen.getByRole('button',{name:'不认识'}))
+  expect(await screen.findByRole('region',{name:'完整答案'})).toHaveTextContent('soluble')
+  expect(screen.getByRole('region',{name:'完整答案'})).toHaveFocus()
+  expect(screen.queryByLabelText('拼写错误对比')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button',{name:'继续'})).not.toBeInTheDocument()
+  const saved=(await db.getActiveSession('en'))!
+  expect(saved.quizFeedback).toMatchObject({correct:false,answerRevealed:true})
+  expect(saved.practice?.pendingIds[0]).toBe('en:soluble')
+  cleanup();mount(db)
+  expect(await screen.findByRole('region',{name:'完整答案'})).toHaveTextContent('soluble')
+  expect(screen.getByRole('button',{name:'播放 soluble 发音'})).toBeEnabled()
+  await user.click(screen.getByRole('button',{name:'重新拼写'}))
+  expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument()
+  expect(screen.getByRole('textbox',{name:'英语'})).toHaveValue('')
+  await user.type(screen.getByRole('textbox',{name:'英语'}),'soluble')
+  await user.click(screen.getByRole('button',{name:'检查答案'}))
+  await user.click(await screen.findByRole('button',{name:'继续'}))
+  expect((await db.getActiveSession('en'))?.practice?.firstAnswers['en:soluble']).toBe(false)
+  expect((await db.getActiveSession('en'))?.practice?.delayed).toEqual([{wordId:'en:soluble',remaining:3}])
+})
+it('does not reveal English spelling if saving fails and permits skipping after reveal',async()=>{
+  const user=userEvent.setup();const db=await setup()
+  vi.spyOn(db,'commitStudyStep').mockRejectedValueOnce(new Error('quota'))
+  await user.click(screen.getByRole('button',{name:'不认识'}))
+  expect(await screen.findByRole('alert')).toHaveTextContent('未能保存')
+  expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument()
+  await user.click(screen.getByRole('button',{name:'不认识'}))
+  await screen.findByRole('region',{name:'完整答案'})
+  await user.click(screen.getByRole('button',{name:'跳过，稍后优先复习'}))
+  expect((await db.getAllProgress('en'))[0]).toMatchObject({wordId:'en:soluble',reviewPriority:'skipped',skipReview:false})
+})
+it('saves the displayed choices when an unanswered prompt crosses midnight',async()=>{
+  vi.useFakeTimers({toFake:['Date']})
+  vi.setSystemTime(new Date(2026,8,28,23,59,50))
+  const recent=Array.from({length:18},(_,i):VocabularyEntry=>({id:`en:recent${i}`,language:'en',term:`solubl${String.fromCharCode(97+i)}`,partOfSpeech:'n.',meaningZh:`当日已学${i}`,category:'测试',examples:[]}))
+  const db=await setup('choice',[...words,...distractors,...recent]);cleanup()
+  for(const word of recent)await db.putProgress({wordId:word.id,language:'en',stage:1,status:'learning',lastReviewedAt:new Date().toISOString(),nextReviewAt:new Date().toISOString(),reviewCount:1,correctCount:1})
+  mount(db)
+  const group=within(await screen.findByRole('group',{name:'选择释义'}))
+  const before=group.getAllByRole('button').map(b=>b.textContent)
+  vi.setSystemTime(new Date(2026,8,29,0,0,10))
+  await userEvent.setup().click(group.getByRole('button',{name:'adj. 稳定的'}))
+  expect(await group.findByText('stable')).toBeInTheDocument()
+  expect(group.getAllByRole('button').map(b=>b.textContent?.replace('选错了：stable',''))).toEqual(before)
+  expect((await db.getActiveSession('en'))?.quizFeedback?.choiceOptionIds?.sort()).toEqual(['en:soluble','en:stable','en:subtle','en:trouble'])
+})
+it('recovers a saved choice whose removed distractors leave too few usable options',async()=>{
+  const user=userEvent.setup();const db=await setup('choice',words)
+  cleanup();const session=(await db.getActiveSession('en'))!
+  await db.saveActiveSession({...session,quizFeedback:{wordId:words[0].id,correct:false,selected:'桌子',selectedWordId:words[1].id,choiceOptionIds:[words[0].id,words[1].id,'en:removed1','en:removed2'],nextPractice:advancePractice(session.practice!,false)}})
+  mount(db)
+  await user.click(await screen.findByRole('button',{name:'立即重做'}))
+  expect(await screen.findByRole('button',{name:'认识'})).toBeInTheDocument()
+  expect((await db.getActiveSession('en'))?.quizFeedback).toBeUndefined()
+})
+it('retains a known legacy wrong selection even when excluded from new questions',async()=>{
+  const user=userEvent.setup();const db=await setup('choice')
+  cleanup();const session=(await db.getActiveSession('en'))!
+  await db.saveActiveSession({...session,quizFeedback:{wordId:words[0].id,correct:false,selected:'桌子',selectedWordId:words[1].id,nextPractice:advancePractice(session.practice!,false)}})
+  mount(db)
+  const group=within(await screen.findByRole('group',{name:'选择释义'}))
+  expect(group.getByRole('button',{name:'n. 桌子 选错了：table'})).toBeInTheDocument()
+  const wrong=group.getAllByRole('button').find(b=>!b.textContent?.includes('table')&&!b.textContent?.includes('[化]'))!
+  await user.click(wrong)
+  expect((await db.getActiveSession('en'))?.quizFeedback?.choiceOptionIds).toContain('en:table')
+})
+it('keeps wrong choices and their English words visible until corrected, then schedules a revisit',async()=>{
+  const user=userEvent.setup();const db=await setup('choice')
+  const group=screen.getByRole('group',{name:'选择释义'})
+  const labels=within(group).getAllByRole('button').map(b=>b.textContent)
+  await user.click(within(group).getByRole('button',{name:'adj. 稳定的'}))
+  expect(await within(group).findByText('stable')).toBeInTheDocument()
+  expect(within(group).getAllByRole('button')).toHaveLength(4)
+  expect(screen.queryByRole('button',{name:'立即重做'})).not.toBeInTheDocument()
+  expect(screen.queryByRole('button',{name:'继续'})).not.toBeInTheDocument()
+  expect(screen.getByRole('heading',{name:'soluble'})).toBeInTheDocument()
+  await user.click(within(group).getByRole('button',{name:'adj. 微妙的'}))
+  expect(await within(group).findByText('subtle')).toBeInTheDocument()
+  expect(within(group).getByText('stable')).toBeInTheDocument()
+  cleanup();mount(db)
+  const restored=within(await screen.findByRole('group',{name:'选择释义'}))
+  expect(restored.getByText('stable')).toBeInTheDocument()
+  expect(restored.getByText('subtle')).toBeInTheDocument()
+  expect(restored.getAllByRole('button').map(b=>b.textContent?.replace(/选错了：stable|选错了：subtle/g,''))).toEqual(labels)
+  expect(screen.getByRole('button',{name:'播放 soluble 发音'})).toBeEnabled()
+  await user.click(restored.getByRole('button',{name:'adj. [化] 可溶的'}))
+  await user.click(await screen.findByRole('button',{name:'继续'}))
+  expect(await screen.findByRole('heading',{name:'table'})).toBeInTheDocument()
+  const session=(await db.getActiveSession('en'))!
+  expect(session.practice?.firstAnswers['en:soluble']).toBe(false)
+  expect(session.failedWordIds).toEqual(['en:soluble'])
+  expect(session.practice?.delayed).toEqual([{wordId:'en:soluble',remaining:3}])
+})
+it('does not reveal or advance an unsaved correction and ignores rapid duplicate choices',async()=>{
+  const user=userEvent.setup();const db=await setup('choice')
+  const group=within(screen.getByRole('group',{name:'选择释义'}))
+  await user.dblClick(group.getByRole('button',{name:'adj. 稳定的'}))
+  expect(await group.findByText('stable')).toBeInTheDocument()
+  const before=(await db.getActiveSession('en'))!
+  vi.spyOn(db,'commitStudyStep').mockRejectedValueOnce(new Error('quota'))
+  await user.click(group.getByRole('button',{name:'adj. [化] 可溶的'}))
+  expect(await screen.findByRole('alert')).toHaveTextContent('未能保存')
+  expect(screen.queryByRole('button',{name:'继续'})).not.toBeInTheDocument()
+  expect((await db.getActiveSession('en'))?.quizFeedback).toEqual(before.quizFeedback)
+  await user.dblClick(group.getByRole('button',{name:'adj. [化] 可溶的'}))
+  await waitFor(()=>expect(screen.getByRole('button',{name:'继续'})).toBeEnabled())
+  expect((await db.getActiveSession('en'))?.practice?.pendingIds[0]).toBe('en:soluble')
+  expect((await db.getActiveSession('en'))?.quizFeedback?.nextPractice.delayed).toEqual([{wordId:'en:soluble',remaining:3}])
+})
+it('shows part of speech and resumes correction from legacy saved choice feedback',async()=>{
   const user=userEvent.setup();const db=await setup()
   expect(screen.getByRole('heading',{level:1})).toHaveTextContent('adj. [化] 可溶的')
   cleanup()
   const session=(await db.getActiveSession('en'))!
-  await db.saveActiveSession({...session,memoryRound:'choice',quizFeedback:{wordId:words[0].id,correct:false,selected:'桌子',selectedWordId:words[1].id,nextPractice:createPracticeQueue(words.map(w=>w.id))}})
+  await db.saveActiveSession({...session,memoryRound:'choice',quizFeedback:{wordId:words[0].id,correct:false,selected:'稳定的',selectedWordId:'en:stable',nextPractice:advancePractice(session.practice!,false)}})
   mount(db)
-  const comparison=await screen.findByRole('region',{name:'释义错误对比'})
-  expect(comparison).toHaveTextContent('n. 桌子')
-  expect(comparison).toHaveTextContent('adj. [化] 可溶的')
-  await user.click(screen.getByRole('button',{name:'立即重做'}))
+  const group=within(await screen.findByRole('group',{name:'选择释义'}))
+  expect(group.getByRole('button',{name:'adj. 稳定的 选错了：stable'})).toBeInTheDocument()
+  await user.click(group.getByRole('button',{name:'adj. [化] 可溶的'}))
+  expect(await screen.findByRole('button',{name:'继续'})).toBeInTheDocument()
+  expect((await db.getActiveSession('en'))?.quizFeedback?.nextPractice.firstAnswers['en:soluble']).toBe(false)
+})
+it('keeps an answer reveal on the same options until the correct meaning is selected',async()=>{
+  const user=userEvent.setup();const db=await setup('choice')
+  await user.click(screen.getByRole('button',{name:'看答案'}))
+  expect(await screen.findByText('请在上方选对释义后继续')).toBeInTheDocument()
+  expect(screen.queryByRole('button',{name:'立即重做'})).not.toBeInTheDocument()
+  const group=within(screen.getByRole('group',{name:'选择释义'}))
+  await user.click(group.getByRole('button',{name:'adj. [化] 可溶的'}))
+  await user.click(await screen.findByRole('button',{name:'继续'}))
+  expect((await db.getActiveSession('en'))?.practice?.firstAnswers['en:soluble']).toBe(false)
+})
+it('does not add a retry for a correct first choice or submit it twice',async()=>{
+  const user=userEvent.setup();const db=await setup('choice')
+  await user.dblClick(screen.getByRole('button',{name:'adj. [化] 可溶的'}))
+  await user.click(await screen.findByRole('button',{name:'继续'}))
+  const session=(await db.getActiveSession('en'))!
+  expect(session.practice?.pendingIds).toEqual(['en:table'])
+  expect(session.practice?.delayed).toEqual([])
+  expect(session.practice?.firstAnswers['en:soluble']).toBe(true)
+})
+it('recovers another tab correction instead of overwriting it with a stale wrong choice',async()=>{
+  const user=userEvent.setup();const db=await setup('choice')
+  await user.click(screen.getByRole('button',{name:'adj. 稳定的'}))
+  await screen.findByText('stable')
+  const session=(await db.getActiveSession('en'))!,feedback=session.quizFeedback!
+  const updated={...session,revision:(session.revision??0)+1,quizFeedback:{...feedback,correct:true,selected:words[0].meaningZh,selectedWordId:words[0].id,nextPractice:advancePractice(feedback.nextPractice,true)}}
+  await db.commitStudyStep(undefined,updated)
+  await user.click(screen.getByRole('button',{name:'adj. 微妙的'}))
+  expect(await screen.findByRole('button',{name:'继续'})).toBeInTheDocument()
+  expect(await db.getActiveSession('en')).toEqual(updated)
 })
 it('caps hints, keeps input untouched, restores hint use, and requires a later unassisted spelling',async()=>{
   const user=userEvent.setup();const db=await setup()

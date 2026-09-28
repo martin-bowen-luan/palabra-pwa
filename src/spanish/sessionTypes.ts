@@ -26,5 +26,5 @@ export interface SpanishSessionState {
   resolvedIds: string[]
   skippedIds: string[]
   fluentIds: string[]
-  feedback?: { correct: boolean; assisted: boolean; input: string; nextPractice: PracticeQueue }
+  feedback?: { correct: boolean; assisted: boolean; input: string; nextPractice: PracticeQueue; answerRevealed?: boolean }
 }

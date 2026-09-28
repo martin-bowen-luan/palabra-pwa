@@ -51,6 +51,9 @@
 .memoryChoices { display: grid; gap: 10px; margin-top: 32px; }
 .memoryChoices button { min-height: 68px; padding: 13px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--control); text-align: left; font-size: 16px; line-height: 1.55; cursor: pointer; }
 .memoryChoices small { display: block; color: var(--muted); font-size: 12px; }
+.memoryChoices .wrongChoice { border-color: var(--red); }
+.choiceCorrection { display: block; margin-top: 6px; color: var(--red); font-size: 13px; }
+.choiceCorrection strong { font: 500 20px/1.4 'Source Serif 4 Variable', serif; }
 .contextSentence { margin: 32px 0; padding: 18px 0 18px 16px; border-left: 3px solid var(--blue); font: 450 24px/1.55 'Source Serif 4 Variable', serif; }
 .recallInstruction { margin: auto 0; padding: 48px 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
 .recallActions { margin-top: auto; padding-top: 28px; }
@@ -71,6 +74,10 @@
 .memoryFeedback { margin-top: auto; padding: 24px 0 0; border-top: 2px solid; }
 .memoryFeedback > strong { display: block; margin-bottom: 20px; font-size: 22px; }
 .spellingComparison { margin: 18px 0 24px; color: var(--ink); }
+.spellingAnswer { margin: 16px 0 24px; color: var(--ink); }
+.spellingAnswer small { display: block; color: var(--muted); font-size: 12px; }
+.spellingAnswer strong { display: block; margin: 8px 0; font: 500 clamp(28px, 9vw, 40px)/1.4 'Source Serif 4 Variable', serif; overflow-wrap: anywhere; }
+.spellingAnswer p { font-size: 14px; line-height: 1.8; color: var(--muted); }
 .spellingComparison > p { font-size: 14px; line-height: 1.6; }
 .spellingComparison > div { padding: 10px 0; }
 .spellingComparison small { display: block; margin-bottom: 6px; color: var(--muted); font-size: 12px; }

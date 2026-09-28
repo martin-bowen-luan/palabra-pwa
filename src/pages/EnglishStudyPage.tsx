@@ -3,15 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { PronunciationButton } from '../components/PronunciationButton'
 import { SpellingComparison } from '../components/SpellingComparison'
+import { SpellingAnswer } from '../components/SpellingAnswer'
 import { WordRelations } from '../components/WordRelations'
 import { SentenceSpeechButton } from '../components/SentenceSpeechButton'
 import { useAi } from '../ai/AiProvider'
 import { pronunciationPlayer } from '../audio/pronunciation'
-import { buildEnglishChoiceOptions } from '../domain/choiceOptions'
+import { studyChoiceOptions } from '../domain/choiceOptions'
 import { MEMORY_ROUNDS, ROUND_LABELS } from '../domain/memoryRounds'
 import { isCorrectSpelling } from '../domain/reviewScheduler'
 import { buildSpellingHint } from '../domain/spellingHint'
-import { toLocalDate } from '../domain/stats'
 import type { ActiveSession, VocabularyEntry } from '../types'
 import styles from '../styles/App.module.css'
 
@@ -46,7 +46,7 @@ export function EnglishStudyPage() {
 }
 
 function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSession; word: VocabularyEntry; busy: boolean; perform: (action: () => Promise<boolean | void>) => Promise<void> }) {
-  const { vocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord, revealSpellingLetter } = useAppState()
+  const { vocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord, revealSpellingLetter, revealSpellingAnswer } = useAppState()
   const { settings: aiSettings } = useAi()
   const [answer, setAnswer] = useState('')
   const location = useLocation()
@@ -63,12 +63,7 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
   const feedback = session.quizFeedback
   const hintCount = session.spellingHint?.wordId === word.id && session.spellingHint.promptNumber === session.practice?.promptNumber ? session.spellingHint.revealedCount : 0
   const letterHint = buildSpellingHint(word.term, hintCount)
-  const choices = useMemo(() => {
-    if (round !== 'choice') return undefined
-    const excluded = new Set(session.wordIds)
-    for (const record of Object.values(progress)) if (toLocalDate(new Date(record.lastReviewedAt)) === toLocalDate(new Date())) excluded.add(record.wordId)
-    return buildEnglishChoiceOptions(word, vocabulary, excluded, `${session.startedAt}:${word.id}:${session.practice?.promptNumber}`)
-  }, [round, session.startedAt, session.wordIds, session.practice?.promptNumber, word, vocabulary, progress])
+  const choices = useMemo(() => studyChoiceOptions(session, word, vocabulary, progress), [session, word, vocabulary, progress])
   useEffect(() => {
     if (round !== 'choice' || feedback) return
     void pronunciationPlayer.play(word).catch(() => undefined)
@@ -76,8 +71,10 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
     // Feedback is persisted; it must not replay the initial prompt after answering.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word.id, round])
-  const submit = (correct: boolean, selected: string, selectedWordId?: string) => perform(() => submitQuizAnswer(correct, selected, selectedWordId))
-  const revealed = checking || Boolean(feedback)
+  const submit = (correct: boolean, selected: string, selectedWordId?: string) => perform(() => submitQuizAnswer(correct, selected, selectedWordId, choices?.map(option => option.id)))
+  const correctingChoice = round === 'choice' && Boolean(choices) && feedback?.correct === false
+  const wrongChoiceIds = feedback?.wrongChoiceIds ?? (feedback?.correct === false && feedback.selectedWordId ? [feedback.selectedWordId] : [])
+  const revealed = checking || Boolean(feedback) && !(correctingChoice && feedback?.selectedWordId)
   const selectedWord = feedback?.selectedWordId ? vocabulary.find(w => w.id === feedback.selectedWordId) : undefined
   const recall = round === 'context' || round === 'recall' || round === 'choice' && !choices
   return <section className={styles.memoryPrompt}>
@@ -88,7 +85,16 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
     </div>
     {round === 'context' && !revealed && <><blockquote className={styles.contextSentence} lang="en">{word.examples[0]?.text || '这个词暂未收录例句，请直接回忆词义。'}</blockquote>{aiSettings.enabled && word.examples[0] && <SentenceSpeechButton text={word.examples[0].text} />}</>}
     {round === 'recall' && !revealed && <p className={styles.recallInstruction}>先在心里说出词义，再核对答案。</p>}
-    {round === 'choice' && choices && !feedback && <><div className={styles.memoryChoices} role="group" aria-label="选择释义">{choices.map(option => <button key={option.id} disabled={busy} onClick={() => void submit(option.id === word.id, option.meaningZh, option.id)}><small>{option.partOfSpeech}</small>{option.meaningZh}</button>)}</div><button className={styles.textButton} disabled={busy} onClick={() => void submit(false, '没有想起')}>看答案</button></>}
+    {round === 'choice' && choices && !feedback?.correct && <>
+      <div className={styles.memoryChoices} role="group" aria-label="选择释义">{choices.map(option => {
+        const wrong = wrongChoiceIds.includes(option.id)
+        return <button key={option.id} className={wrong ? styles.wrongChoice : undefined} disabled={busy} onClick={() => void submit(option.id === word.id, option.meaningZh, option.id)}>
+          <small>{option.partOfSpeech}</small>{option.meaningZh}
+          {wrong && <span className={styles.choiceCorrection}>选错了：<strong lang="en">{option.term}</strong></span>}
+        </button>
+      })}</div>
+      {!feedback && <button className={styles.textButton} disabled={busy} onClick={() => void submit(false, '没有想起')}>看答案</button>}
+    </>}
     {recall && !revealed && <div className={styles.recallActions}><button className={styles.textButton} disabled={busy} onClick={() => reveal(true)}>提示一下</button><div><button disabled={busy} onClick={() => reveal(false)}>认识</button><button disabled={busy} onClick={() => void submit(false, '不认识')}>不认识</button></div></div>}
     {revealed && round !== 'spelling' && <div className={styles.memoryDefinition}>
       <p><small>{word.partOfSpeech}</small><strong>{word.meaningZh}</strong></p>
@@ -105,12 +111,13 @@ function EnglishPrompt({ session, word, busy, perform }: { session: ActiveSessio
         {hintCount > 0 && <small>用过提示后，稍后还需无提示拼对一次。{hintCount >= letterHint.limit && '已达到提示上限。'}</small>}
       </div>}
       <button className={styles.primaryButton} disabled={busy || !answer.trim()}>检查答案</button>
+      <button type="button" className={styles.textButton} disabled={busy} onClick={() => void perform(() => revealSpellingAnswer(answer))}>不认识</button>
     </form>}
     {feedback && <div className={`${styles.memoryFeedback} ${feedback.correct ? styles.feedbackCorrect : styles.feedbackWrong}`} role="status">
-      <strong>{feedback.correct ? '正确' : '再记一次'}</strong>
+      <strong>{feedback.correct ? '正确' : correctingChoice ? '请在上方选对释义后继续' : '再记一次'}</strong>
       {feedback.correct && feedback.assisted && <p>用过提示，稍后再无提示拼写一次。</p>}
-      {round === 'spelling' && !feedback.correct && <SpellingComparison input={feedback.selected} word={word} />}
-      <button className={styles.primaryButton} disabled={busy} onClick={() => void perform(completeQuizItem)}>{feedback.correct ? '继续' : '立即重做'}</button>
+      {round === 'spelling' && !feedback.correct && (feedback.answerRevealed ? <SpellingAnswer answer={word.term} language="en"/> : <SpellingComparison input={feedback.selected} word={word} />)}
+      {!correctingChoice && <button className={styles.primaryButton} disabled={busy} onClick={() => void perform(completeQuizItem)}>{feedback.correct ? '继续' : feedback.answerRevealed ? '重新拼写' : '立即重做'}</button>}
     </div>}
     {round === 'spelling' && !feedback?.correct && <div className={styles.skipSpelling}><button disabled={busy} onClick={() => void perform(skipSpellingWord)}>跳过，稍后优先复习</button><small>不计为掌握，约 10 分钟后进入复习。</small></div>}
   </section>

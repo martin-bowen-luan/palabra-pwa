@@ -117,8 +117,8 @@ describe('Palabra app', () => {
     expect(await screen.findByRole('heading', { name: 'word0' })).toBeInTheDocument()
     const choices = screen.getByRole('group', { name: '选择释义' })
     await user.click(within(choices).getAllByRole('button').find(button => !button.textContent?.includes('释义0'))!)
-    expect(await screen.findByText('你选的是')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: '立即重做' }))
+    expect(await within(choices).findByText(/选错了：/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '立即重做' })).not.toBeInTheDocument()
     for (const index of [0, 1, 0]) {
       await user.click(await screen.findByRole('button', { name: `n. 释义${index}` }))
       await user.click(await screen.findByRole('button', { name: '继续' }))

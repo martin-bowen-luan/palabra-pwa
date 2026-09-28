@@ -8,6 +8,7 @@ import { calculateStreak, toLocalDate } from '../domain/stats'
 import { advanceMemoryRound, buildEnglishGroup } from '../domain/memoryRounds'
 import { scheduleEnglishReview } from '../domain/englishReview'
 import { buildSpellingHint } from '../domain/spellingHint'
+import { studyChoiceOptions } from '../domain/choiceOptions'
 import type { ActiveSession, LearningLanguage, ReviewRating, StudyMode, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
 import type { SpanishDailyUpdate, SpanishOutcome } from '../spanish/sessionTypes'
 import { reconcileLegacySpanish } from '../spanish/legacy'
@@ -30,8 +31,9 @@ interface AppStateValue {
   startNextGroup: (mode?: StudyMode) => Promise<ActiveSession | undefined>
   rateCurrentWord: (rating: ReviewRating) => Promise<void>
   markCurrentWordFluent: () => Promise<boolean>
-  submitQuizAnswer: (correct: boolean, selected: string, selectedWordId?: string) => Promise<void>
+  submitQuizAnswer: (correct: boolean, selected: string, selectedWordId?: string, displayedChoiceIds?: string[]) => Promise<void>
   revealSpellingLetter: () => Promise<void>
+  revealSpellingAnswer: (input: string) => Promise<void>
   skipSpellingWord: () => Promise<boolean>
   completeQuizItem: () => Promise<boolean>
   exitSession: () => Promise<void>
@@ -306,11 +308,21 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     setActiveSession(nextSession)
   }
 
-  const submitQuizAnswer = async (correct: boolean, selected: string, selectedWordId?: string) => {
+  const submitQuizAnswer = async (correct: boolean, selected: string, selectedWordId?: string, displayedChoiceIds?: string[], answerRevealed = false) => {
     if (!activeSession) return
     const queue = sessionQueue(activeSession)
     const wordId = sessionWordId(activeSession)
-    if (!wordId || activeSession.phase !== 'quiz' || activeSession.quizFeedback) return
+    const previous = activeSession.quizFeedback
+    const correctingChoice = activeSession.language === 'en' && activeSession.memoryRound === 'choice'
+      && previous !== undefined && previous.wordId === wordId && !previous.correct
+    if (!wordId || activeSession.phase !== 'quiz' || previous && !correctingChoice) return
+    const word = vocabulary.find(entry => entry.id === wordId)
+    // Snapshot the rendered question: date-dependent exclusions may have changed
+    // since it appeared (e.g. a learner answering just after midnight).
+    const choiceOptionIds = displayedChoiceIds ?? (word ? studyChoiceOptions(activeSession, word, vocabulary, progress)?.map(option => option.id) : undefined)
+    const wrongChoiceIds = correctingChoice
+      ? previous.wrongChoiceIds ?? (previous.selectedWordId ? [previous.selectedWordId] : []) : []
+    if (correctingChoice && !correct && selectedWordId && wrongChoiceIds.includes(selectedWordId)) return
     const failedBefore = activeSession.failedWordIds?.includes(wordId) ?? false
     const assisted = activeSession.memoryRound === 'spelling' && activeSession.spellingHint?.wordId === wordId
       && activeSession.spellingHint.promptNumber === queue.promptNumber && activeSession.spellingHint.revealedCount > 0
@@ -321,10 +333,18 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
         ? applyReview(progress[wordId], correct ? 'known' : 'forgotten', now)
         : createProgress(wordId, correct ? 'known' : 'forgotten', now, activeSession.language)
     }
-    const advanced = advancePractice(queue, correct, assisted)
+    // Keep the visible prompt unchanged, but carry its first error into the
+    // corrected answer so it still earns a delayed, unassisted revisit.
+    const advanced = advancePractice(correctingChoice ? previous.nextPractice : queue, correct, assisted)
     const nextSession: ActiveSession = {
       ...activeSession,
-      quizFeedback: { wordId, correct, selected, selectedWordId, nextPractice: advanced, assisted },
+      quizFeedback: { wordId, correct, selected, selectedWordId, nextPractice: advanced, assisted,
+        ...(answerRevealed ? { answerRevealed: true } : {}),
+        ...(activeSession.memoryRound === 'choice' && activeSession.language === 'en' ? {
+          choiceOptionIds,
+          wrongChoiceIds: !correct && selectedWordId ? [...wrongChoiceIds, selectedWordId] : wrongChoiceIds,
+        } : {}),
+      },
       failedWordIds: (!correct || assisted) && !failedBefore ? [...(activeSession.failedWordIds ?? []), wordId] : activeSession.failedWordIds,
       assignedNewCount: activeSession.assignedNewCount ?? activeSession.newWordIds.length,
       assignedReviewCount: activeSession.assignedReviewCount ?? activeSession.reviewWordIds.length,
@@ -344,6 +364,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
 
   const completeQuizItem = async () => {
     if (!activeSession?.quizFeedback) return false
+    const word = vocabulary.find(entry => entry.id === activeSession.quizFeedback!.wordId)
+    if (!activeSession.quizFeedback.correct && word && studyChoiceOptions(activeSession, word, vocabulary, progress)) return false
     const advanced = activeSession.quizFeedback.nextPractice
     const nextSession: ActiveSession = {
       ...activeSession,
@@ -375,6 +397,11 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     }
     setActiveSession(nextSession)
     return false
+  }
+
+  const revealSpellingAnswer = async (input: string) => {
+    if (activeSession?.language !== 'en' || activeSession.memoryRound !== 'spelling') return
+    await submitQuizAnswer(false, input, undefined, undefined, true)
   }
 
   const persistMemoryStep = async (session: ActiveSession, finished: boolean, nextProgress?: WordProgress): Promise<boolean> => {
@@ -461,6 +488,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     markCurrentWordFluent,
     submitQuizAnswer,
     revealSpellingLetter,
+    revealSpellingAnswer,
     completeQuizItem,
     skipSpellingWord,
     exitSession,

@@ -1,4 +1,5 @@
-import type { VocabularyEntry } from '../types'
+import type { ActiveSession, VocabularyEntry, WordProgress } from '../types'
+import { toLocalDate } from './stats'
 
 function seededRandom(seed: string): () => number {
   let state = 2166136261
@@ -79,4 +80,30 @@ export function buildEnglishChoiceOptions(
   const distractors = [...near, ...fallback]
   if (distractors.length < 3) return undefined
   return seededShuffle([target, ...distractors], `${seed}:order`)
+}
+
+/** Share restoration rules between the visible choices and the advance guard. */
+export function studyChoiceOptions(session: ActiveSession, target: VocabularyEntry, vocabulary: VocabularyEntry[], progress: Record<string, WordProgress>, now = new Date()): VocabularyEntry[] | undefined {
+  if (session.language !== 'en' || session.memoryRound !== 'choice') return undefined
+  const feedback = session.quizFeedback
+  const saved = feedback?.choiceOptionIds?.map(id => vocabulary.find(word => word.id === id && word.language === 'en'))
+  if (saved?.length === 4 && saved.every((word): word is VocabularyEntry => Boolean(word))
+    && new Set(saved.map(word => word.id)).size === 4 && saved.some(word => word.id === target.id)) return saved
+
+  const wrongIds = feedback?.wrongChoiceIds ?? (feedback?.correct === false && feedback.selectedWordId ? [feedback.selectedWordId] : [])
+  const knownWrong = wrongIds.map(id => vocabulary.find(word => word.id === id && word.language === 'en'))
+    .filter((word): word is VocabularyEntry => Boolean(word) && word!.id !== target.id)
+  const excluded = new Set(session.wordIds)
+  for (const record of Object.values(progress)) if (toLocalDate(new Date(record.lastReviewedAt)) === toLocalDate(now)) excluded.add(record.wordId)
+  // Restoring an existing mistake is not assigning a new distractor: retain it
+  // even if it is now excluded from fresh questions (e.g. after a date change).
+  for (const wrong of knownWrong) excluded.delete(wrong.id)
+  const choices = buildEnglishChoiceOptions(target, vocabulary, excluded, `${session.startedAt}:${target.id}:${session.practice?.promptNumber}`)
+  if (!choices) return undefined
+  for (const wrong of knownWrong) {
+    if (choices.some(word => word.id === wrong.id)) continue
+    const replace = choices.findIndex(word => word.id !== target.id && !wrongIds.includes(word.id))
+    if (replace !== -1) choices[replace] = wrong
+  }
+  return choices
 }
