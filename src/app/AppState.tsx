@@ -1,11 +1,15 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import type { WordbookCatalog,WordbookId } from '../wordbooks/types'
+import { projectWordbook } from '../wordbooks/catalog'
+import { buildWordbookGroup } from '../wordbooks/planning'
+import { pronunciationPlayer } from '../audio/pronunciation'
 import { DEFAULT_SETTINGS, StaleStudySessionError, storage as defaultStorage, type PalabraStorage } from '../data/storage'
 import { buildDailyPlan, type DailyPlan } from '../domain/dailyPlan'
 import { buildNextStudyGroup, hasMoreStudyGroups } from '../domain/studyGroups'
 import { advancePractice, createPracticeQueue, currentPracticeWord, removePracticeWord } from '../domain/practiceQueue'
 import { applyReview, createProgress, markFluent } from '../domain/reviewScheduler'
 import { calculateStreak, toLocalDate } from '../domain/stats'
-import { advanceMemoryRound, buildEnglishGroup } from '../domain/memoryRounds'
+import { advanceMemoryRound } from '../domain/memoryRounds'
 import { scheduleEnglishReview } from '../domain/englishReview'
 import { buildSpellingHint } from '../domain/spellingHint'
 import { studyChoiceOptions } from '../domain/choiceOptions'
@@ -14,6 +18,12 @@ import type { SpanishDailyUpdate, SpanishOutcome } from '../spanish/sessionTypes
 import { reconcileLegacySpanish } from '../spanish/legacy'
 
 interface AppStateValue {
+  wordbooks:WordbookCatalog[]
+  selectedWordbook?:WordbookCatalog
+  bookVocabulary:VocabularyEntry[]
+  studyVocabulary:VocabularyEntry[]
+  allEnglishDueCount:number
+  setEnglishWordbook:(id:WordbookId)=>Promise<void>
   acceptSpanishCommit: (active: ActiveSession | undefined, progress?: WordProgress, completed?: StudySession) => void
   refreshLearningData: () => Promise<void>
   ready: boolean
@@ -27,7 +37,7 @@ interface AppStateValue {
   dailyPlan: DailyPlan
   streak: number
   moreGroupsToday: boolean
-  startSession: (extraWords?: number, mode?: StudyMode) => Promise<ActiveSession | undefined>
+  startSession: (extraWords?: number, mode?: StudyMode, reviewScope?:'book'|'all-english') => Promise<ActiveSession | undefined>
   startNextGroup: (mode?: StudyMode) => Promise<ActiveSession | undefined>
   rateCurrentWord: (rating: ReviewRating) => Promise<void>
   markCurrentWordFluent: () => Promise<boolean>
@@ -63,6 +73,10 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS)
   const [activeSession, setActiveSession] = useState<ActiveSession>()
   const [clock, setClock] = useState(() => new Date())
+  const [wordbooks,setWordbooks]=useState<WordbookCatalog[]>([])
+  const settingsRef=useRef(settings)
+  const settingsQueue=useRef<Promise<unknown>>(Promise.resolve())
+  const selectionVersion=useRef(0)
 
   useEffect(() => {
     const refreshClock = () => setClock(new Date())
@@ -76,20 +90,23 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     let mounted = true
     storageClient.getSettings().then(async (savedSettings) => {
       const language = savedSettings.learningLanguage
-      const [savedVocabulary, savedProgress, savedSessions, savedActive] = await Promise.all([
+      const [savedVocabulary, savedProgress, savedSessions, savedActive, savedBooks] = await Promise.all([
         storageClient.getVocabulary(language),
         storageClient.getAllProgress(language),
         storageClient.getSessions(language),
         storageClient.getActiveSession(language),
+        storageClient.getWordbooks(),
       ])
-      return { savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive }
+      return { savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive, savedBooks }
     })
-      .then(({ savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive }) => {
+      .then(({ savedVocabulary, savedProgress, savedSessions, savedSettings, savedActive, savedBooks }) => {
         if (!mounted) return
         setVocabulary(savedVocabulary)
         setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
         setSessions(savedSessions)
         setSettings(savedSettings)
+        settingsRef.current=savedSettings
+        setWordbooks(savedBooks)
         setActiveSession(savedActive)
         setReady(true)
       })
@@ -103,21 +120,35 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     document.documentElement.dataset.theme = settings.theme
   }, [settings.theme])
 
-  const dailyPlan = useMemo(
-    () => buildDailyPlan(vocabulary, progress, settings.dailyNewWords, clock),
-    [progress, settings.dailyNewWords, vocabulary, clock],
-  )
+  const selectedWordbook=wordbooks.find(b=>b.id===(settings.englishWordbook??'en-highschool'))??wordbooks.find(b=>b.id==='en-highschool')
+  const bookVocabulary=useMemo(()=>settings.learningLanguage==='en'&&selectedWordbook?projectWordbook(vocabulary,selectedWordbook):vocabulary,[vocabulary,selectedWordbook,settings.learningLanguage])
+  const studyVocabulary=useMemo(()=>{
+    if(settings.learningLanguage!=='en'||activeSession?.reviewScope==='all-english')return vocabulary
+    const book=activeSession?wordbooks.find(b=>b.id===(activeSession.sourceWordbook??'en-highschool')):selectedWordbook
+    return book?projectWordbook(vocabulary,book):vocabulary
+  },[vocabulary,wordbooks,activeSession,selectedWordbook,settings.learningLanguage])
+  const range=settings.englishWordbook==='en-oxford-primary'?settings.primaryNewWordRange??{}:{}
+  const dailyPlan = useMemo(()=>{
+    const plan=buildDailyPlan(bookVocabulary,progress,settings.dailyNewWords,clock)
+    if(settings.learningLanguage==='en'&&selectedWordbook) {
+      const fresh=buildDailyPlan(projectWordbook(vocabulary,selectedWordbook,range),progress,settings.dailyNewWords,clock).newWords
+      return {...plan,newWords:fresh,all:[...plan.review,...fresh]}
+    }
+    return plan
+  },[bookVocabulary,progress,settings.dailyNewWords,clock,settings.learningLanguage,selectedWordbook,vocabulary,range])
+  const allEnglishDueCount=settings.learningLanguage==='en'?buildDailyPlan(vocabulary,progress,0,clock).review.length:0
+  const englishGroup=(mode:StudyMode,now:Date,extra=0,reviewScope:'book'|'all-english'='book')=>selectedWordbook?buildWordbookGroup({words:vocabulary,book:selectedWordbook,range,progress,sessions,goal:settings.dailyNewWords,mode,reviewScope,now,extra}):{all:[],newWords:[],review:[]}
 
   const categories = useMemo(
-    () => ['全部', ...new Set(vocabulary.map((word) => word.category))],
-    [vocabulary],
+    () => ['全部', ...new Set(bookVocabulary.map((word) => word.category))],
+    [bookVocabulary],
   )
 
   const moreGroupsToday = useMemo(
     () => ready && (settings.learningLanguage === 'en'
-      ? buildEnglishGroup(vocabulary, progress, sessions, settings.dailyNewWords, sessions.at(-1)?.mode ?? 'learn', clock).all.length > 0
+      ? englishGroup(sessions.at(-1)?.mode??'learn',clock,0,sessions.at(-1)?.reviewScope).all.length > 0
       : hasMoreStudyGroups(vocabulary, progress, sessions, settings.dailyNewWords, clock)),
-    [ready, vocabulary, progress, sessions, settings.dailyNewWords, settings.learningLanguage, clock],
+    [ready, vocabulary, progress, sessions, settings, clock,selectedWordbook],
   )
 
   const refreshLearningState = async (language: LearningLanguage) => {
@@ -137,16 +168,16 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     return true
   }
 
-  const startSession = async (extraWords = 0, mode: StudyMode = 'learn') => {
+  const startSession = async (extraWords = 0, mode: StudyMode = 'learn',reviewScope:'book'|'all-english'='book') => {
     if (activeSession) return activeSession
     const english = settings.learningLanguage === 'en'
-    const plan = english ? buildEnglishGroup(vocabulary, progress, sessions, settings.dailyNewWords, mode, new Date(), extraWords)
+    const plan = english ? englishGroup(mode,new Date(),extraWords,reviewScope)
       : buildNextStudyGroup(vocabulary, progress, sessions, settings.dailyNewWords, new Date(), extraWords)
     if (!plan.all.length) return undefined
     const session: ActiveSession = {
       id: `active-session:${settings.learningLanguage}`,
       language: settings.learningLanguage,
-      ...(english ? { mode, memoryRound: 'choice' as const, skippedWordIds: [] } : {}),
+      ...(english ? { mode, memoryRound: 'choice' as const, skippedWordIds: [],sourceWordbook:selectedWordbook?.id??'en-highschool',reviewScope } : {}),
       wordIds: plan.all.map((word) => word.id),
       newWordIds: plan.newWords.map((word) => word.id),
       reviewWordIds: plan.review.map((word) => word.id),
@@ -167,7 +198,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     return saved
   }
 
-  const startNextGroup = (mode?: StudyMode) => startSession(0, mode ?? sessions.at(-1)?.mode ?? 'learn')
+  const startNextGroup = (mode?: StudyMode) => startSession(0, mode ?? sessions.at(-1)?.mode ?? 'learn',sessions.at(-1)?.reviewScope)
 
   const legacySpanishDailyUpdate = (session: ActiveSession, wordId: string, outcome: SpanishOutcome): SpanishDailyUpdate | undefined => {
     const data = vocabulary.find(word => word.id === wordId)?.spanishData
@@ -232,6 +263,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       durationSeconds: Math.max(1, Math.round((now.getTime() - new Date(session.startedAt).getTime()) / 1000)),
       completed: true,
       mode: session.mode,
+      sourceWordbook:session.sourceWordbook,
+      reviewScope:session.reviewScope,
       skippedCount: session.skippedWordIds?.length ?? 0,
     }
     try {
@@ -319,7 +352,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const word = vocabulary.find(entry => entry.id === wordId)
     // Snapshot the rendered question: date-dependent exclusions may have changed
     // since it appeared (e.g. a learner answering just after midnight).
-    const choiceOptionIds = displayedChoiceIds ?? (word ? studyChoiceOptions(activeSession, word, vocabulary, progress)?.map(option => option.id) : undefined)
+    const choiceOptionIds = displayedChoiceIds ?? (word ? studyChoiceOptions(activeSession, word, studyVocabulary, progress)?.map(option => option.id) : undefined)
     const wrongChoiceIds = correctingChoice
       ? previous.wrongChoiceIds ?? (previous.selectedWordId ? [previous.selectedWordId] : []) : []
     if (correctingChoice && !correct && selectedWordId && wrongChoiceIds.includes(selectedWordId)) return
@@ -365,7 +398,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   const completeQuizItem = async () => {
     if (!activeSession?.quizFeedback) return false
     const word = vocabulary.find(entry => entry.id === activeSession.quizFeedback!.wordId)
-    if (!activeSession.quizFeedback.correct && word && studyChoiceOptions(activeSession, word, vocabulary, progress)) return false
+    if (!activeSession.quizFeedback.correct && word && studyChoiceOptions(activeSession, word, studyVocabulary, progress)) return false
     const advanced = activeSession.quizFeedback.nextPractice
     const nextSession: ActiveSession = {
       ...activeSession,
@@ -433,27 +466,40 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     // Each answered step is already durable; leaving must not overwrite another tab's newer state.
   }
 
-  const updateSettings = async (patch: Partial<UserSettings>) => {
-    const next = { ...settings, ...patch }
-    await storageClient.saveSettings(next)
-    setSettings(next)
+  const writeSettings = (patch:Partial<UserSettings>,version?:number,apply?:()=>void) => {
+    const job=settingsQueue.current.catch(()=>{}).then(async()=>{
+      if(version!==undefined&&version!==selectionVersion.current)return
+      const next={...settingsRef.current,...patch}
+      await storageClient.saveSettings(next)
+      settingsRef.current=next
+      if(version===undefined||version===selectionVersion.current){setSettings(next);apply?.()}
+    })
+    settingsQueue.current=job
+    return job
+  }
+  const updateSettings = (patch: Partial<UserSettings>) => writeSettings(patch)
+  const setEnglishWordbook=async(id:WordbookId)=>{
+    const version=++selectionVersion.current
+    const books=await storageClient.getWordbooks()
+    if(!books.some(b=>b.id===id))throw new Error('词书未安装，请刷新重试')
+    await writeSettings({englishWordbook:id},version,()=>{setWordbooks(books);pronunciationPlayer.stop()})
   }
 
   const setLearningLanguage = async (language: LearningLanguage) => {
-    if (language === settings.learningLanguage) return
+    const version=++selectionVersion.current
     const [savedVocabulary, savedProgress, savedSessions, savedActive] = await Promise.all([
       storageClient.getVocabulary(language),
       storageClient.getAllProgress(language),
       storageClient.getSessions(language),
       storageClient.getActiveSession(language),
     ])
-    const nextSettings = { ...settings, learningLanguage: language }
-    await storageClient.saveSettings(nextSettings)
+    await writeSettings({learningLanguage:language},version,()=>{
     setVocabulary(savedVocabulary)
     setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
     setSessions(savedSessions)
     setActiveSession(savedActive)
-    setSettings(nextSettings)
+    pronunciationPlayer.stop()
+    })
   }
 
   const clearLearningData = async () => {
@@ -464,6 +510,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   }
 
   const value: AppStateValue = {
+    wordbooks,selectedWordbook,bookVocabulary,studyVocabulary,allEnglishDueCount,setEnglishWordbook,
     acceptSpanishCommit: (active, nextProgress, completed) => {
       if (settings.learningLanguage !== 'es') return
       setActiveSession(active)

@@ -1,0 +1,15 @@
+import { it, expect } from 'vitest'
+import { matchesPrimaryRange,projectWordbook } from './catalog'
+import type { WordbookMember,WordbookCatalog } from './types'
+const member:WordbookMember={wordId:'en:apple',order:0,memberships:[{sourceBookId:'g1s1',grade:1,semester:1},{sourceBookId:'g2s2',grade:2,semester:2}]}
+it('matches grade and semester on the same membership',()=>{
+  expect(matchesPrimaryRange(member,{grade:1,semester:2})).toBe(false)
+  expect(matchesPrimaryRange(member,{grade:2,semester:2})).toBe(true)
+  expect(matchesPrimaryRange(member,{})).toBe(true)
+})
+it('projects book senses without changing IDs or canonical data',()=>{
+  const word={id:'en:apple',language:'en' as const,term:'apple',partOfSpeech:'n.',meaningZh:'旧释义',category:'高考',examples:[],senses:[{id:'s1',partOfSpeech:'n.',meaningZh:'苹果'}]}
+  const book:WordbookCatalog={id:'en-oxford-primary',language:'en',title:'小学',revision:1,members:[{...member,senseIds:['s1'],displayTerm:'Apple'}]}
+  expect(projectWordbook([word],book)[0]).toMatchObject({id:'en:apple',term:'Apple',meaningZh:'苹果'})
+  expect(word.meaningZh).toBe('旧释义')
+})
