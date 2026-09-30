@@ -13,3 +13,11 @@ it('projects book senses without changing IDs or canonical data',()=>{
   expect(projectWordbook([word],book)[0]).toMatchObject({id:'en:apple',term:'Apple',meaningZh:'苹果'})
   expect(word.meaningZh).toBe('旧释义')
 })
+it('orders the selected grade by its matching semesters rather than earlier memberships',()=>{
+  const words=['wash','moon'].map(term=>({id:`en:${term}`,language:'en' as const,term,partOfSpeech:'n.',meaningZh:term,category:'小学',examples:[]}))
+  const book:WordbookCatalog={id:'en-oxford-primary',language:'en',title:'小学',revision:1,members:[
+    {wordId:'en:wash',order:0,memberships:[{sourceBookId:'g1s1',grade:1,semester:1},{sourceBookId:'g2s2',grade:2,semester:2}]},
+    {wordId:'en:moon',order:1,memberships:[{sourceBookId:'g2s1',grade:2,semester:1}]},
+  ]}
+  expect(projectWordbook(words,book,{grade:2}).map(w=>w.term)).toEqual(['moon','wash'])
+})

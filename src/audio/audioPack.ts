@@ -1,4 +1,4 @@
-import { englishVocabulary } from '../data/englishVocabulary'
+import { englishVocabulary,englishWordbookBundle } from '../data/englishVocabulary'
 
 export interface AudioPackFile {
   id: string
@@ -32,7 +32,8 @@ interface AudioPackOptions {
 
 export const AUDIO_PACK_VERSION = 1
 export const AUDIO_PACK_ESTIMATED_BYTES_PER_FILE = 24_000
-export const englishAudioFiles: AudioPackFile[] = englishVocabulary.flatMap((word) => word.pronunciation?.audioPath
+const highschoolIds=new Set(englishWordbookBundle.books.find(b=>b.id==='en-highschool')!.members.map(m=>m.wordId))
+export const englishAudioFiles: AudioPackFile[] = englishVocabulary.filter(w=>highschoolIds.has(w.id)).flatMap((word) => word.pronunciation?.audioPath
   ? [{ id: word.id, url: word.pronunciation.audioPath }]
   : [])
 

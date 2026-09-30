@@ -19,8 +19,15 @@ export function SpanishStudyPage() {
   const identity=`${activeSession?.startedAt}:${activeSession?.practice?.promptNumber}`
   const [input,setInput]=useState(state?.draft??'')
   const inputRef=useRef<HTMLInputElement>(null)
+  const resumeTyping=useRef(false)
   const feedback=state?.feedback
   useLayoutEffect(()=>{setInput(state?.draft??'')},[identity,feedback])
+  useLayoutEffect(()=>{
+    if(resumeTyping.current&&!feedback&&!course.busy&&inputRef.current){
+      resumeTyping.current=false
+      inputRef.current.focus({preventScroll:true})
+    }
+  },[identity,feedback,course.busy])
   // A competing tab can replace this prompt's draft without changing its word.
   useLayoutEffect(()=>{if(course.error.startsWith('本组已在其他页面更新'))setInput(state?.draft??'')},[course.error,state?.draft])
   if(!word||!state||!activeSession)return <main className={base.page}><h1>本组已结束</h1><button className={base.primaryButton} onClick={()=>navigate('/today')}>回到今日</button></main>
@@ -34,6 +41,7 @@ export function SpanishStudyPage() {
     requestAnimationFrame(()=>inputRef.current?.setSelectionRange(start+character.length,start+character.length))
   }
   const finish=async(action:()=>Promise<boolean>)=>{if(await action())navigate('/result')}
+  const next=async()=>{resumeTyping.current=true;await finish(course.next)}
   return <StudyFrame label="学习" header={<>
     <header className={base.studyHeader}>
       <button className={base.quietButton} disabled={course.busy} onClick={()=>void course.flush().then(saved=>{if(saved)navigate('/today')})}>结束</button>
@@ -50,7 +58,7 @@ export function SpanishStudyPage() {
       <button type="button" className={base.textButton} disabled={course.busy} onClick={()=>void finish(course.skip)}>跳过，稍后复习</button></div>
       <button className={base.primaryButton} disabled={course.busy||!input.trim()}>检查答案</button>
     </form>:<>
-      <button className={base.primaryButton} disabled={course.busy} onClick={()=>void finish(course.next)}>{feedback.correct?'继续':feedback.answerRevealed?'重新拼写':'立即重做'}</button>
+      <button className={base.primaryButton} disabled={course.busy} onClick={()=>void next()}>{feedback.correct?'继续':feedback.answerRevealed?'重新拼写':'立即重做'}</button>
       {!feedback.correct&&<button className={base.textButton} disabled={course.busy} onClick={()=>void finish(course.skip)}>跳过，稍后复习</button>}
     </>}>
     {course.error&&<p role="alert" className={styles.error}>{course.error}{course.error.includes('请刷新页面后继续')&&<button className={base.textButton} onClick={()=>window.location.reload()}>刷新页面</button>}</p>}

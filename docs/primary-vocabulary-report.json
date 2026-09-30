@@ -6,6 +6,24 @@
   "membershipCount": 1164,
   "sourceBookCount": 12,
   "editorialWords": [
+    "dining-room",
+    "lemon juice",
+    "swimming pool",
+    "in front of",
+    "a few",
+    "high jump",
+    "come from",
+    "plenty of",
+    "a little",
+    "a lot of",
+    "traffic jam",
+    "get to",
+    "each other",
+    "very much",
+    "keep a promise",
+    "stay up",
+    "zoo-keeper",
+    "little",
     "shine",
     "make",
     "bring",
@@ -441,11 +459,6 @@
       "word": "dining-room",
       "examples": [
         {
-          "text": "The ship's passengers are in the dining saloon.",
-          "translationZh": "船上的旅客在餐厅就餐。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_43041.html"
-        },
-        {
           "text": "Their dining room is very spacious.",
           "translationZh": "他们的餐厅很宽敞。",
           "sourceUrl": "https://www.koolearn.com/dict/wd_43041.html"
@@ -493,21 +506,6 @@
       ]
     },
     {
-      "word": "lemon juice",
-      "examples": [
-        {
-          "text": "She dropped some lemon juice into her tea.",
-          "translationZh": "她在茶里滴了几滴柠檬汁。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_85901.html"
-        },
-        {
-          "text": "She put a squeeze of lemon in her drink.",
-          "translationZh": "她在饮料中放了一点柠檬汁。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_85901.html"
-        }
-      ]
-    },
-    {
       "word": "sit",
       "examples": [
         {
@@ -544,36 +542,6 @@
           "text": "The children tore the cocoon open to see if there was a pupa.",
           "translationZh": "孩子们撕开蚕茧看看里面有没有蛹。",
           "sourceUrl": "https://www.koolearn.com/dict/wd_30748.html"
-        }
-      ]
-    },
-    {
-      "word": "zoo-keeper",
-      "examples": [
-        {
-          "text": "Set includes animals, zoo keeper, and large building bricks.",
-          "translationZh": "套装中包括动物，动物园管理员，大积木。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_168323.html"
-        },
-        {
-          "text": "On the next page the zoo keeper gave Erny back to the girl, and Michener nodded his approval.",
-          "translationZh": "后一页中动物园管理员把恩尼还给了那个女孩，对此麦切纳点头表示同意。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_168323.html"
-        }
-      ]
-    },
-    {
-      "word": "swimming pool",
-      "examples": [
-        {
-          "text": "The balcony juts out over the swimming pool.",
-          "translationZh": "阳台伸出在游泳池上方。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_146248.html"
-        },
-        {
-          "text": "On a hot day a dip in the pool is sheer paradise.",
-          "translationZh": "大热天在游泳池里泡一泡真是太美了。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_146248.html"
         }
       ]
     },
@@ -678,21 +646,6 @@
       ]
     },
     {
-      "word": "in front of",
-      "examples": [
-        {
-          "text": "I drove up in front of the house and honked.",
-          "translationZh": "我将车开到屋子前面然后按喇叭。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_75416.html"
-        },
-        {
-          "text": "A still better tomorrow lies ahead of you.",
-          "translationZh": "展现在你们前面的是更加美好的未来。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_75416.html"
-        }
-      ]
-    },
-    {
       "word": "think of",
       "examples": [
         {
@@ -709,26 +662,6 @@
           "text": "She thought of several possibilities.",
           "translationZh": "她考虑了几种可能的情况。",
           "sourceUrl": "https://www.koolearn.com/dict/wd_150556.html"
-        }
-      ]
-    },
-    {
-      "word": "a few",
-      "examples": [
-        {
-          "text": "There was a slight quiver in his voice as he spoke.",
-          "translationZh": "他说话时声音有些颤抖。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_100.html"
-        },
-        {
-          "text": "The wooden floor has a noticeable slant.",
-          "translationZh": "这木地板可以看得出有些倾斜。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_100.html"
-        },
-        {
-          "text": "She juiced a few oranges for her breakfast.",
-          "translationZh": "她拿几个橙子榨汁当早餐饮料。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_100.html"
         }
       ]
     },
@@ -768,76 +701,6 @@
       ]
     },
     {
-      "word": "high jump",
-      "examples": [
-        {
-          "text": "John won the silver cup for the high jump.",
-          "translationZh": "约翰赢得跳高项目的银杯。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_70542.html"
-        },
-        {
-          "text": "He tried to jump up a third time.",
-          "translationZh": "他试图作第三次的跳高动作。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_70542.html"
-        }
-      ]
-    },
-    {
-      "word": "come from",
-      "examples": [
-        {
-          "text": "Most of these children come from broken families.",
-          "translationZh": "这些孩子中的多数人来自婚姻破裂的家庭。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_31657.html"
-        },
-        {
-          "text": "They love paintings from the Orient.",
-          "translationZh": "他们喜欢来自东方的绘画。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_31657.html"
-        },
-        {
-          "text": "These English words derive from Greek.",
-          "translationZh": "这些英文字起源于希腊文。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_31657.html"
-        }
-      ]
-    },
-    {
-      "word": "plenty of",
-      "examples": [
-        {
-          "text": "We have plenty of bottled drinks.",
-          "translationZh": "我们有很多的瓶装饮料。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_113980.html"
-        },
-        {
-          "text": "A year in America will cost you no end of money.",
-          "translationZh": "在美国住一年要花很多的钱。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_113980.html"
-        }
-      ]
-    },
-    {
-      "word": "a little",
-      "examples": [
-        {
-          "text": "The new intern is a little frisky.",
-          "translationZh": "这个新来的实习生有一点爱戏闹。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_178.html"
-        },
-        {
-          "text": "He managed to swallow a little soup and dry toast.",
-          "translationZh": "他设法吞下一点汤和不涂奶油的土司。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_178.html"
-        },
-        {
-          "text": "There is a vein of melancholy in his character.",
-          "translationZh": "他的性格中有少许忧郁的气质。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_178.html"
-        }
-      ]
-    },
-    {
       "word": "choose",
       "examples": [
         {
@@ -865,36 +728,6 @@
           "translationZh": "我在去学校的路上遇见了莉莉。",
           "sourceId": "editorial:primary:on one's way to",
           "author": "Palabra 编辑补充"
-        }
-      ]
-    },
-    {
-      "word": "a lot of",
-      "examples": [
-        {
-          "text": "The boy had a lot of pocket money.",
-          "translationZh": "这男孩有许多零用钱。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_189.html"
-        },
-        {
-          "text": "I think this new system has a lot going for it.",
-          "translationZh": "我认为这一新体系有许多有利之处。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_189.html"
-        }
-      ]
-    },
-    {
-      "word": "traffic jam",
-      "examples": [
-        {
-          "text": "The traffic had been tied up for three hours.",
-          "translationZh": "交通阻塞已有三个小时。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_153762.html"
-        },
-        {
-          "text": "His car was stalled in a traffic jam.",
-          "translationZh": "他的车子在交通阻塞中动弹不得。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_153762.html"
         }
       ]
     },
@@ -984,41 +817,6 @@
       ]
     },
     {
-      "word": "get to",
-      "examples": [
-        {
-          "text": "It's quite a scramble to get to the mountaintop.",
-          "translationZh": "费劲攀登才能到达山顶。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_63068.html"
-        },
-        {
-          "text": "Father told me to cable when I arrived.",
-          "translationZh": "父亲嘱我到达後发个电报。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_63068.html"
-        }
-      ]
-    },
-    {
-      "word": "each other",
-      "examples": [
-        {
-          "text": "They took out their resentments on each other.",
-          "translationZh": "他们互相发泄怨气。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_47485.html"
-        },
-        {
-          "text": "The teams are all square at one match each.",
-          "translationZh": "这些队在各自参加了一场比赛后不分胜负。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_47485.html"
-        },
-        {
-          "text": "Each side of a case in court has its own counsel.",
-          "translationZh": "法庭上原告和被告双方都有各自的律师。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_47485.html"
-        }
-      ]
-    },
-    {
       "word": "dress up",
       "examples": [
         {
@@ -1034,36 +832,11 @@
       ]
     },
     {
-      "word": "very much",
-      "examples": [
-        {
-          "text": "I enjoyed reading these books very much.",
-          "translationZh": "我很喜欢读这些书。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_161585.html"
-        },
-        {
-          "text": "Advance in the jungle was very slow.",
-          "translationZh": "在丛林中行进很慢。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_161585.html"
-        },
-        {
-          "text": "He used to like the blues very much.",
-          "translationZh": "他过去非常喜爱布鲁斯乐曲。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_161585.html"
-        }
-      ]
-    },
-    {
       "word": "keep a promise",
       "examples": [
         {
           "text": "She kept her promise to visit her aunt regularly.",
           "translationZh": "她信守诺言，定期去看望姑妈。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_82161.html"
-        },
-        {
-          "text": "Fidelity to engagement is a virtue.",
-          "translationZh": "信守诺言是一种美德。",
           "sourceUrl": "https://www.koolearn.com/dict/wd_82161.html"
         }
       ]
@@ -1120,21 +893,6 @@
           "text": "The dancer's feet twinkled.",
           "translationZh": "舞蹈演员的脚在轻快地移动。",
           "sourceUrl": "https://www.koolearn.com/dict/wd_156249.html"
-        }
-      ]
-    },
-    {
-      "word": "stay up",
-      "examples": [
-        {
-          "text": "I am going to stay up late to finish my paper.",
-          "translationZh": "为了完成报告我打算熬夜不睡。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_142047.html"
-        },
-        {
-          "text": "I was tired from having sat up all night.",
-          "translationZh": "我因熬夜而感到疲倦。",
-          "sourceUrl": "https://www.koolearn.com/dict/wd_142047.html"
         }
       ]
     },

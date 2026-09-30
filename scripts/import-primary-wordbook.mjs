@@ -44,12 +44,12 @@ export function normalizePrimaryDataset(dataset,highschoolWords,editorial,option
     word.examples=unique([...word.examples,...examples],exampleKey)
     word.sources=unique([...(word.sources??[]),...(word.source?[word.source]:[]),source],s=>s.url)
     if(!word.pronunciation)word.pronunciation=sound
-    members.push({wordId:word.id,order:index,memberships,displayTerm:cleanText(record.word),senseIds:senses.map(s=>word.senses.find(x=>x.partOfSpeech===s.partOfSpeech&&x.meaningZh===s.meaningZh).id),exampleKeys:examples.map(exampleKey)})
+    members.push({wordId:word.id,order:index,sourceOrder:index,memberships,displayTerm:cleanText(record.word),senseIds:senses.map(s=>word.senses.find(x=>x.partOfSpeech===s.partOfSpeech&&x.meaningZh===s.meaningZh).id),exampleKeys:examples.map(exampleKey)})
   }
   if(gaps.length){const error=new Error(`Primary quality gaps: ${JSON.stringify(gaps)}`);error.gaps=gaps;throw error}
   const rank=m=>Math.min(...m.memberships.map(x=>x.grade*2+x.semester))
   members.sort((a,b)=>rank(a)-rank(b)||a.order-b.order).forEach((m,i)=>m.order=i)
-  const bundle={revision:5,words,books:[{id:'en-highschool',language:'en',title:'高考 3500',revision:1,members:highschoolWords.map((w,order)=>({wordId:w.id,order,memberships:[]}))},{id:'en-oxford-primary',language:'en',title:'小学必背单词（牛津版）',revision:1,members}]}
+  const bundle={revision:6,words,books:[{id:'en-highschool',language:'en',title:'高考 3500',revision:1,members:highschoolWords.map((w,order)=>({wordId:w.id,order,memberships:[]}))},{id:'en-oxford-primary',language:'en',title:'小学必背单词（牛津版）',revision:2,members}]}
   validatePrimaryBundle(bundle)
   return {bundle,report:{primaryCount:members.length,publicCount:words.length,overlap,newCount:members.length-overlap,membershipCount:members.reduce((n,m)=>n+m.memberships.length,0),sourceBookCount:books.size,editorialWords:Object.keys(editorial),warnings,gaps,reviewScope:'所有记录自动检查；补充及标记项逐项审核，各册抽查；未逐句人工审校全库。',sourceGeneratedAt:dataset.generated_at}}
 }

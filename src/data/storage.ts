@@ -20,7 +20,7 @@ const STORE_SPANISH_DAYS = 'spanishDays'
 const STORE_WORDLE = 'wordleGame'
 const STORE_WORDLE_DICTIONARY = 'wordleDictionary'
 // Revision 2 was used by local previews before the final sentence/cue audit.
-const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 3, en: 5 }
+const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 3, en: 6 }
 const STORE_PROGRESS = 'wordProgress'
 const STORE_SESSIONS = 'sessions'
 const STORE_SETTINGS = 'settings'

@@ -21,6 +21,20 @@ async function setup(prepare?:(db:PalabraStorage)=>Promise<void>, words=[spanish
   return {db,user}
 }
 describe('Spanish contextual course',()=>{
+  it('restores typing focus after an explicit retry and continue without initial autofocus',async()=>{
+    const {user}=await setup(undefined,[spanishFixture(),spanishFixture('es:second','duermo','dormir')])
+    await user.click(screen.getByRole('button',{name:'开始今天的学习'}))
+    const first=await screen.findByRole('textbox',{name:'填写缺少的西语词'})
+    expect(first).not.toHaveFocus()
+    await user.type(first,'wrong');await user.click(screen.getByRole('button',{name:'检查答案'}))
+    await user.click(await screen.findByRole('button',{name:'立即重做'}))
+    await waitFor(()=>expect(screen.getByRole('textbox',{name:'填写缺少的西语词'})).toHaveFocus())
+    await user.keyboard('hablo');await user.click(screen.getByRole('button',{name:'检查答案'}))
+    await user.click(await screen.findByRole('button',{name:'继续'}))
+    await waitFor(()=>expect(screen.getByRole('textbox',{name:'填写缺少的西语词'})).toHaveFocus())
+    await user.keyboard('duermo')
+    expect(screen.getByRole('textbox',{name:'填写缺少的西语词'})).toHaveValue('duermo')
+  })
   it('keeps input controls together without stealing initial focus and inserts accents at the caret',async()=>{
     const {user}=await setup()
     await user.click(screen.getByRole('button',{name:'开始今天的学习'}))

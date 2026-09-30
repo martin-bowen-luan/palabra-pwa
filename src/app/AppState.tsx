@@ -76,7 +76,8 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
   const [wordbooks,setWordbooks]=useState<WordbookCatalog[]>([])
   const settingsRef=useRef(settings)
   const settingsQueue=useRef<Promise<unknown>>(Promise.resolve())
-  const selectionVersion=useRef(0)
+  const bookSelectionVersion=useRef(0)
+  const languageSelectionVersion=useRef(0)
 
   useEffect(() => {
     const refreshClock = () => setClock(new Date())
@@ -466,34 +467,36 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     // Each answered step is already durable; leaving must not overwrite another tab's newer state.
   }
 
-  const writeSettings = (patch:Partial<UserSettings>,version?:number,apply?:()=>void) => {
+  const writeSettings = (patch:Partial<UserSettings>,isCurrent?:()=>boolean,apply?:()=>void) => {
     const job=settingsQueue.current.catch(()=>{}).then(async()=>{
-      if(version!==undefined&&version!==selectionVersion.current)return
+      if(isCurrent&&!isCurrent())return
       const next={...settingsRef.current,...patch}
       await storageClient.saveSettings(next)
       settingsRef.current=next
-      if(version===undefined||version===selectionVersion.current){setSettings(next);apply?.()}
+      // A completed durable write and its matching data must be applied together.
+      // A newer queued request can supersede this snapshot, but never half of it.
+      setSettings(next);apply?.()
     })
     settingsQueue.current=job
     return job
   }
   const updateSettings = (patch: Partial<UserSettings>) => writeSettings(patch)
   const setEnglishWordbook=async(id:WordbookId)=>{
-    const version=++selectionVersion.current
+    const version=++bookSelectionVersion.current
     const books=await storageClient.getWordbooks()
     if(!books.some(b=>b.id===id))throw new Error('词书未安装，请刷新重试')
-    await writeSettings({englishWordbook:id},version,()=>{setWordbooks(books);pronunciationPlayer.stop()})
+    await writeSettings({englishWordbook:id},()=>version===bookSelectionVersion.current,()=>{setWordbooks(books);pronunciationPlayer.stop()})
   }
 
   const setLearningLanguage = async (language: LearningLanguage) => {
-    const version=++selectionVersion.current
+    const version=++languageSelectionVersion.current
     const [savedVocabulary, savedProgress, savedSessions, savedActive] = await Promise.all([
       storageClient.getVocabulary(language),
       storageClient.getAllProgress(language),
       storageClient.getSessions(language),
       storageClient.getActiveSession(language),
     ])
-    await writeSettings({learningLanguage:language},version,()=>{
+    await writeSettings({learningLanguage:language},()=>version===languageSelectionVersion.current,()=>{
     setVocabulary(savedVocabulary)
     setProgress(Object.fromEntries(savedProgress.map((item) => [item.wordId, item])))
     setSessions(savedSessions)

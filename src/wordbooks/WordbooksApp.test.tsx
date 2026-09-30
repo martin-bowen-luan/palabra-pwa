@@ -12,6 +12,8 @@ afterEach(()=>{cleanup();clients.splice(0).forEach(c=>c.close());vi.restoreAllMo
 function Harness(){const s=useAppState();return s.ready?<>
   <p data-testid="selected">{s.selectedWordbook?.id}</p><p data-testid="study">{s.studyVocabulary.map(w=>w.term).join(',')}</p>
   <p data-testid="browse">{s.bookVocabulary.map(w=>w.term).join(',')}</p>
+  <p data-testid="language">{s.settings.learningLanguage}:{s.vocabulary[0]?.language}</p>
+  <button onClick={()=>void s.setLearningLanguage('es')}>西语</button>
   <button onClick={()=>void s.setEnglishWordbook('en-oxford-primary')}>小学</button>
   <button onClick={()=>void s.setEnglishWordbook('en-highschool')}>高考</button>
   <button onClick={()=>void s.startSession()}>开始</button>
@@ -36,6 +38,18 @@ it('keeps the last requested selection in UI and storage when loads finish out o
   first(bookFixture.books)
   await waitFor(()=>expect(screen.getByTestId('selected')).toHaveTextContent('en-highschool'))
   expect((await db.getSettings()).englishWordbook).toBe('en-highschool')
+})
+it('keeps language data aligned when a book is selected during an in-flight language save',async()=>{
+  const db=await setup(),user=userEvent.setup(),save=db.saveSettings.bind(db)
+  let release!:()=>void
+  vi.spyOn(db,'saveSettings').mockImplementationOnce(async settings=>{await new Promise<void>(resolve=>{release=resolve});await save(settings)})
+  await user.click(screen.getByText('西语'))
+  await waitFor(()=>expect(release).toBeDefined())
+  await user.click(screen.getByText('小学'))
+  release()
+  await waitFor(()=>expect(screen.getByTestId('selected')).toHaveTextContent('en-oxford-primary'))
+  expect(screen.getByTestId('language')).toHaveTextContent('es:es')
+  expect((await db.getSettings()).learningLanguage).toBe('es')
 })
 async function mountApp(path='/today') {
   const db=new PalabraStorage(crypto.randomUUID(),{wordbookBundle:bookFixture});clients.push(db)
