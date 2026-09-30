@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { cleanup, render, screen, within, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, within, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
@@ -19,6 +19,23 @@ const distractors:VocabularyEntry[]=[
 const stores:PalabraStorage[]=[]
 afterEach(()=>{cleanup();stores.splice(0).forEach(s=>s.close());vi.restoreAllMocks();vi.useRealTimers()})
 const mount=(db:PalabraStorage)=>render(<MemoryRouter initialEntries={['/study']}><App storageClient={db}/></MemoryRouter>)
+it('does not submit an IME confirmation and submits ordinary Enter',async()=>{
+  const db=await setup(), user=userEvent.setup()
+  const input=screen.getByRole('textbox',{name:'英语'})
+  await user.type(input,'soluble')
+  expect(fireEvent.keyDown(input,{key:'Enter',isComposing:true})).toBe(false)
+  expect((await db.getActiveSession('en'))?.quizFeedback).toBeUndefined()
+  await user.keyboard('{Enter}')
+  expect(await screen.findByRole('button',{name:'继续'})).toBeInTheDocument()
+})
+it('keeps spelling controls in the actions region without initial autofocus',async()=>{
+  await setup()
+  const actions=screen.getByRole('region',{name:'答题操作'})
+  expect(screen.getByRole('textbox',{name:'英语'})).not.toHaveFocus()
+  for(const name of ['检查答案','不认识','跳过，稍后优先复习'])expect(actions).toContainElement(screen.getByRole('button',{name}))
+  await userEvent.setup().click(screen.getByRole('button',{name:'不认识'}))
+  expect(actions).toContainElement(await screen.findByRole('button',{name:'重新拼写'}))
+})
 async function setup(round:MemoryRound='spelling', seed=[...words,...distractors]){
   const db=new PalabraStorage(`hints-${crypto.randomUUID()}`,{vocabularySeeds:{en:seed}});stores.push(db)
   await db.saveSettings({...DEFAULT_SETTINGS,learningLanguage:'en'})
