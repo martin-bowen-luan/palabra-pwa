@@ -7,18 +7,20 @@ import type {
   WordProgress,
 } from '../types'
 import { spanishVocabulary } from '../spanish/vocabulary'
-import { englishVocabulary } from './englishVocabulary'
+import { englishWordbookBundle } from './englishVocabulary'
+import type { EnglishWordbookBundle, WordbookCatalog, WordbookId } from '../wordbooks/types'
 import { DEFAULT_AI_SETTINGS, type AiSettings, type EncryptedCredential, type WordAiAnalysis } from '../ai/types'
 
 import type { WordleDictionaryEntry, WordleGame } from '../wordle/types'
 import type { SpanishDailyRecord, SpanishDailyUpdate } from '../spanish/sessionTypes'
 
-const DB_VERSION = 6
+const DB_VERSION = 7
+const STORE_WORDBOOKS = 'wordbooks'
 const STORE_SPANISH_DAYS = 'spanishDays'
 const STORE_WORDLE = 'wordleGame'
 const STORE_WORDLE_DICTIONARY = 'wordleDictionary'
 // Revision 2 was used by local previews before the final sentence/cue audit.
-const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 3, en: 4 }
+const DEFAULT_VOCABULARY_REVISIONS: Record<LearningLanguage, number> = { es: 3, en: 5 }
 const STORE_PROGRESS = 'wordProgress'
 const STORE_SESSIONS = 'sessions'
 const STORE_SETTINGS = 'settings'
@@ -43,6 +45,7 @@ interface StoredVocabularyEntry extends VocabularyEntry {
 }
 
 interface PalabraStorageOptions {
+  wordbookBundle?: EnglishWordbookBundle
   vocabularySeed?: readonly VocabularyEntry[]
   vocabularyRevision?: number
   vocabularySeeds?: Partial<Record<LearningLanguage, readonly VocabularyEntry[]>>
@@ -50,6 +53,8 @@ interface PalabraStorageOptions {
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
+  englishWordbook:'en-highschool',
+  primaryNewWordRange:{},
   spanishDailyGoal: 50,
   id: 'settings',
   dailyNewWords: 10,
@@ -203,19 +208,25 @@ export class PalabraStorage {
   private vocabularyInitialization?: Promise<void>
   private readonly vocabularySeeds: Record<LearningLanguage, readonly VocabularyEntry[]>
   private readonly vocabularyRevisions: Record<LearningLanguage, number>
+  private readonly englishBundle: EnglishWordbookBundle
 
   constructor(
     private readonly databaseName = 'palabra-db',
     options: PalabraStorageOptions = {},
   ) {
     const legacySpanishSeed = options.vocabularySeed ?? spanishVocabulary
+    this.englishBundle=options.wordbookBundle??(options.vocabularySeeds?.en ? {
+      revision:options.vocabularyRevisions?.en??DEFAULT_VOCABULARY_REVISIONS.en,
+      words:[...options.vocabularySeeds.en],
+      books:[{id:'en-highschool',language:'en',title:'高考 3500',revision:1,members:options.vocabularySeeds.en.map((w,order)=>({wordId:w.id,order,memberships:[]}))}],
+    }:englishWordbookBundle)
     this.vocabularySeeds = {
       es: options.vocabularySeeds?.es ?? legacySpanishSeed,
-      en: options.vocabularySeeds?.en ?? englishVocabulary,
+      en: this.englishBundle.words,
     }
     this.vocabularyRevisions = {
       es: options.vocabularyRevisions?.es ?? options.vocabularyRevision ?? DEFAULT_VOCABULARY_REVISIONS.es,
-      en: options.vocabularyRevisions?.en ?? DEFAULT_VOCABULARY_REVISIONS.en,
+      en: this.englishBundle.revision,
     }
   }
 
@@ -226,6 +237,7 @@ export class PalabraStorage {
         let blocked = false
         request.onupgradeneeded = (event) => {
           const database = request.result
+          if (!database.objectStoreNames.contains(STORE_WORDBOOKS)) database.createObjectStore(STORE_WORDBOOKS, { keyPath:'id' })
           if (!database.objectStoreNames.contains(STORE_SPANISH_DAYS)) database.createObjectStore(STORE_SPANISH_DAYS, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_WORDLE)) database.createObjectStore(STORE_WORDLE, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_WORDLE_DICTIONARY)) database.createObjectStore(STORE_WORDLE_DICTIONARY, { keyPath: 'term' })
@@ -239,6 +251,14 @@ export class PalabraStorage {
           if (!database.objectStoreNames.contains(STORE_AI_CREDENTIALS)) database.createObjectStore(STORE_AI_CREDENTIALS, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_AI_ANALYSES)) database.createObjectStore(STORE_AI_ANALYSES, { keyPath: 'key' })
           if (event.oldVersion < 3) migrateToVersionThree(request.transaction!)
+          if(event.oldVersion>=3&&event.oldVersion<7)for(const name of [STORE_SESSIONS,STORE_ACTIVE]) {
+            request.transaction!.objectStore(name).openCursor().onsuccess=event=>{
+              const cursor=(event.target as IDBRequest<IDBCursorWithValue|null>).result
+              if(!cursor)return
+              if(cursor.value.language==='en'&&!cursor.value.sourceWordbook)cursor.update({...cursor.value,sourceWordbook:'en-highschool',reviewScope:'book'})
+              cursor.continue()
+            }
+          }
         }
         request.onsuccess = () => {
           if (blocked) {
@@ -282,6 +302,7 @@ export class PalabraStorage {
   }
 
   private async seedLanguage(language: LearningLanguage): Promise<void> {
+    if(language==='en')return this.seedEnglishBooks()
     const seed = this.vocabularySeeds[language].map(normalizeVocabularyEntry)
     if (seed.some((entry) => entry.language !== language)) throw new Error(`Vocabulary seed contains wrong language for ${language}`)
     const database = await this.open()
@@ -307,6 +328,47 @@ export class PalabraStorage {
       }
     }
     await transactionDone(transaction)
+  }
+
+  private async seedEnglishBooks():Promise<void> {
+    const {words,books,revision}=this.englishBundle
+    const ids=new Set(words.map(w=>w.id))
+    if(ids.size!==words.length||words.some(w=>w.language!=='en')||books.some(b=>b.members.some(m=>!ids.has(m.wordId))||new Set(b.members.map(m=>m.wordId)).size!==b.members.length))throw new Error('Invalid wordbook references')
+    const database=await this.open()
+    const tx=database.transaction([STORE_VOCABULARY,STORE_WORDBOOKS,STORE_METADATA],'readwrite')
+    const done=transactionDone(tx)
+    const metadata=tx.objectStore(STORE_METADATA),dictionary=tx.objectStore(STORE_VOCABULARY),catalogs=tx.objectStore(STORE_WORDBOOKS)
+    // All reads and writes remain in one transaction, including revision checks.
+    const meta=metadata.get('vocabulary:en')
+    meta.onsuccess=()=>{
+      const existing=catalogs.getAll()
+      existing.onsuccess=()=>{
+        if(meta.result?.revision===revision&&meta.result.count===words.length&&existing.result.length===books.length&&books.every(b=>existing.result.some((x:WordbookCatalog)=>x.id===b.id&&x.revision===b.revision)))return
+        const old=dictionary.getAll()
+        old.onsuccess=()=>{
+          try {
+            for(const word of old.result)if(word.language==='en')dictionary.delete(word.id)
+            words.forEach((word,order)=>dictionary.put({...word,order}))
+            catalogs.clear();books.forEach(book=>catalogs.put(book))
+            metadata.put({id:'vocabulary:en',language:'en',revision,count:words.length,updatedAt:new Date().toISOString()})
+          } catch { try{tx.abort()}catch{/* Already aborted by the storage engine. */} }
+        }
+      }
+    }
+    await done
+  }
+
+  async getWordbooks():Promise<WordbookCatalog[]> {
+    await this.initializeVocabulary()
+    return this.getAll<WordbookCatalog>(STORE_WORDBOOKS)
+  }
+
+  async getWordbookVocabulary(id:WordbookId):Promise<VocabularyEntry[]> {
+    const [words,books]=await Promise.all([this.getVocabulary('en'),this.getWordbooks()])
+    const book=books.find(b=>b.id===id)
+    if(!book)throw new Error('Wordbook not found')
+    const byId=new Map(words.map(w=>[w.id,w]))
+    return [...book.members].sort((a,b)=>a.order-b.order).map(m=>{const word=byId.get(m.wordId);if(!word)throw new Error('Wordbook entry missing');return word})
   }
 
   private async getAll<T>(storeName: string): Promise<T[]> {

@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { englishVocabulary } from './englishVocabulary'
 
 describe('generated English vocabulary', () => {
-  it('contains 3464 complete and uniquely identified entries', () => {
-    expect(englishVocabulary).toHaveLength(3464)
-    expect(new Set(englishVocabulary.map((word) => word.id)).size).toBe(3464)
-    expect(new Set(englishVocabulary.map((word) => word.term.toLocaleLowerCase('en-US'))).size).toBe(3464)
+  it('contains 3707 complete and uniquely identified shared entries', () => {
+    expect(englishVocabulary).toHaveLength(3707)
+    expect(new Set(englishVocabulary.map((word) => word.id)).size).toBe(3707)
+    expect(new Set(englishVocabulary.map((word) => word.term.toLocaleLowerCase('en-US'))).size).toBe(3707)
     englishVocabulary.forEach((word) => {
       expect(word.language).toBe('en')
       expect(word.id).toBe(`en:${word.term.toLocaleLowerCase('en-US')}`)

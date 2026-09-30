@@ -3,6 +3,7 @@ export type LearningStatus = 'learning' | 'mastered'
 export type ThemeMode = 'system' | 'light' | 'dark'
 import type { SpanishLearningData } from './spanish/types'
 import type { SpanishSessionState } from './spanish/sessionTypes'
+import type { WordbookId, PrimaryRange } from './wordbooks/types'
 
 export type LearningLanguage = 'es' | 'en'
 export type StudyMode = 'learn' | 'review'
@@ -77,6 +78,8 @@ export interface WordProgress {
 }
 
 export interface StudySession {
+  sourceWordbook?: WordbookId
+  reviewScope?: 'book'|'all-english'
   spanishDailyTracked?: boolean
   spanishUntrackedCount?: number
   mode?: StudyMode
@@ -93,6 +96,8 @@ export interface StudySession {
 }
 
 export interface UserSettings {
+  englishWordbook?: WordbookId
+  primaryNewWordRange?: PrimaryRange
   spanishDailyGoal?: 10 | 20 | 30 | 50
   id: 'settings'
   dailyNewWords: 5 | 10 | 15 | 20
@@ -104,6 +109,8 @@ export interface UserSettings {
 }
 
 export interface ActiveSession {
+  sourceWordbook?: WordbookId
+  reviewScope?: 'book'|'all-english'
   spanishDailyIds?: string[]
   spanish?: SpanishSessionState
   mode?: StudyMode

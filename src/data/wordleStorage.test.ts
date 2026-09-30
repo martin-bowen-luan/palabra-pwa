@@ -34,7 +34,7 @@ it('upgrades a populated v4 database without changing old records', async () => 
   const db=new PalabraStorage(name);stores.push(db)
   await db.saveWordleGame(createGame([word]),undefined)
   const upgraded=await new Promise<IDBDatabase>(resolve=>{const q=indexedDB.open(name);q.onsuccess=()=>resolve(q.result)})
-  expect(upgraded.version).toBe(6)
+  expect(upgraded.version).toBe(7)
   for(const store of ['wordProgress','sessions','settings','activeSession','vocabulary','metadata','aiSettings','aiCredentials','aiAnalyses']) {
     const value=await new Promise(resolve=>{const q=upgraded.transaction(store).objectStore(store).get('sentinel');q.onsuccess=()=>resolve(q.result)})
     expect(value).toEqual({id:'sentinel',wordId:'sentinel',key:'sentinel',value:store})
