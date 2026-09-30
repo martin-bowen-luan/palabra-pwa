@@ -17,7 +17,7 @@ import type { ActiveSession, VocabularyEntry } from '../types'
 import styles from '../styles/App.module.css'
 
 export function EnglishStudyPage() {
-  const { activeSession, vocabulary, markCurrentWordFluent, exitSession } = useAppState()
+  const { activeSession, studyVocabulary: vocabulary, markCurrentWordFluent, exitSession } = useAppState()
   const navigate = useNavigate()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -45,7 +45,7 @@ export function EnglishStudyPage() {
 }
 
 function EnglishPrompt({ session, word, busy, perform, header, error }: { session: ActiveSession; word: VocabularyEntry; busy: boolean; perform: (action: () => Promise<boolean | void>) => Promise<void>; header:ReactNode; error:string }) {
-  const { vocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord, revealSpellingLetter, revealSpellingAnswer } = useAppState()
+  const { vocabulary, studyVocabulary, progress, submitQuizAnswer, completeQuizItem, skipSpellingWord, revealSpellingLetter, revealSpellingAnswer } = useAppState()
   const { settings: aiSettings } = useAi()
   const [answer, setAnswer] = useState('')
   const location = useLocation()
@@ -62,7 +62,7 @@ function EnglishPrompt({ session, word, busy, perform, header, error }: { sessio
   const feedback = session.quizFeedback
   const hintCount = session.spellingHint?.wordId === word.id && session.spellingHint.promptNumber === session.practice?.promptNumber ? session.spellingHint.revealedCount : 0
   const letterHint = buildSpellingHint(word.term, hintCount)
-  const choices = useMemo(() => studyChoiceOptions(session, word, vocabulary, progress), [session, word, vocabulary, progress])
+  const choices = useMemo(() => studyChoiceOptions(session, word, studyVocabulary, progress), [session, word, studyVocabulary, progress])
   useEffect(() => {
     if (round !== 'choice' || feedback) return
     void pronunciationPlayer.play(word).catch(() => undefined)
@@ -115,7 +115,7 @@ function EnglishPrompt({ session, word, busy, perform, header, error }: { sessio
       <p><small>{word.partOfSpeech}</small><strong>{word.meaningZh}</strong></p>
       {word.examples[0] && <><blockquote lang="en">{word.examples[0].text}</blockquote>{aiSettings.enabled && <SentenceSpeechButton text={word.examples[0].text} />}<p>{word.examples[0].translationZh}</p></>}
       {selectedWord && !feedback?.correct && <div className={styles.choiceComparison} role="region" aria-label="释义错误对比"><small>你选的是</small><strong lang="en">{selectedWord.term}</strong><p>{selectedWord.partOfSpeech} {selectedWord.meaningZh}</p><small>本题单词</small><strong lang="en">{word.term}</strong><p>{word.partOfSpeech} {word.meaningZh}</p></div>}
-      <details className={styles.studyDetails}><summary>词汇详情</summary><WordRelations word={word} vocabulary={vocabulary} /></details>
+      <details className={styles.studyDetails}><summary>词汇详情</summary><WordRelations word={word} vocabulary={vocabulary} bookContext={session.sourceWordbook==='en-oxford-primary'?session.sourceWordbook:undefined} /></details>
     </div>}
     {feedback && <div className={`${styles.memoryFeedback} ${feedback.correct ? styles.feedbackCorrect : styles.feedbackWrong}`} role="status">
       <strong>{feedback.correct ? '正确' : correctingChoice ? '请在上方选对释义后继续' : '再记一次'}</strong>

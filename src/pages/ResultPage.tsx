@@ -7,7 +7,7 @@ import { useSpanish } from '../spanish/SpanishProvider'
 import { buildSpanishGroup } from '../spanish/course'
 
 export function ResultPage() {
-  const { sessions, moreGroupsToday: legacyMoreGroups, startNextGroup, vocabulary, progress, settings } = useAppState()
+  const { sessions, moreGroupsToday: legacyMoreGroups, startNextGroup, vocabulary, progress, settings,wordbooks } = useAppState()
   const spanish = useSpanish()
   const navigate = useNavigate()
   const session = [...sessions].reverse().find((item) => item.date === toLocalDate(new Date()))
@@ -19,6 +19,7 @@ export function ResultPage() {
   const accuracy = session.totalCount ? Math.round(session.correctCount / session.totalCount * 100) : undefined
   return <main className={styles.resultPage}>
     <div className={styles.completionMark}><span>✓</span></div>
+    {session.language==='en'&&<p className={styles.bookNote}>{wordbooks.find(b=>b.id===(session.sourceWordbook??'en-highschool'))?.title} · 已计入英语共享记忆</p>}
     <p>{session.mode ? `${session.mode === 'review' ? '复习' : '学习'}小组完成了` : moreGroupsToday ? '本组完成了' : '今天完成了'}</p>
     <h1>{accuracy === undefined ? '—' : `${accuracy}%`}</h1>
     <span>{accuracy === undefined ? '无需测试' : '测试正确率'}</span>

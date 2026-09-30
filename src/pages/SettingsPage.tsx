@@ -6,6 +6,7 @@ import { AiSettingsPanel } from '../components/AiSettingsPanel'
 import type { ThemeMode, UserSettings } from '../types'
 import styles from '../styles/App.module.css'
 import { useSpanish } from '../spanish/SpanishProvider'
+import { WordbookSwitch } from '../wordbooks/WordbookSwitch'
 
 const goals: UserSettings['dailyNewWords'][] = [5, 10, 15, 20]
 const themes: Array<{ value: ThemeMode; label: string }> = [
@@ -20,6 +21,7 @@ export function SettingsPage() {
   return <main className={styles.page}>
     <header className={styles.pageHeader}><h1>设置</h1></header>
     <LanguageSwitch />
+    <WordbookSwitch />
     <section className={styles.settingsSection}>
       <div className={styles.settingTitle}><h2>{spanish.enabled?'西语每日总量':'每日新词'}</h2><span>{spanish.enabled?'新词形与复习合计，可不完成':'按自己的节奏学习'}</span></div>
       <div className={styles.segmented}>
@@ -45,7 +47,7 @@ export function SettingsPage() {
     </section>
     <section className={styles.dangerSection}>
       <h2>学习数据</h2>
-      {!confirming ? <button onClick={() => setConfirming(true)}>清空学习记录</button> : <div className={styles.confirmClear}><p>这会删除进度和打卡记录，设置会保留。</p><button onClick={() => { void clearLearningData(); setConfirming(false) }}>确认清空</button><button onClick={() => setConfirming(false)}>取消</button></div>}
+      {!confirming ? <button onClick={() => setConfirming(true)}>{settings.learningLanguage==='en'?'清空全部英语学习记录':'清空学习记录'}</button> : <div className={styles.confirmClear}><p>{settings.learningLanguage==='en'?'高考与小学共用记忆，都会重置。西语、词典、设置、AI 与 Wordle 会保留。':'这会删除进度和打卡记录，设置会保留。'}</p><button onClick={() => { void clearLearningData(); setConfirming(false) }}>确认清空</button><button onClick={() => setConfirming(false)}>取消</button></div>}
     </section>
   </main>
 }
