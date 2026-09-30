@@ -1,0 +1,9 @@
+.frame { width: min(100%,480px); margin-inline:auto; background:var(--paper); padding-inline:20px; }
+.bounded { position:fixed; left:50%; transform:translateX(-50%); top:var(--study-top); height:var(--study-height); display:grid; grid-template-rows:auto minmax(0,1fr) auto; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); }
+.content { min-height:0; overflow-y:auto; overscroll-behavior-y:contain; scrollbar-width:thin; }
+.header,.actions { min-width:0; background:var(--paper); }
+.actions { border-top:1px solid var(--line); padding-block:8px; }
+.flow { min-height:100dvh; padding-bottom:env(safe-area-inset-bottom); }
+.flow .header { position:sticky; top:0; z-index:2; }
+.flow .content { overflow:visible; }
+:global(html[data-study-viewport='bounded']), :global(html[data-study-viewport='bounded'] body), :global(html[data-study-viewport='bounded'] #root) { min-height:0; height:100%; overflow:hidden; }
