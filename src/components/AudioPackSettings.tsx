@@ -45,6 +45,7 @@ export function AudioPackSettings() {
 
   return <section className={styles.settingsSection}>
     <div className={styles.settingTitle}><h2>英语离线发音</h2><span>约 {sizeMb} MB</span></div>
+    <p className={styles.bookNote}>高考词库音频包 · 不包含全部小学词音。小学无录音时使用设备语音；离线可用性取决于已缓存录音和本机语音。</p>
     <p className={styles.settingDescription}>3458 个真人录音；缺失的 6 个词使用设备内置美式语音。未下载时，播放过的录音也会自动缓存。</p>
     <div className={styles.audioPackProgress} aria-label={`离线发音 ${percent}%`}><span style={{ width: `${percent}%` }} /></div>
     <div className={styles.audioPackMeta}><span>{status.downloaded} / {status.total}</span><strong>{percent}%</strong></div>

@@ -7,6 +7,9 @@ export default defineConfig(({ command, isPreview }) => {
 
   return {
     base,
+    build: {rollupOptions:{output:{manualChunks(id){
+      if(id.endsWith('/english-wordbooks.json'))return 'english-wordbooks'
+    }}}},
     plugins: [
     react(),
     VitePWA({

@@ -19,6 +19,17 @@ async function setup(fetcher: typeof fetch) {
 }
 const response = () => new Response(JSON.stringify({choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(result)}}]}),{status:200})
 describe('AI analysis lifecycle', () => {
+  it('shares cached analysis across book labels but separates changed sense input',async()=>{
+    const fetcher=vi.fn<typeof fetch>().mockImplementation(async()=>response())
+    const {service}=await setup(fetcher)
+    const first=await service.analyze({...word,category:'高考 3500'})
+    expect(await service.analyze({...word,category:'小学必背单词（牛津版）'})).toEqual(first)
+    expect(fetcher).toHaveBeenCalledTimes(1)
+    const changed=await service.analyze({...word,meaningZh:'幸福的'})
+    expect(changed.key).not.toBe(first.key)
+    expect(fetcher).toHaveBeenCalledTimes(2)
+    expect(await service.analyze(word)).toEqual(first)
+  })
   it.each(['clear', 'navigate'] as const)('cancels analysis still reading the cache on %s', async action => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response())
     const {service, db} = await setup(fetcher)

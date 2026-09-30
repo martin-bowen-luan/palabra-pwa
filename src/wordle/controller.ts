@@ -37,7 +37,7 @@ export class WordleController {
     this.update({ loading: true, error: '' })
     try {
       const [vocabulary, saved, supplement] = await Promise.all([
-        this.db.getVocabulary('en'), this.db.getWordleGame(),
+        this.db.getWordbookVocabulary('en-highschool'), this.db.getWordleGame(),
         this.loadSupplement().catch(() => undefined),
       ])
       if (this.disposed) return

@@ -1,0 +1,938 @@
+{
+  "primaryCount": 1047,
+  "publicCount": 3707,
+  "overlap": 804,
+  "newCount": 243,
+  "membershipCount": 1164,
+  "sourceBookCount": 12,
+  "editorialWords": [
+    "dining-room",
+    "lemon juice",
+    "swimming pool",
+    "in front of",
+    "a few",
+    "high jump",
+    "come from",
+    "plenty of",
+    "a little",
+    "a lot of",
+    "traffic jam",
+    "get to",
+    "each other",
+    "very much",
+    "keep a promise",
+    "stay up",
+    "zoo-keeper",
+    "little",
+    "shine",
+    "make",
+    "bring",
+    "twenty-one",
+    "build",
+    "secondary school",
+    "have a swim",
+    "run away",
+    "dragon boat festival",
+    "go on a trip",
+    "go shopping",
+    "post box",
+    "how about",
+    "housing estate",
+    "others",
+    "yet",
+    "keep",
+    "talk about",
+    "on foot",
+    "dress up",
+    "berry",
+    "sandal",
+    "x-ray",
+    "felt pen",
+    "shaker",
+    "soya milk",
+    "on one's way to",
+    "litter bin",
+    "toucan",
+    "kilogramme",
+    "cherry",
+    "sandcastle",
+    "seaweed",
+    "physical education"
+  ],
+  "warnings": [
+    {
+      "word": "tongue-twister",
+      "examples": [
+        {
+          "text": "Our next warm-up is a tongue twister.",
+          "translationZh": "下一个热身内容是绕口令。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_152752.html"
+        },
+        {
+          "text": "Tongue twisters always frustrate me because I cannot say them correctly.",
+          "translationZh": "绕口令一向让我很头大，因为我总是说错。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_152752.html"
+        }
+      ]
+    },
+    {
+      "word": "get",
+      "examples": [
+        {
+          "text": "The problem is when to get the money we need.",
+          "translationZh": "问题是什么时候能得到我们所需要的钱。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62869.html"
+        },
+        {
+          "text": "If Peter had applied for the post, he would probably get it now.",
+          "translationZh": "要是彼得申请了那职位,他很可能现在就得到了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62869.html"
+        },
+        {
+          "text": "She soon got the children ready for school.",
+          "translationZh": "她很快帮孩子做好上学的准备。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62869.html"
+        }
+      ]
+    },
+    {
+      "word": "it",
+      "examples": [
+        {
+          "text": "It's Friday.",
+          "translationZh": "今天星期五。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_80055.html"
+        },
+        {
+          "text": "It irks us to wait for people who are late.",
+          "translationZh": "等候迟到的人使我们厌烦。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_80055.html"
+        },
+        {
+          "text": "\"Where's your car?\"\"It's in the garage.\"",
+          "translationZh": "“你的汽车在哪儿呢?”“在车库里。”",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_80055.html"
+        }
+      ]
+    },
+    {
+      "word": "feel",
+      "examples": [
+        {
+          "text": "Can you feel the tension in this room?",
+          "translationZh": "你能觉察出这房间里的紧张气氛吗？",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_55403.html"
+        },
+        {
+          "text": "Take a deep breath, and you will feel relaxed.",
+          "translationZh": "深深地吸一口气,那样你会觉得轻松的。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_55403.html"
+        },
+        {
+          "text": "She felt the child's forehead to see if he was feverish.",
+          "translationZh": "她摸孩子的前额去看他是不是发烧了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_55403.html"
+        }
+      ]
+    },
+    {
+      "word": "write",
+      "examples": [
+        {
+          "text": "I've been writing for three hours.",
+          "translationZh": "我已经写了三个小时了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_167012.html"
+        },
+        {
+          "text": "Nature inspired him to write such beautiful poems.",
+          "translationZh": "自然赋予他灵感,使他写出如此优美的诗句。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_167012.html"
+        },
+        {
+          "text": "But there are some parts of the world where even now people cannot write.",
+          "translationZh": "但直到现在,世界上有些地方的人们还不会书写。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_167012.html"
+        }
+      ]
+    },
+    {
+      "word": "me",
+      "examples": [
+        {
+          "text": "Let me see.",
+          "translationZh": "让我想一想。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_92600.html"
+        },
+        {
+          "text": "They paid me the princely sum of USD5000.",
+          "translationZh": "他们慷慨地给我5000美元。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_92600.html"
+        },
+        {
+          "text": "Give it to me.",
+          "translationZh": "把它给我！",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_92600.html"
+        }
+      ]
+    },
+    {
+      "word": "down",
+      "examples": [
+        {
+          "text": "Please sit down.",
+          "translationZh": "请坐下。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_45794.html"
+        },
+        {
+          "text": "He is walking down the seaside.",
+          "translationZh": "他正沿海边走去。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_45794.html"
+        },
+        {
+          "text": "I've been feeling down since I lost my job.",
+          "translationZh": "自从失去工作後,我的情绪一直处於低潮。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_45794.html"
+        }
+      ]
+    },
+    {
+      "word": "ice-cream",
+      "examples": [
+        {
+          "text": "The boys were regaling on ice cream cones.",
+          "translationZh": "男孩们在美滋滋地大吃冰淇淋。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_73788.html"
+        },
+        {
+          "text": "Mother knows how to make ice cream.",
+          "translationZh": "母亲会做冰淇淋。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_73788.html"
+        }
+      ]
+    },
+    {
+      "word": "run",
+      "examples": [
+        {
+          "text": "The little boy ran off to get his brother.",
+          "translationZh": "这个小男孩跑去找他的哥哥。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_128818.html"
+        },
+        {
+          "text": "We ran into port for supplies.",
+          "translationZh": "我们驶进港口装补给品.",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_128818.html"
+        },
+        {
+          "text": "I can't make this machine run properly.",
+          "translationZh": "我无法使这部机器正常运转。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_128818.html"
+        }
+      ]
+    },
+    {
+      "word": "cat",
+      "examples": [
+        {
+          "text": "A cat mews.",
+          "translationZh": "猫喵喵叫。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_25468.html"
+        },
+        {
+          "text": "The cat lapped up the milk.",
+          "translationZh": "猫舔食牛奶。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_25468.html"
+        },
+        {
+          "text": "The cat is playing with a live mouse.",
+          "translationZh": "猫在戏弄那只活老鼠。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_25468.html"
+        }
+      ]
+    },
+    {
+      "word": "ride",
+      "examples": [
+        {
+          "text": "She hasn't been out riding since the accident.",
+          "translationZh": "她自从出了事故以后，一直没有骑马外出过。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_126903.html"
+        },
+        {
+          "text": "I can ride a bicycle, and I can drive a car, but I can not ride a horse.",
+          "translationZh": "我会骑自行车，而且我会开汽车。但我不会骑马。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_126903.html"
+        },
+        {
+          "text": "You'll never learn to ride a bicycle if you don't practise.",
+          "translationZh": "如果你不练习,就学不会骑自行车。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_126903.html"
+        }
+      ]
+    },
+    {
+      "word": "fly",
+      "examples": [
+        {
+          "text": "The aircraft was flying above thick fog.",
+          "translationZh": "飞机在浓雾上空飞行。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_58181.html"
+        },
+        {
+          "text": "How time flies!",
+          "translationZh": "时间过得真快！",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_58181.html"
+        },
+        {
+          "text": "She will drive to, but fly back from, London.",
+          "translationZh": "她将坐汽车去伦敦，坐飞机从伦敦回来。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_58181.html"
+        }
+      ]
+    },
+    {
+      "word": "slide",
+      "examples": [
+        {
+          "text": "If you pull this lever, the roof will slide back.",
+          "translationZh": "拉一下这根杆,顶就往后滑动。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_137184.html"
+        },
+        {
+          "text": "The book slid off my knee.",
+          "translationZh": "书从我膝上滑落。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_137184.html"
+        },
+        {
+          "text": "House values may begin to slide.",
+          "translationZh": "房价可能开始逐渐下降了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_137184.html"
+        }
+      ]
+    },
+    {
+      "word": "throw",
+      "examples": [
+        {
+          "text": "Pick out some good apples from the box, and throw away the rest.",
+          "translationZh": "把好苹果从盒子里捡出来,剩下的扔了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_150951.html"
+        },
+        {
+          "text": "The trees threw long shadows across the lawn.",
+          "translationZh": "树在草坪上都投下长长的影子。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_150951.html"
+        },
+        {
+          "text": "It's your turn to throw the dice.",
+          "translationZh": "轮到你掷骰子了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_150951.html"
+        }
+      ]
+    },
+    {
+      "word": "sketch-book",
+      "examples": [
+        {
+          "text": "Every time I see a beautiful scene, I sketch it in my sketch book.",
+          "translationZh": "每次我看到美丽的风景，我都会画在我的素描簿中。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136586.html"
+        }
+      ]
+    },
+    {
+      "word": "foot",
+      "examples": [
+        {
+          "text": "I apologized to her for stepping on her foot.",
+          "translationZh": "我因踩了她一脚向她道歉。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_58594.html"
+        },
+        {
+          "text": "I hurt my foot while playing football.",
+          "translationZh": "在踢足球时,我的脚受伤了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_58594.html"
+        },
+        {
+          "text": "They sank the post two feet deep in the ground.",
+          "translationZh": "他们把这根柱子在地下埋了两英尺深。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_58594.html"
+        }
+      ]
+    },
+    {
+      "word": "man",
+      "examples": [
+        {
+          "text": "She married a man who put her on a pedestal.",
+          "translationZh": "她嫁给了一个对她十分崇拜的男人。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_90980.html"
+        },
+        {
+          "text": "All men are born equal.",
+          "translationZh": "人生而平等。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_90980.html"
+        },
+        {
+          "text": "He played the man in the time of great trouble.",
+          "translationZh": "他在极为困难的时候显示出男子汉的气概。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_90980.html"
+        }
+      ]
+    },
+    {
+      "word": "sing",
+      "examples": [
+        {
+          "text": "She was singing a lullaby to her child.",
+          "translationZh": "她正在给孩子唱摇篮曲。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136161.html"
+        },
+        {
+          "text": "Let's sing a song during the break.",
+          "translationZh": "我们趁这空当儿唱支歌。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136161.html"
+        },
+        {
+          "text": "She sang the baby to sleep.",
+          "translationZh": "她给孩子唱歌唱到孩子睡着。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136161.html"
+        }
+      ]
+    },
+    {
+      "word": "may",
+      "examples": [
+        {
+          "text": "Well, and who may you be?",
+          "translationZh": "那麽，你是谁呢?",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_92473.html"
+        },
+        {
+          "text": "That might be our taxi.",
+          "translationZh": "那辆有可能是我们的计程车。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_92473.html"
+        },
+        {
+          "text": "That may be our taxi now!",
+          "translationZh": "那辆可能就是我们的计程车了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_92473.html"
+        }
+      ]
+    },
+    {
+      "word": "afternoon",
+      "examples": [
+        {
+          "text": "Good afternoon!",
+          "translationZh": "下午好！",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_3241.html"
+        },
+        {
+          "text": "She could knit up a baby's coatee in an afternoon.",
+          "translationZh": "她一个下午就能编结好一件婴孩的紧身短上衣。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_3241.html"
+        },
+        {
+          "text": "I met him in a hot and breathless afternoon.",
+          "translationZh": "我是在一个又闷又热的下午遇到他的。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_3241.html"
+        }
+      ]
+    },
+    {
+      "word": "sitting-room",
+      "examples": [
+        {
+          "text": "Their sitting room was enormous.",
+          "translationZh": "他们的起居室很大。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136453.html"
+        },
+        {
+          "text": "He is vacuuming a rug in the sitting room.",
+          "translationZh": "他在起居室里用吸尘器打扫地毯。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136453.html"
+        }
+      ]
+    },
+    {
+      "word": "dining-room",
+      "examples": [
+        {
+          "text": "Their dining room is very spacious.",
+          "translationZh": "他们的餐厅很宽敞。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_43041.html"
+        }
+      ]
+    },
+    {
+      "word": "shake",
+      "examples": [
+        {
+          "text": "Give the bottle a couple of shakes before pouring the juice.",
+          "translationZh": "倒果汁前，先把瓶子摇几下。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_134075.html"
+        },
+        {
+          "text": "He shook his head in disapproval.",
+          "translationZh": "他摇了摇头表示反对。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_134075.html"
+        },
+        {
+          "text": "His voice shook with fear.",
+          "translationZh": "他害怕得声音发抖。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_134075.html"
+        }
+      ]
+    },
+    {
+      "word": "dig",
+      "examples": [
+        {
+          "text": "Ten soldiers were told off to dig ditches.",
+          "translationZh": "十名战士被分派去挖沟。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_42734.html"
+        },
+        {
+          "text": "He was buried by an avalanche and had to be dug out.",
+          "translationZh": "他遇雪崩被埋住了，得把他挖出来。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_42734.html"
+        },
+        {
+          "text": "An old Greek statue was dug up here last month.",
+          "translationZh": "上个月在这儿挖出了一尊古希腊雕像。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_42734.html"
+        }
+      ]
+    },
+    {
+      "word": "sit",
+      "examples": [
+        {
+          "text": "He sat at his desk working.",
+          "translationZh": "他坐在桌子旁边工作。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136400.html"
+        },
+        {
+          "text": "The students sit in a circle on the floor.",
+          "translationZh": "学生们在地板上坐成一圈。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136400.html"
+        },
+        {
+          "text": "There is a sparrow sitting on a branch.",
+          "translationZh": "有只麻雀栖在树枝上。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_136400.html"
+        }
+      ]
+    },
+    {
+      "word": "cocoon",
+      "examples": [
+        {
+          "text": "Silkworms make cocoons.",
+          "translationZh": "蚕做茧。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_30748.html"
+        },
+        {
+          "text": "A cocoon is a kind of silk covering made by an insect.",
+          "translationZh": "蚕茧是由昆虫制造的一种由丝组成的外包层。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_30748.html"
+        },
+        {
+          "text": "The children tore the cocoon open to see if there was a pupa.",
+          "translationZh": "孩子们撕开蚕茧看看里面有没有蛹。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_30748.html"
+        }
+      ]
+    },
+    {
+      "word": "money",
+      "examples": [
+        {
+          "text": "He robs her of money.",
+          "translationZh": "他抢夺她的财产。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_96415.html"
+        },
+        {
+          "text": "Time is money.",
+          "translationZh": "时间就是金钱。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_96415.html"
+        },
+        {
+          "text": "Money doesn't always bring happiness.",
+          "translationZh": "金钱并不一定带来快乐。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_96415.html"
+        }
+      ]
+    },
+    {
+      "word": "wear",
+      "examples": [
+        {
+          "text": "The inscription on the stone had worn away.",
+          "translationZh": "刻在石头上的文字已磨损了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_164152.html"
+        },
+        {
+          "text": "Machines soon wear out under rough usage.",
+          "translationZh": "机器如果使用不仔细, 很快就会磨损。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_164152.html"
+        },
+        {
+          "text": "It was a freak of mine to wear pink pajamas.",
+          "translationZh": "穿上粉红色睡衣是我一时的奇想。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_164152.html"
+        }
+      ]
+    },
+    {
+      "word": "buy",
+      "examples": [
+        {
+          "text": "Money can't buy happiness.",
+          "translationZh": "金钱买不来幸福。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_22702.html"
+        },
+        {
+          "text": "I bought him a drink in return for his help.",
+          "translationZh": "我请他喝酒以酬谢他的帮助。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_22702.html"
+        },
+        {
+          "text": "I'd like to buy a strong household bleach.",
+          "translationZh": "我想买强力家用漂白剂。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_22702.html"
+        }
+      ]
+    },
+    {
+      "word": "shelf",
+      "examples": [
+        {
+          "text": "He poised the glass on the shelf.",
+          "translationZh": "他把玻璃杯稳稳地放在架子上。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_134458.html"
+        },
+        {
+          "text": "There were a lot of books on the shelves along the walls.",
+          "translationZh": "靠墙的书架上有许多书。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_134458.html"
+        },
+        {
+          "text": "Please lift the box down from the shelf for me.",
+          "translationZh": "请帮我把这只箱子从搁板上抬下来。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_134458.html"
+        }
+      ]
+    },
+    {
+      "word": "sell",
+      "examples": [
+        {
+          "text": "Her name will help to sell the film.",
+          "translationZh": "有她的名字，这部影片就卖座。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_132839.html"
+        },
+        {
+          "text": "The group's record has sold millions.",
+          "translationZh": "他们的唱片已经售出了千千万万张了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_132839.html"
+        },
+        {
+          "text": "I'd like to buy your house if you are willing to sell it.",
+          "translationZh": "如果你愿意卖的话，我想买你的房子。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_132839.html"
+        }
+      ]
+    },
+    {
+      "word": "think of",
+      "examples": [
+        {
+          "text": "I couldn't think of the name of that man anyhow.",
+          "translationZh": "我怎么也想不出那人的名字来了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_150556.html"
+        },
+        {
+          "text": "He would never think of letting his daughter marry a fellow like you.",
+          "translationZh": "他决不会想到让女儿嫁给像你这样的家伙。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_150556.html"
+        },
+        {
+          "text": "She thought of several possibilities.",
+          "translationZh": "她考虑了几种可能的情况。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_150556.html"
+        }
+      ]
+    },
+    {
+      "word": "be born",
+      "examples": [
+        {
+          "text": "He is a Dane inasmuch as he was born in Denmark, but he became a British citizen at the age of 30.",
+          "translationZh": "他按其出生在丹麦来说是丹麦人，但他在30岁时成了英国公民。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_14301.html"
+        },
+        {
+          "text": "She was born in America.",
+          "translationZh": "她出生于美国。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_14301.html"
+        },
+        {
+          "text": "She was born in 1950.",
+          "translationZh": "她生於1950年。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_14301.html"
+        }
+      ]
+    },
+    {
+      "word": "table-tennis",
+      "examples": [
+        {
+          "text": "He drubbed his opponent in the table tennis match.",
+          "translationZh": "他在乒乓球比赛中大胜对手。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_146900.html"
+        },
+        {
+          "text": "Yes, table tennis is an Olympic sport.",
+          "translationZh": "是的，乒乓球是奥运项目。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_146900.html"
+        }
+      ]
+    },
+    {
+      "word": "choose",
+      "examples": [
+        {
+          "text": "It's up to you to choose where we should go.",
+          "translationZh": "我们要去的地点,由你负责选择。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_28419.html"
+        },
+        {
+          "text": "He will choose banking as his career.",
+          "translationZh": "他将选择银行业做为职业。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_28419.html"
+        },
+        {
+          "text": "He chose not to go home until later.",
+          "translationZh": "他决定晚一点才回家。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_28419.html"
+        }
+      ]
+    },
+    {
+      "word": "on one's way to",
+      "examples": [
+        {
+          "text": "I met Lily on my way to school.",
+          "translationZh": "我在去学校的路上遇见了莉莉。",
+          "sourceId": "editorial:primary:on one's way to",
+          "author": "Palabra 编辑补充"
+        }
+      ]
+    },
+    {
+      "word": "get on",
+      "examples": [
+        {
+          "text": "She got on the bus and picked a seat up front.",
+          "translationZh": "她上了公车,找了个最前面的座位。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62980.html"
+        },
+        {
+          "text": "He can always get on well with his colleagues.",
+          "translationZh": "他总能和同事们和睦相处。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62980.html"
+        }
+      ]
+    },
+    {
+      "word": "get off",
+      "examples": [
+        {
+          "text": "Jason saw me and got off the horse immediately.",
+          "translationZh": "杰逊看到我，立即从马上下来。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62976.html"
+        },
+        {
+          "text": "A good lawyer might be able to get you off.",
+          "translationZh": "请位好律师有可能使你免受追究。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62976.html"
+        },
+        {
+          "text": "We will get off after breakfast.",
+          "translationZh": "我们将于早餐后出发。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_62976.html"
+        }
+      ]
+    },
+    {
+      "word": "bus-stop",
+      "examples": [
+        {
+          "text": "Go straight on until you come to a bus stop.",
+          "translationZh": "你一直往前走，直到公共汽车站为止。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_22416.html"
+        },
+        {
+          "text": "The bus stop is just across the street.",
+          "translationZh": "公共汽车站就在街对过。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_22416.html"
+        }
+      ]
+    },
+    {
+      "word": "teach",
+      "examples": [
+        {
+          "text": "I taught her to ride a bicycle.",
+          "translationZh": "我教她骑自行车。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_148402.html"
+        },
+        {
+          "text": "His parents employed a tutor to teach him Greek.",
+          "translationZh": "他父母雇佣了一位家庭教师来教他希腊语。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_148402.html"
+        },
+        {
+          "text": "Parents should teach their children table manners.",
+          "translationZh": "双亲应该教导他们的小孩餐桌礼仪。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_148402.html"
+        }
+      ]
+    },
+    {
+      "word": "fire-engine",
+      "examples": [
+        {
+          "text": "Automobiles must make way for a fire engine.",
+          "translationZh": "任何车辆都必须为消防车让路。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_56714.html"
+        },
+        {
+          "text": "When the fire engine arrived, the fire was blazing.",
+          "translationZh": "消防车到时，火正在炽烈燃烧着。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_56714.html"
+        }
+      ]
+    },
+    {
+      "word": "dress up",
+      "examples": [
+        {
+          "text": "Her maid helped her to dress up for the party.",
+          "translationZh": "她的女仆帮助她穿上参加晚会的礼服。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_46283.html"
+        },
+        {
+          "text": "They all dressed up to take part in the parade.",
+          "translationZh": "他们都穿上盛装去参加游行。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_46283.html"
+        }
+      ]
+    },
+    {
+      "word": "keep a promise",
+      "examples": [
+        {
+          "text": "She kept her promise to visit her aunt regularly.",
+          "translationZh": "她信守诺言，定期去看望姑妈。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_82161.html"
+        }
+      ]
+    },
+    {
+      "word": "pick up",
+      "examples": [
+        {
+          "text": "He picked up his knife and fork.",
+          "translationZh": "他捡起了刀叉。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_112381.html"
+        },
+        {
+          "text": "He picked up the child and put her on his shoulders.",
+          "translationZh": "他抱起孩子让她骑在自己的肩膀上。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_112381.html"
+        },
+        {
+          "text": "He picked up news from all sources.",
+          "translationZh": "他从各种渠道收集消息。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_112381.html"
+        }
+      ]
+    },
+    {
+      "word": "tell a lie",
+      "examples": [
+        {
+          "text": "He swore by Jupiter not to tell a lie again.",
+          "translationZh": "他对天发誓再也不说谎了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_148889.html"
+        },
+        {
+          "text": "She will tell lies without scruple.",
+          "translationZh": "她会肆无忌惮地说谎。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_148889.html"
+        }
+      ]
+    },
+    {
+      "word": "twinkle",
+      "examples": [
+        {
+          "text": "We could see lights twinkling in the little town below.",
+          "translationZh": "我们可以看见下面的小镇灯光闪耀。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_156249.html"
+        },
+        {
+          "text": "He stared up at the stars twinkling in the sky above him.",
+          "translationZh": "他抬眼凝视着头顶上方星光闪烁的天空。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_156249.html"
+        },
+        {
+          "text": "The dancer's feet twinkled.",
+          "translationZh": "舞蹈演员的脚在轻快地移动。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_156249.html"
+        }
+      ]
+    },
+    {
+      "word": "cry",
+      "examples": [
+        {
+          "text": "She cried with grief when she heard news of her friend's death.",
+          "translationZh": "听到朋友死亡的消息，她难过地哭了。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_37200.html"
+        },
+        {
+          "text": "She began to cry in the face of failure.",
+          "translationZh": "面对失败，她开始哭了起来。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_37200.html"
+        },
+        {
+          "text": "He cried that he had found the key.",
+          "translationZh": "他大声地叫喊找到了钥匙。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_37200.html"
+        }
+      ]
+    },
+    {
+      "word": "berry",
+      "examples": [
+        {
+          "text": "Tomorrow we'll go to pick berries.",
+          "translationZh": "明天我们去采浆果。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_16300.html"
+        },
+        {
+          "text": "The berry is nutritious and has a sweetish taste.",
+          "translationZh": "浆果有营养并且有一种带甜味的口味。",
+          "sourceUrl": "https://www.koolearn.com/dict/wd_16300.html"
+        }
+      ]
+    }
+  ],
+  "gaps": [],
+  "reviewScope": "所有记录自动检查；补充及标记项逐项审核，各册抽查；未逐句人工审校全库。",
+  "sourceGeneratedAt": "2026-09-30T14:33:47.807197+00:00"
+}

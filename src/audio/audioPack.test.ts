@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { AudioPackManager } from './audioPack'
+import { AudioPackManager,englishAudioFiles } from './audioPack'
+import { englishWordbookBundle } from '../data/englishVocabulary'
 
 class MemoryCache {
   entries = new Map<string, Response>()
@@ -18,6 +19,12 @@ class MemoryCacheStorage {
 }
 
 describe('English offline audio pack', () => {
+  it('keeps the existing highschool package without primary-only recordings',()=>{
+    const ids=new Set(englishWordbookBundle.books.find(b=>b.id==='en-highschool')!.members.map(m=>m.wordId))
+    expect(englishAudioFiles).toHaveLength(3458)
+    expect(englishAudioFiles.every(f=>ids.has(f.id))).toBe(true)
+    expect(new Set(englishAudioFiles.map(f=>f.id)).size).toBe(3458)
+  })
   it('resumes missing files, reports progress, and can remove the pack', async () => {
     const cacheStorage = new MemoryCacheStorage()
     const cache = await cacheStorage.open('palabra-audio-en-v1')

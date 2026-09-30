@@ -34,12 +34,12 @@
 .studyEntrances button:disabled { border-color: var(--line); color: var(--muted); }
 .resumeStudy p { color: var(--muted); font-size: 13px; line-height: 1.6; }
 .roundRail { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 0; padding: 0; list-style: none; }
-.roundRail li { min-width: 0; display: flex; flex-direction: column; gap: 9px; padding: 12px 0; border-top: 2px solid var(--line); color: var(--muted); font-size: 11px; }
+.roundRail li { min-width: 0; display: flex; align-items:center; gap: 5px; padding: 8px 0; border-top: 2px solid var(--line); color: var(--muted); font-size: 11px; }
 .roundRail span { font-size: 16px; }
 .roundRail .roundReached { border-color: var(--blue); }
 .roundRail [aria-current='step'] { color: var(--blue); font-weight: 600; }
-.memoryPrompt { display: flex; flex: 1; flex-direction: column; padding-top: 30px; }
-.memoryPrompt > .quizPrompt { margin-bottom: 24px; font-size: 12px; }
+.memoryPrompt { display: flex; flex: 1; flex-direction: column; padding-block: 16px; }
+.memoryPrompt > .quizPrompt { margin:0 0 12px; font-size: 12px; }
 .memoryIdentity h1 { margin: 0; font: 520 clamp(44px, 13vw, 66px)/1.12 'Source Serif 4 Variable', serif; letter-spacing: -.035em; overflow-wrap: anywhere; }
 .memoryIdentity .meaningPrompt { font: 600 26px/1.55 'Noto Sans SC Variable', sans-serif; letter-spacing: 0; }
 .promptPartOfSpeech { display: block; font-size: 16px; font-weight: 400; color: var(--muted); }
@@ -56,7 +56,7 @@
 .choiceCorrection strong { font: 500 20px/1.4 'Source Serif 4 Variable', serif; }
 .contextSentence { margin: 32px 0; padding: 18px 0 18px 16px; border-left: 3px solid var(--blue); font: 450 24px/1.55 'Source Serif 4 Variable', serif; }
 .recallInstruction { margin: auto 0; padding: 48px 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
-.recallActions { margin-top: auto; padding-top: 28px; }
+.recallActions { margin-top: auto; }
 .recallActions > p { color: var(--muted); font-size: 14px; }
 .recallActions > div { display: flex; gap: 12px; }
 .recallActions > div > button { flex: 1; min-height: 54px; border: 1px solid var(--line); border-radius: 8px; background: transparent; cursor: pointer; }
@@ -160,9 +160,29 @@
 .choiceList button { padding: 12px 18px; text-align: left; background: var(--control); }
 .choiceList .correctChoice { color: var(--green); border-color: var(--green); background: color-mix(in srgb, var(--green) 9%, var(--paper)); }
 .choiceList .wrongChoice { color: var(--red); border-color: var(--red); background: color-mix(in srgb, var(--red) 8%, var(--paper)); }
-.spellingForm { margin-top: 48px; }
+.spellingForm { margin-top: 0; }
 .spellingForm label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 13px; }
-.spellingForm input { width: 100%; height: 58px; margin-bottom: 16px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--control); font: 500 25px 'Source Serif 4 Variable', serif; }
+.spellingForm input { width: 100%; height: 48px; margin-bottom: 4px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--control); font: 500 25px 'Source Serif 4 Variable', serif; }
+.studyHelpers { display:flex; flex-wrap:wrap; gap:4px; justify-content:space-between; }
+.wordbookSwitch { display:flex; gap:12px; border-bottom:1px solid var(--line); }
+.wordbookSwitch button { min-height:44px; border:0; border-bottom:2px solid transparent; padding:8px 0; background:none; text-align:left; font-size:13px; color:var(--muted); cursor:pointer; }
+.wordbookSwitch button[aria-pressed='true'] { border-bottom-color:var(--blue); color:var(--blue); }
+.bookRange { display:flex; gap:12px; margin-top:16px; }
+.bookRange label { flex:1; min-width:0; font-size:12px; color:var(--muted); }
+.bookRange select { display:block; width:100%; min-height:44px; margin-top:4px; padding:0 8px; font-size:16px; border:1px solid var(--line); border-radius:6px; background:var(--control); color:var(--ink); }
+.bookNote { font-size:13px; line-height:1.8; color:var(--muted); }
+.studyHelpers button { min-height:44px; padding:0 3px; width:auto; font-size:13px; }
+.compactHint { margin:4px 0; color:var(--blue); font-size:20px; letter-spacing:.12em; overflow-wrap:anywhere; }
+.compactHint small { display:block; font-size:11px; letter-spacing:0; }
+.compactHint:empty { display:none; }
+.studyDetails summary { min-height:44px; display:flex; align-items:center; cursor:pointer; color:var(--blue); font-size:14px; }
+:global([data-compact]) .studyHeader { min-height:48px; }
+:global([data-compact]) .memoryPrompt { padding-top:8px; }
+:global([data-compact]) .memoryIdentity h1 { font-size:36px; }
+:global([data-compact]) .memoryIdentity .meaningPrompt { font-size:22px; }
+:global([data-compact]) .memoryPrompt > .quizPrompt { margin-bottom:6px; }
+:global([data-compact]) .compactHint small { display:none; }
+:global([data-compact]) .contextSentence { font-size:22px; margin-top:16px; }
 .feedback { margin-top: auto; padding-top: 26px; border-top: 2px solid; }
 .feedback strong { font-size: 22px; }
 .feedback p { margin: 6px 0 20px; color: var(--muted); }

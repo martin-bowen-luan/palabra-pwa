@@ -1,12 +1,13 @@
 import { useAppState } from '../app/AppState'
 import { LanguageSwitch } from '../components/LanguageSwitch'
+import { WordbookSwitch } from '../wordbooks/WordbookSwitch'
 import { recentSevenDays, summarizeStages } from '../domain/stats'
 import styles from '../styles/App.module.css'
 import { useSpanish } from '../spanish/SpanishProvider'
 import { calculateStreak } from '../domain/stats'
 
 export function ProgressPage() {
-  const { progress, sessions, streak, settings } = useAppState()
+  const { progress, sessions, streak, settings,bookVocabulary } = useAppState()
   const spanish = useSpanish()
   const legacySessions = sessions.filter(session=>!session.id.startsWith('es-cloze:')&&!session.spanishDailyTracked)
     .map(session=>session.spanishUntrackedCount===undefined?session:{...session,newCount:session.spanishUntrackedCount,reviewCount:0})
@@ -19,6 +20,8 @@ export function ProgressPage() {
   return <main className={styles.page}>
     <header className={styles.pageHeader}><h1>进度</h1><span>连续 {spanish.enabled?calculateStreak(chartSessions):streak} 天</span></header>
     <LanguageSwitch />
+    <WordbookSwitch />
+    {settings.learningLanguage==='en'&&<p className={styles.bookNote}>英语共享记忆 · 共 {total} 个已学词<br/>本书已学 {bookVocabulary.filter(w=>progress[w.id]).length} / {bookVocabulary.length}，已熟练 {bookVocabulary.filter(w=>progress[w.id]?.skipReview).length}</p>}
     {!chartSessions.length ? <div className={styles.emptyState}><h2>完成第一次学习后，<br />这里会出现趋势</h2><p>每天几分钟，就能让记忆慢慢留下来。</p></div> : <>
       <section className={styles.chartSection}>
         <div className={styles.sectionHeading}><h2>最近 7 天</h2><span>共学习 {days.reduce((sum, day) => sum + day.count, 0)} 次</span></div>

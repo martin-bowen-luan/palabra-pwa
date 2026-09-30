@@ -11,9 +11,14 @@ import { pronunciationPlayer } from '../audio/pronunciation'
 import styles from '../styles/App.module.css'
 import { SpanishDictionary, groupSpanishResults } from '../spanish/SpanishDictionary'
 import spanishStyles from '../spanish/Spanish.module.css'
+import { WordbookSwitch } from '../wordbooks/WordbookSwitch'
+import { PrimaryRangeFilter } from '../wordbooks/PrimaryRangeFilter'
+import { projectWordbook } from '../wordbooks/catalog'
+import type { PrimaryRange } from '../wordbooks/types'
 
 export function LibraryPage() {
-  const { categories, progress, settings, vocabulary } = useAppState()
+  const { categories, progress, settings, vocabulary, bookVocabulary,selectedWordbook,wordbooks } = useAppState()
+  const [range,setRange]=useState<PrimaryRange>({})
   const { settings: aiSettings } = useAi()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('全部')
@@ -21,7 +26,9 @@ export function LibraryPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const selectedId = searchParams.get('word')
-  const selected = vocabulary.find(word => word.id === selectedId)
+  const contextBook=wordbooks.find(b=>b.id===searchParams.get('book'))??selectedWordbook
+  const selected = (contextBook&&settings.learningLanguage==='en'?projectWordbook(vocabulary,contextBook).find(word=>word.id===selectedId):undefined)??vocabulary.find(word => word.id === selectedId)
+  const browseWords=useMemo(()=>settings.learningLanguage==='en'&&selectedWordbook?.id==='en-oxford-primary'?projectWordbook(vocabulary,selectedWordbook,range):bookVocabulary,[vocabulary,bookVocabulary,selectedWordbook,range,settings.learningLanguage])
   const heading = useRef<HTMLHeadingElement>(null)
   const from = location.state?.wordLinkFrom
   const backLabel = from === '/study' ? '返回学习' : typeof from === 'string' && from.startsWith('/library?') ? '返回上一词' : '返回词库'
@@ -33,18 +40,19 @@ export function LibraryPage() {
   const [view, setView] = useState<'all' | 'learned'>('all')
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase('es')
-    return vocabulary.filter((word) =>
+    return browseWords.filter((word) =>
       (view === 'all' || Boolean(progress[word.id])) &&
       (category === '全部' || word.category === category) &&
       (!needle || word.term.toLocaleLowerCase(word.language).includes(needle) || word.meaningZh.includes(needle) || word.spanishData?.lemma.toLocaleLowerCase('es').includes(needle) || word.spanishData?.grammarLabel.includes(needle) || word.spellingVariants?.some((variant) => variant.toLocaleLowerCase('en').includes(needle))),
     )
-  }, [category, progress, query, view, vocabulary])
+  }, [category, progress, query, view, browseWords])
   useEffect(() => {
     setVisibleCount(80)
     setCategory('全部')
     setView('all')
-  }, [settings.learningLanguage])
-  useEffect(() => setVisibleCount(80), [category, query, view])
+    setQuery('');setRange({})
+  }, [settings.learningLanguage,settings.englishWordbook])
+  useEffect(() => setVisibleCount(80), [category, query, view,range])
   useEffect(() => () => pronunciationPlayer.stop(), [selectedId])
   useEffect(() => {
     heading.current?.focus({ preventScroll: true })
@@ -64,6 +72,7 @@ export function LibraryPage() {
       <button className={styles.backButton} onClick={goBack}><BackIcon />{backLabel}</button>
       <section className={styles.wordDetail}>
         <p>{selected.category}</p>
+        {selected.language==='en'&&!bookVocabulary.some(w=>w.id===selected.id)&&<p className={styles.bookNote}>当前词书未收录 · 记忆仍与英语词库共享</p>}
         <h1 ref={heading} tabIndex={-1} lang={selected.language}>{selected.term}</h1>
         {selected.language === 'en' && <div className={styles.pronunciationRow}>
           <span>{selected.pronunciation?.ipa || '美式发音'}</span>
@@ -76,7 +85,7 @@ export function LibraryPage() {
           {aiSettings.enabled && selected.language === 'en' && <SentenceSpeechButton text={example.text} />}
           <p>{example.translationZh}</p>
         </div>)}
-        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} />
+        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} bookContext={contextBook?.id==='en-oxford-primary'?contextBook.id:undefined} />
         <SpanishDictionary word={selected} vocabulary={vocabulary} progress={progress} select={id=>setSearchParams({word:id},{state:{wordLinkFrom:location.pathname+location.search}})} />
         <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / ${progress[selected.id]?.scheduleVersion === 1 ? 7 : 5}`}{progress[selected.id]?.reviewPriority === 'skipped' && ' · 拼写跳过，优先复习'}</footer>
       </section>
@@ -84,8 +93,10 @@ export function LibraryPage() {
   }
 
   return <main className={styles.page}>
-    <header className={styles.pageHeader}><h1>词库</h1><span>{vocabulary.length} 个词</span></header>
+    <header className={styles.pageHeader}><h1>词库</h1><span>{bookVocabulary.length} 个词</span></header>
     <LanguageSwitch />
+    <WordbookSwitch />
+    {settings.learningLanguage==='en'&&selectedWordbook?.id==='en-oxford-primary'&&<PrimaryRangeFilter value={range} onChange={setRange} label="浏览"/>}
     <div className={styles.libraryViews} role="group" aria-label="词库范围">
       <button type="button" className={view === 'all' ? styles.libraryViewActive : ''} aria-pressed={view === 'all'} onClick={() => setView('all')}>全部</button>
       <button type="button" className={view === 'learned' ? styles.libraryViewActive : ''} aria-pressed={view === 'learned'} onClick={() => setView('learned')}>已背</button>

@@ -5,6 +5,7 @@ import { WordleController } from './controller'
 import { WiktionaryClient } from './dictionary'
 import { localEntry } from './rules'
 import { loadEcdict } from './ecdict'
+import { bookFixture } from '../wordbooks/fixtures'
 const word = (term: string): VocabularyEntry => ({id:`en:${term}`,language:'en',term,partOfSpeech:'n.',meaningZh:term,category:'测试',examples:[]})
 const stores:PalabraStorage[]=[]
 const controllers:WordleController[]=[]
@@ -16,6 +17,14 @@ async function setup(client=new WiktionaryClient(), online=()=>true, store?:Pala
   await controller.initialize();return {db,controller}
 }
 describe('Wordle controller',()=>{
+  it('uses only the highschool answer pool when primary adds a five-letter word',async()=>{
+    const bundle=structuredClone(bookFixture)
+    bundle.words.push(word('grape'));bundle.books[1].members.push({wordId:'en:grape',order:2,memberships:[]})
+    const db=new PalabraStorage(crypto.randomUUID(),{wordbookBundle:bundle})
+    const {controller}=await setup(undefined,()=>false,db)
+    expect(controller.getSnapshot().candidateCount).toBe(2)
+    expect(controller.getSnapshot().game?.answer.term).not.toBe('grape')
+  })
   it('preserves a saved game and local/cache play when the optional dictionary cannot load',async()=>{
     const {db,controller}=await setup(undefined,()=>false)
     await controller.edit('gra');controller.dispose()
