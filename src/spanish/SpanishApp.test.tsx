@@ -29,7 +29,7 @@ describe('Spanish contextual course',()=>{
     const actions=screen.getByRole('region',{name:'答题操作'})
     expect(actions).toContainElement(screen.getByRole('button',{name:'检查答案'}))
     await user.type(input,'camion');input.setSelectionRange(4,5)
-    await user.click(screen.getByRole('button',{name:'ó',exact:true}))
+    await user.click(screen.getByRole('button',{name:'ó'}))
     expect(input).toHaveValue('camión')
     await waitFor(()=>expect(input.selectionStart).toBe(5))
   })

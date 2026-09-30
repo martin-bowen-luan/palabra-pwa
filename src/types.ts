@@ -34,6 +34,8 @@ export interface VocabularySource {
 }
 
 export interface VocabularyEntry {
+  senses?: DictionarySense[]
+  sources?: VocabularySource[]
   spanishData?: SpanishLearningData
   id: string
   language: LearningLanguage
@@ -57,6 +59,8 @@ export interface VocabularyEntry {
   exampleZh?: string
   regionalNote?: string
 }
+
+export interface DictionarySense { id:string; partOfSpeech:string; meaningZh:string; source?:VocabularySource }
 
 export interface WordProgress {
   language: LearningLanguage

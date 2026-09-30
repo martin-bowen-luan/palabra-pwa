@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { definitionSenses } from './lib/english-record-fields.mjs'
 
 const EXPECTED_COUNT = 3464
 const DEFAULT_INPUT = '/home/martin/Desktop/wordlist/koolearn_words.json'
@@ -56,19 +57,8 @@ function cleanText(value) {
 }
 
 function parseDefinition(definition) {
-  const normalized = cleanText(definition)
-  const firstChinese = normalized.search(/[\u3400-\u9fff]/u)
-  if (firstChinese < 0) return { partOfSpeech: '', meaningZh: normalized }
-  const prefix = normalized.slice(0, firstChinese)
-  const openingBracket = prefix.search(/[\[［【（(〈“]/u)
-  const meaningStart = openingBracket >= 0 ? openingBracket : firstChinese
-  const partOfSpeech = normalized.slice(0, meaningStart).trim().replace(/[|；;]+$/u, '').trim()
-  const meanings = normalized.slice(meaningStart)
-    .split(/[；;|]/u)
-    .map((item) => cleanText(item).replace(/[，,。]+$/u, ''))
-    .filter(Boolean)
-    .slice(0, 3)
-  return { partOfSpeech, meaningZh: meanings.join('；') }
+  const senses=definitionSenses(definition)
+  return {partOfSpeech:senses[0]?.partOfSpeech??'',meaningZh:senses.flatMap(s=>s.meaningZh.split(/[；;|]/u)).map(s=>s.replace(/[，,。]+$/u,'')).filter(Boolean).slice(0,3).join('；')}
 }
 
 function parseBilingualDefinition(sections) {
@@ -139,7 +129,7 @@ function isRegularForm(term, label, form) {
   return false
 }
 
-function parseSpecialForms(sections, term) {
+export function parseSpecialForms(sections, term) {
   const section = sections.find((item) => item?.title === '变形')
   if (!section?.text) return []
   const forms = []
@@ -157,7 +147,7 @@ function parseSpecialForms(sections, term) {
   return forms
 }
 
-function parseRelatedTerms(sections, term) {
+export function parseRelatedTerms(sections, term) {
   const candidates = []
   for (const section of sections) {
     if (!['英英释义', '同近义词辨析'].includes(section?.title)) continue

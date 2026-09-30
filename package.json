@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "import:primary": "node scripts/import-primary-wordbook.mjs",
+    "check:wordbooks": "node scripts/import-primary-wordbook.mjs --check",
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "import:english": "node scripts/import-english-vocabulary.mjs",
