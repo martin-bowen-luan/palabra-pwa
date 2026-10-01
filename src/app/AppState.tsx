@@ -16,6 +16,7 @@ import { studyChoiceOptions } from '../domain/choiceOptions'
 import type { ActiveSession, LearningLanguage, ReviewRating, StudyMode, StudySession, UserSettings, VocabularyEntry, WordProgress } from '../types'
 import type { SpanishDailyUpdate, SpanishOutcome } from '../spanish/sessionTypes'
 import { reconcileLegacySpanish } from '../spanish/legacy'
+import type { CheckinEvent,PracticeOutcome } from '../groups/types'
 
 interface AppStateValue {
   wordbooks:WordbookCatalog[]
@@ -211,6 +212,10 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     } }
   }
 
+  const groupCheckin=(session:ActiveSession,wordId:string,outcome:PracticeOutcome):CheckinEvent=>({
+    wordId,language:session.language,kind:session.newWordIds.includes(wordId)?'new':'review',outcome,
+    at:new Date().toISOString(),goal:session.language==='en'?settings.dailyNewWords:settings.spanishDailyGoal??50,
+  })
   const rateCurrentWord = async (rating: ReviewRating) => {
     if (!activeSession) return
     const queue = sessionQueue(activeSession)
@@ -239,7 +244,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const daily = legacySpanishDailyUpdate(activeSession, wordId, rating === 'known' ? 'remembered' : 'forgotten')
     if (daily) nextSession.spanishDailyIds = [...new Set([...(activeSession.spanishDailyIds ?? []), wordId])]
     try {
-      await storageClient.commitStudyStep(nextProgress, nextSession, daily)
+      await storageClient.commitStudyStep(nextProgress, nextSession, daily,activeSession.language==='es'?groupCheckin(activeSession,wordId,rating==='known'?'passed':'wrong'):undefined)
     } catch (error) {
       if (await recoverStaleSession(error, activeSession.language)) return
       throw error
@@ -248,7 +253,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     setActiveSession(nextSession)
   }
 
-  const finishSession = async (session: ActiveSession, progressUpdate?: WordProgress, daily?: SpanishDailyUpdate) => {
+  const finishSession = async (session: ActiveSession, progressUpdate?: WordProgress, daily?: SpanishDailyUpdate,checkin?:CheckinEvent) => {
     const now = new Date()
     const reconciliation = reconcileLegacySpanish(session, vocabulary, progressUpdate ? { ...progress, [progressUpdate.wordId]: progressUpdate } : progress, daily)
     const answers = session.phase === 'quiz' ? Object.values(session.practice?.firstAnswers ?? {}) : []
@@ -269,7 +274,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       skippedCount: session.skippedWordIds?.length ?? 0,
     }
     try {
-      await storageClient.completeStudyGroup(completed, session.language, progressUpdate, session, reconciliation?.updates ?? daily)
+      await storageClient.completeStudyGroup(completed, session.language, progressUpdate, session, reconciliation?.updates ?? daily,checkin)
     } catch (error) {
       if (await recoverStaleSession(error, session.language)) return false
       throw error
@@ -387,7 +392,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     const daily = legacySpanishDailyUpdate(activeSession, wordId, correct ? 'remembered' : 'forgotten')
     if (daily) nextSession.spanishDailyIds = [...new Set([...(activeSession.spanishDailyIds ?? []), wordId])]
     try {
-      await storageClient.commitStudyStep(nextProgress, nextSession, daily)
+      await storageClient.commitStudyStep(nextProgress, nextSession, daily,activeSession.language==='es'?groupCheckin(activeSession,wordId,correct?'passed':'wrong'):undefined)
     } catch (error) {
       if (await recoverStaleSession(error, activeSession.language)) return
       throw error
@@ -416,7 +421,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       const nextProgress = spellingDone ? scheduleEnglishReview(progress[wordId], wordId,
         activeSession.failedWordIds?.includes(wordId) ? 'forgotten' : 'remembered') : undefined
       const result = advanceMemoryRound(nextSession)
-      return persistMemoryStep(result.session, result.finished, nextProgress)
+      return persistMemoryStep(result.session, result.finished, nextProgress,spellingDone?groupCheckin(activeSession,wordId,'passed'):undefined)
     }
     const daily = legacySpanishDailyUpdate(activeSession, activeSession.quizFeedback.wordId, activeSession.quizFeedback.correct ? 'remembered' : 'forgotten')
     if (daily) nextSession.spanishDailyIds = [...new Set([...(activeSession.spanishDailyIds ?? []), daily.wordId])]
@@ -438,9 +443,9 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     await submitQuizAnswer(false, input, undefined, undefined, true)
   }
 
-  const persistMemoryStep = async (session: ActiveSession, finished: boolean, nextProgress?: WordProgress): Promise<boolean> => {
-    if (finished) return finishSession(session, nextProgress)
-    try { await storageClient.commitStudyStep(nextProgress, session) }
+  const persistMemoryStep = async (session: ActiveSession, finished: boolean, nextProgress?: WordProgress,checkin?:CheckinEvent): Promise<boolean> => {
+    if (finished) return finishSession(session, nextProgress,undefined,checkin)
+    try { await storageClient.commitStudyStep(nextProgress, session,undefined,checkin) }
     catch (error) { if (await recoverStaleSession(error, session.language)) return false; throw error }
     if (nextProgress) setProgress(current => ({ ...current, [nextProgress.wordId]: nextProgress }))
     setActiveSession(session)
@@ -460,7 +465,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
       revision: (activeSession.revision ?? 0) + 1,
     }
     const result = advanceMemoryRound(nextSession)
-    return persistMemoryStep(result.session, result.finished, scheduleEnglishReview(progress[wordId], wordId, 'skipped'))
+    return persistMemoryStep(result.session, result.finished, scheduleEnglishReview(progress[wordId], wordId, 'skipped'),groupCheckin(activeSession,wordId,'skipped'))
   }
 
   const exitSession = async () => {

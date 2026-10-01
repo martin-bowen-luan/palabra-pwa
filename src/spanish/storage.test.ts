@@ -70,7 +70,7 @@ describe('Spanish atomic persistence',()=>{
     const db=client(name)
     expect(await db.getSpanishDay('2026-09-27')).toEqual({id:'2026-09-27',entries:{}})
     const upgraded=await new Promise<IDBDatabase>(resolve=>{const request=indexedDB.open(name);request.onsuccess=()=>resolve(request.result)})
-    expect(upgraded.version).toBe(7)
+    expect(upgraded.version).toBe(8)
     for(const store of stores){const saved=await new Promise(resolve=>{const r=upgraded.transaction(store).objectStore(store).get('sentinel');r.onsuccess=()=>resolve(r.result)})
       expect(saved).toEqual({id:'sentinel',wordId:'sentinel',key:'sentinel',term:'sentinel',value:store})}
     upgraded.close()
