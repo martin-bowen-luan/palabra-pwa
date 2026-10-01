@@ -39,16 +39,28 @@ export class GroupLocal {
   async write<T>(store:Store,key:string,value:T):Promise<void>{const db=await this.open(),tx=db.transaction(store,'readwrite'),saved=done(tx);tx.objectStore(store).put(value,key);await saved}
   async remove(store:Store,key:string):Promise<void>{const db=await this.open(),tx=db.transaction(store,'readwrite'),saved=done(tx);tx.objectStore(store).delete(key);await saved}
   async getBinding(){return this.read<GroupBinding>('groupState','binding')}
-  async saveBinding(binding:GroupBinding|undefined){
+  async saveBinding(binding:GroupBinding|undefined,guard?:{epoch:string|undefined}){
     const db=await this.open(),tx=db.transaction(['groupState','groupOutbox','groupCache','groupDrafts'],'readwrite'),saved=done(tx)
     const state=tx.objectStore('groupState'),read=state.get('binding') as IDBRequest<GroupBinding|undefined>
+    let changed=false,accepted=false
     read.onsuccess=()=>{
-      if(bindingKey(read.result)!==bindingKey(binding)){
-        tx.objectStore('groupOutbox').clear();tx.objectStore('groupCache').clear();tx.objectStore('groupDrafts').clear();state.delete('lease')
+      const apply=()=>{
+        accepted=true;changed=JSON.stringify(read.result)!==JSON.stringify(binding)
+        if(bindingKey(read.result)!==bindingKey(binding)){
+          tx.objectStore('groupOutbox').clear();tx.objectStore('groupCache').clear();tx.objectStore('groupDrafts').clear();state.delete('lease')
+        }
+        if(binding)state.put(binding,'binding');else state.delete('binding')
       }
-      if(binding)state.put(binding,'binding');else state.delete('binding')
+      if(guard){const epoch=state.get('identityEpoch');epoch.onsuccess=()=>{if(epoch.result===guard.epoch)apply()}}
+      else apply()
     }
-    await saved;notifyGroups()
+    await saved;if(changed)notifyGroups();return accepted
+  }
+  async cacheSnapshot(value:unknown,epoch:string|undefined){
+    const db=await this.open(),tx=db.transaction(['groupState','groupCache'],'readwrite'),saved=done(tx),read=tx.objectStore('groupState').get('identityEpoch')
+    let accepted=false
+    read.onsuccess=()=>{if(read.result===epoch){tx.objectStore('groupCache').put(value,'snapshot');accepted=true}}
+    await saved;return accepted
   }
   async outbox():Promise<GroupOutboxItem[]>{const db=await this.open();return result(db.transaction('groupOutbox').objectStore('groupOutbox').getAll())}
   async ack(key:string,version:number){
@@ -84,6 +96,43 @@ export class GroupLocal {
   async logout(){
     const stores:Store[]=['groupState','groupOutbox','groupCache','groupAuth','groupDrafts']
     const db=await this.open(),tx=db.transaction(stores,'readwrite'),saved=done(tx)
-    stores.forEach(store=>tx.objectStore(store).clear());await saved;notifyGroups()
+    stores.forEach(store=>tx.objectStore(store).clear());tx.objectStore('groupState').put(crypto.randomUUID(),'identityEpoch');await saved;notifyGroups()
+  }
+  async acquireLease(owner:string,now=Date.now()){return this.lease(owner,now,false)}
+  async renewLease(owner:string,now=Date.now()){return this.lease(owner,now,true)}
+  private async lease(owner:string,now:number,renew:boolean){
+    const db=await this.open(),tx=db.transaction('groupState','readwrite'),saved=done(tx),state=tx.objectStore('groupState')
+    let acquired=false
+    const binding=state.get('binding') as IDBRequest<GroupBinding|undefined>
+    binding.onsuccess=()=>{
+      if(!binding.result?.enabled)return
+      const read=state.get('lease') as IDBRequest<{owner:string;expiresAt:number;binding:string}|undefined>
+      read.onsuccess=()=>{
+        const previous=read.result,key=bindingKey(binding.result)
+        if(renew&&(!previous||previous.owner!==owner||previous.binding!==key||previous.expiresAt<=now))return
+        if(!renew&&previous&&previous.binding===key&&previous.expiresAt>now&&previous.owner!==owner)return
+        state.put({owner,expiresAt:now+30000,binding:key},'lease');acquired=true
+      }
+    }
+    await saved;return acquired
+  }
+  async releaseLease(owner:string){
+    const db=await this.open(),tx=db.transaction('groupState','readwrite'),saved=done(tx),state=tx.objectStore('groupState'),read=state.get('lease')
+    read.onsuccess=()=>{if(read.result?.owner===owner)state.delete('lease')};await saved
+  }
+  async reserveIdentity<T extends {operationId:string}>(value:T,epoch?:string){return this.changeIdentity(undefined,value,epoch)}
+  async updateIdentity<T extends {operationId:string}>(operationId:string,value?:T){return this.changeIdentity(operationId,value)}
+  private async changeIdentity<T extends {operationId:string}>(expected:string|undefined,value:T|undefined,epoch?:string){
+    const db=await this.open(),tx=db.transaction('groupState','readwrite'),saved=done(tx),state=tx.objectStore('groupState'),read=state.get('pendingIdentity')
+    let changed=false
+    read.onsuccess=()=>{
+      if(read.result?.operationId!==expected)return
+      const epochRead=state.get('identityEpoch')
+      epochRead.onsuccess=()=>{
+        if(expected===undefined&&epochRead.result!==epoch)return
+        if(value)state.put(value,'pendingIdentity');else state.delete('pendingIdentity');changed=true
+      }
+    }
+    await saved;return changed
   }
 }

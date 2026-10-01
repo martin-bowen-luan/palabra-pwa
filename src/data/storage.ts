@@ -208,7 +208,7 @@ function migrateToVersionThree(transaction: IDBTransaction): void {
 export class PalabraStorage {
   readonly groups=new GroupLocal(()=>this.open())
   getGroupBinding(){return this.groups.getBinding()}
-  saveGroupBinding(binding:GroupBinding|undefined){return this.groups.saveBinding(binding)}
+  saveGroupBinding(binding:GroupBinding|undefined,guard?:{epoch:string|undefined}){return this.groups.saveBinding(binding,guard)}
   getGroupOutbox(){return this.groups.outbox()}
   ackGroupItem(key:string,version:number){return this.groups.ack(key,version)}
   saveGroupDraft(date:string,text:string){return this.groups.saveDraft(date,text)}
