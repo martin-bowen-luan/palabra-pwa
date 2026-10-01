@@ -6,6 +6,7 @@ import styles from '../styles/App.module.css'
 import { EnglishToday } from './EnglishToday'
 import { SpanishToday } from '../spanish/SpanishToday'
 import { useSpanish } from '../spanish/SpanishProvider'
+import { GroupEntry } from '../groups/GroupEntry'
 
 export function TodayPage() {
   const spanish = useSpanish()
@@ -64,6 +65,7 @@ export function TodayPage() {
       )}
     </section>
 
+    <GroupEntry />
     {preview && <section className={styles.wordPreview} aria-label="今天会遇见的词">
       <p>今天会遇见的一个词</p>
       <strong>{preview.term}</strong>
