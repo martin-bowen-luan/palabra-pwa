@@ -43,7 +43,7 @@ export function GroupsPage(){
     <header className={styles.header}><Link to="/today">回到今日</Link>{groups.configured&&<button className={styles.quiet} disabled={groups.syncing||!groups.online||!groups.enabled} onClick={()=>void groups.refresh()}>刷新</button>}</header>
     <h1>{groups.group?.group.name??'好友小组'}</h1>
     {!groups.configured?<p>好友小组尚未开放，正在完成服务与隐私配置。本地背词照常可用。</p>:<>
-      <p role="status" className={styles.status}>{!groups.enabled?'共享已关闭':!groups.online?`离线显示本机缓存${groups.cachedAt?`，更新于 ${new Date(groups.cachedAt).toLocaleString('zh-CN')}`:''}`:groups.syncing?'正在同步…':groups.cachedAt?`最近同步 ${new Date(groups.cachedAt).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`:'从加入后的练习开始共享'}{groups.pendingCount>0?` · 待同步 ${groups.pendingCount} 条`:''}</p>
+      <p role="status" className={styles.status}>{!groups.enabled?'共享已关闭':!groups.online?`离线显示本机缓存${groups.cachedAt?`，更新于 ${new Date(groups.cachedAt).toLocaleString('zh-CN')}`:''}`:groups.syncing?'正在同步…':groups.error&&groups.cachedAt?'同步未完成，显示本机缓存':groups.cachedAt?`最近同步 ${new Date(groups.cachedAt).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`:'从加入后的练习开始共享'}{groups.pendingCount>0?` · 待同步 ${groups.pendingCount} 条`:''}</p>
       {groups.error&&<p role="alert" className={styles.error}>{groups.error}</p>}
       {groups.notice&&<p className={styles.caption}>{groups.notice==='DEVICE_REPLACED'?'旧设备的未同步记录不会转移到新身份。':groups.notice}</p>}
       {!groups.enabled?<button className={styles.primary} disabled={groups.busy} onClick={()=>void groups.setEnabled(true)}>重新开启共享</button>:<>

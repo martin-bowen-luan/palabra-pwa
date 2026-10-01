@@ -11,7 +11,7 @@ import { hashSecret,makeSecret } from './secrets'
 interface Snapshot {profile?:GroupProfile;group?:GroupData;activity?:GroupActivity;cachedAt?:string}
 interface InviteOperation {secret:string;operationId:string;action:'create'|'rotate';name?:string;hash:string;confirmed?:boolean}
 interface GroupsValue extends Snapshot {
-  ready:boolean;configured:boolean;enabled:boolean;busy:boolean;syncing:boolean;online:boolean;error:string;pending?:PendingIdentity;invite?:InviteOperation;pendingCount:number;notice:string
+  ready:boolean;configured:boolean;enabled:boolean;hasIdentity:boolean;busy:boolean;syncing:boolean;online:boolean;error:string;pending?:PendingIdentity;invite?:InviteOperation;pendingCount:number;notice:string
   refresh:()=>Promise<void>;setEnabled:(enabled:boolean)=>Promise<boolean>
   beginIdentity:(action:'register'|'recover',input:{nickname?:string;code?:string},captchaToken?:string)=>Promise<boolean>
   resumeIdentity:(code?:string)=>Promise<boolean>;confirmIdentity:()=>Promise<boolean>;rotateRecovery:()=>Promise<boolean>
@@ -25,6 +25,7 @@ const Context=createContext<GroupsValue|null>(null)
 export function GroupsProvider({children,storageClient:db=defaultStorage,remote}: {children:ReactNode;storageClient?:PalabraStorage;remote?:GroupService}){
   const location=useLocation(),configured=Boolean(remote)||groupConfig.enabled
   const [ready,setReady]=useState(false),[enabled,setEnabledState]=useState(true),[snapshot,setSnapshot]=useState<Snapshot>({})
+  const [hasIdentity,setHasIdentity]=useState(false)
   const [busy,setBusy]=useState(false),[syncing,setSyncing]=useState(false),[error,setError]=useState(''),[online,setOnline]=useState(navigator.onLine)
   const [pending,setPending]=useState<PendingIdentity>(),[invite,setInvite]=useState<InviteOperation>(),[pendingCount,setPendingCount]=useState(0),[notice,setNotice]=useState('')
   const mounted=useRef(true),actionBusy=useRef(false),epoch=useRef(0),flight=useRef<Promise<void>|undefined>(undefined),queued=useRef(false)
@@ -37,6 +38,7 @@ export function GroupsProvider({children,storageClient:db=defaultStorage,remote}
       db.groups.read<PendingIdentity>('groupState','pendingIdentity'),db.groups.read<InviteOperation>('groupState','inviteOperation'),db.getGroupOutbox(),db.groups.read<string>('groupState','syncNotice'),
     ])
     if(!mounted.current)return
+    setHasIdentity(Boolean(consent||pendingValue))
     current.current.enabled=sharing!==false;setEnabledState(sharing!==false);setPending(pendingValue);setInvite(inviteValue);setPendingCount(queue.length);setNotice(noticeValue??'')
     if(consent&&sharing!==false&&configured&&cached)setSnapshot(cached)
     else if(!consent||sharing===false||!configured)setSnapshot({})
@@ -50,7 +52,7 @@ export function GroupsProvider({children,storageClient:db=defaultStorage,remote}
         await local()
         if(!mounted.current||version!==epoch.current||!current.current.configured||!current.current.enabled||!navigator.onLine||document.visibilityState==='hidden')return
         if(!await db.groups.read('groupState','consent'))return
-        const identityEpoch=await db.groups.read<string>('groupState','identityEpoch')
+        const guard=await db.groups.guard()
         const controller=new AbortController();refreshController.current=controller
         setSyncing(true);setError('')
         try{
@@ -58,9 +60,9 @@ export function GroupsProvider({children,storageClient:db=defaultStorage,remote}
           if(!await service.uid())return
           const response=await service.rpc<GroupProfile>('self',{},controller.signal)
           if(version!==epoch.current||controller.signal.aborted)return
-          if(!response.ok){if(response.code==='NOT_REGISTERED'){await db.saveGroupBinding(undefined);setSnapshot({});return}throw new GroupError(response.code)}
+          if(!response.ok){if(response.code==='NOT_REGISTERED'){if(await db.saveGroupBinding(undefined,guard))setSnapshot({});return}throw new GroupError(response.code)}
           const identity=response.data,waiting=await db.groups.read<PendingIdentity>('groupState','pendingIdentity')
-          if(!await db.saveGroupBinding(identity.binding?{...identity.binding,enabled:!waiting}:undefined,{epoch:identityEpoch}))return
+          if(!await db.saveGroupBinding(identity.binding?{...identity.binding,enabled:!waiting}:undefined,guard))return
           let group:GroupData|undefined,activity:GroupActivity|undefined
           if(identity.binding&&!waiting){
             await syncGroupOutbox(db,service,controller.signal)
@@ -69,11 +71,11 @@ export function GroupsProvider({children,storageClient:db=defaultStorage,remote}
           }
           if(version!==epoch.current||controller.signal.aborted||!mounted.current)return
           const next:Snapshot={profile:identity,group,activity,cachedAt:new Date().toISOString()}
-          if(!await db.groups.cacheSnapshot(next,identityEpoch))return
+          if(!await db.groups.cacheSnapshot(next,guard.epoch,guard.sharingEpoch))return
           setSnapshot(next);await local()
         }catch(cause){
           if(controller.signal.aborted||version!==epoch.current||!mounted.current)return
-          if(cause instanceof GroupError&&(revokedCodes.has(cause.code)||cause.code==='DISABLED')){await db.saveGroupBinding(undefined);setSnapshot({})}
+          if(cause instanceof GroupError&&(revokedCodes.has(cause.code)||cause.code==='DISABLED')){if(await db.saveGroupBinding(undefined,guard))setSnapshot({})}
           setError(groupErrorText(cause))
         }finally{if(mounted.current)setSyncing(false)}
       }while(queued.current&&version===epoch.current)
@@ -84,9 +86,19 @@ export function GroupsProvider({children,storageClient:db=defaultStorage,remote}
   useEffect(()=>{
     mounted.current=true
     const channel=typeof BroadcastChannel==='undefined'?undefined:new BroadcastChannel(`${db.aiChannelName}:groups`)
+    let observed:Awaited<ReturnType<typeof db.groups.guard>>|undefined
+    const invalidate=async()=>{
+      const latest=await db.groups.guard()
+      if(observed&&(observed.epoch!==latest.epoch||observed.sharingEpoch!==latest.sharingEpoch)){
+        refreshController.current?.abort()
+        if(observed.epoch!==latest.epoch){epoch.current++;actionController.current.abort();releaseGroupClient(db);remote?.stop()}
+      }
+      observed=latest
+    }
     const update=()=>{setOnline(navigator.onLine);if(!navigator.onLine||document.visibilityState==='hidden')refreshController.current?.abort();else void refreshRef.current()}
-    const changed=()=>{channel?.postMessage('changed');void refreshRef.current()}
-    if(channel)channel.onmessage=()=>{void refreshRef.current()}
+    const changed=()=>{channel?.postMessage('changed');void invalidate().then(()=>refreshRef.current())}
+    if(channel)channel.onmessage=()=>{void invalidate().then(()=>refreshRef.current())}
+    void invalidate()
     void local().then(async()=>{
       if(!configured){const binding=await db.getGroupBinding();if(binding?.enabled)await db.saveGroupBinding({...binding,enabled:false})}
       if(mounted.current){setReady(true);void refreshRef.current()}
@@ -112,33 +124,37 @@ export function GroupsProvider({children,storageClient:db=defaultStorage,remote}
   }
   const identity=async()=>new IdentityService(db,await client())
   const beginIdentity:GroupsValue['beginIdentity']=(action,input,captchaToken)=>execute(async()=>{
+    const guard=await db.groups.guard()
     if(!remote&&!import.meta.env.DEV&&!captchaToken)throw new GroupError('CAPTCHA_REQUIRED')
     if(!navigator.onLine)throw new GroupError('OFFLINE')
     const service=await client();await db.groups.write('groupState','consent',true);await db.groups.write('groupState','enabled',true)
-    await service.authenticate(captchaToken);await new IdentityService(db,service).start(action,input)
+    await service.authenticate(captchaToken)
+    const latest=await db.groups.guard();if(latest.epoch!==guard.epoch||latest.sharingEpoch!==guard.sharingEpoch)throw new GroupError('IDENTITY_CHANGED')
+    await new IdentityService(db,service).start(action,input)
   })
   const setEnabled:GroupsValue['setEnabled']=value=>execute(async()=>{
     refreshController.current?.abort()
-    await db.groups.write('groupState','enabled',value);current.current.enabled=value;setEnabledState(value)
-    const binding=await db.getGroupBinding();if(binding)await db.saveGroupBinding({...binding,enabled:false})
+    await db.groups.setSharing(value);current.current.enabled=value;setEnabledState(value)
     if(!value){releaseGroupClient(db);remote?.stop();setSnapshot({})}
   })
   const inviteGroup:GroupsValue['inviteGroup']=(action,name)=>execute(async()=>{
+    const identityEpoch=await db.groups.read<string>('groupState','identityEpoch')
     if(await db.groups.read('groupState','pendingIdentity'))throw new GroupError('PENDING_IDENTITY')
     let op=await db.groups.read<InviteOperation>('groupState','inviteOperation')
     if(op?.confirmed)throw new GroupError('PENDING_INVITE')
-    if(!op){const secret=makeSecret(16);op={secret,hash:await hashSecret(secret),operationId:crypto.randomUUID(),action,name};await db.groups.write('groupState','inviteOperation',op)}
+    if(!op){const secret=makeSecret(16);op={secret,hash:await hashSecret(secret),operationId:crypto.randomUUID(),action,name};if(!await db.groups.reserveInvite(op,identityEpoch))throw new GroupError('IDENTITY_CHANGED')}
     const service=await client(),receipt=await service.rpc<GroupData>('operation',{p_operation_id:op.operationId},actionController.current.signal)
     if(!receipt.ok){
       if(receipt.code!=='NOT_FOUND')throw new GroupError(receipt.code)
-      await call(op.action==='create'?'create_group':'manage_group',op.action==='create'?{p_name:op.name,p_invite_hash:op.hash,p_operation_id:op.operationId}:{p_action:'rotate_invite',p_target_profile_id:null,p_name:null,p_invite_hash:op.hash,p_operation_id:op.operationId})
+      const result=await service.rpc(op.action==='create'?'create_group':'manage_group',op.action==='create'?{p_name:op.name,p_invite_hash:op.hash,p_operation_id:op.operationId}:{p_action:'rotate_invite',p_target_profile_id:null,p_name:null,p_invite_hash:op.hash,p_operation_id:op.operationId},actionController.current.signal)
+      if(!result.ok){await db.groups.updateInvite(op.operationId);throw new GroupError(result.code)}
     }
-    await db.groups.write('groupState','inviteOperation',{...op,confirmed:true})
+    if(!await db.groups.updateInvite(op.operationId,{...op,confirmed:true}))throw new GroupError('IDENTITY_CHANGED')
   })
   const logout=()=>execute(async()=>{
     refreshController.current?.abort();releaseGroupClient(db);remote?.stop();await db.groups.logout();setSnapshot({});setPending(undefined);setInvite(undefined)
   })
-  const value:GroupsValue={...snapshot,ready,configured,enabled,busy,syncing,online,error,pending,invite,pendingCount,notice,refresh,setEnabled,beginIdentity,inviteGroup,
+  const value:GroupsValue={...snapshot,ready,configured,enabled,hasIdentity,busy,syncing,online,error,pending,invite,pendingCount,notice,refresh,setEnabled,beginIdentity,inviteGroup,
     resumeIdentity:code=>execute(async()=>{await(await identity()).resume(code)}),confirmIdentity:()=>execute(async()=>{await(await identity()).confirmSaved()}),
     rotateRecovery:()=>execute(async()=>{await(await identity()).start('rotate')}),dismissInvite:()=>execute(()=>db.groups.remove('groupState','inviteOperation')),
     call,perform:(name,args)=>execute(async()=>{await call(name,args)}),draft:async date=>await db.groups.read<string>('groupDrafts',date)??'',saveDraft:(date,text)=>db.saveGroupDraft(date,text),publish:date=>execute(()=>db.publishGroupDraft(date)),logout,

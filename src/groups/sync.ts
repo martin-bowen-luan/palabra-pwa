@@ -8,7 +8,7 @@ export interface GroupRemote {
 export class GroupError extends Error {
   constructor(public code:string,public retryable=false,public retryAfterMs=0){super(code);this.name='GroupError'}
 }
-export const revokedCodes=new Set(['DEVICE_REPLACED','NOT_REGISTERED','AUTH_REQUIRED','STALE_BINDING','NOT_MEMBER','MEMBERSHIP_REVOKED'])
+export const revokedCodes=new Set(['DEVICE_REPLACED','NOT_REGISTERED','STALE_BINDING','NOT_MEMBER','MEMBERSHIP_REVOKED'])
 const abortError=()=>new DOMException('已取消','AbortError')
 export function pause(ms:number,signal:AbortSignal):Promise<void>{
   return new Promise((resolve,reject)=>{
@@ -47,6 +47,7 @@ export async function syncGroupOutbox(db:PalabraStorage,remote:GroupRemote,signa
         await db.groups.write('groupState','syncNotice','超过 30 天的待传记录不再共享，本地台账仍保留。');continue
       }
       for(let attempt=0;attempt<3;attempt++) {
+        const guard=await db.groups.guard()
         const binding=await db.getGroupBinding()
         if(!binding?.enabled)return
         if(binding.membershipId!==item.payload.membershipId||binding.membershipGeneration!==item.payload.membershipGeneration||binding.deviceGeneration!==item.payload.deviceGeneration){await db.ackGroupItem(item.key,item.version);break}
@@ -58,7 +59,7 @@ export async function syncGroupOutbox(db:PalabraStorage,remote:GroupRemote,signa
           await db.ackGroupItem(item.key,item.version);break
         }catch(error){
           if(lifetime.signal.aborted||(error instanceof DOMException&&error.name==='AbortError'))return
-          if(error instanceof GroupError&&revokedCodes.has(error.code)){await db.saveGroupBinding(undefined);await db.groups.write('groupState','syncNotice',error.code);throw error}
+          if(error instanceof GroupError&&revokedCodes.has(error.code)){if(await db.saveGroupBinding(undefined,guard))await db.groups.write('groupState','syncNotice',error.code);throw error}
           if(error instanceof GroupError&&(!error.retryable||error.retryAfterMs>9000)||attempt===2)throw error
           const delay=Math.max([1000,3000][attempt]+Math.floor(Math.random()*501),error instanceof GroupError?error.retryAfterMs:0)
           await pause(delay,lifetime.signal)

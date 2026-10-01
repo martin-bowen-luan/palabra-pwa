@@ -33,9 +33,9 @@ export function GroupSettingsPanel(){
     {groups.profile&&<><label className={styles.check}><input type="checkbox" checked={groups.profile.receiveNudges} disabled={groups.busy||!groups.online} onChange={e=>void groups.perform('update_profile',{p_nickname:groups.profile!.nickname,p_receive_nudges:e.target.checked,p_operation_id:crypto.randomUUID()})}/>接收朋友的轻提醒</label>
       <div className={styles.actions}><button disabled={groups.busy||Boolean(groups.pending)||!groups.online} onClick={()=>void groups.rotateRecovery()}>重新生成恢复码</button></div>
       <p className={styles.caption}>新码生成后请到好友小组页保存，旧码随即失效。</p>
-      <ConfirmButton label="退出本机身份" disabled={groups.busy} description="请先保存恢复码。退出会清除本机小组凭据、缓存及待传项，不删除本机背词记录；未同步部分不会共享。" onConfirm={groups.logout}/>
       <ConfirmButton label="删除云端小组资料" disabled={groups.busy||!groups.online} description="将删除你的昵称、小组资格、云端打卡、留言和提醒，无法恢复。组主需先转交或解散。此操作不删除本机学习记录，也不等于删除整个 Supabase Auth 账号。" onConfirm={groups.deleteProfile}/>
     </>}
+    {groups.hasIdentity&&<ConfirmButton label="退出本机身份" disabled={groups.busy} description="请先保存恢复码。退出会清除本机小组凭据、缓存及待传项，不删除本机背词记录；未同步部分不会共享。身份被替换后，可先退出本机身份，再用最新恢复码找回。" onConfirm={groups.logout}/>}
     <p><Link to="/groups">打开好友小组</Link></p>
     {groups.error&&<p className={styles.error} role="alert">{groups.error}</p>}
   </section>

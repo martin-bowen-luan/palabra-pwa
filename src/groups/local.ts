@@ -3,6 +3,7 @@ import type { CheckinDay,CheckinEvent,GroupBinding,GroupOutboxItem } from './typ
 export const GROUP_STORES=['groupState','groupLedger','groupOutbox','groupCache','groupAuth','groupDrafts'] as const
 export const CHECKIN_STORES=['groupState','groupLedger','groupOutbox']
 type Store=typeof GROUP_STORES[number]
+export interface GroupGuard {epoch:string|undefined;sharingEpoch?:string}
 export const GROUP_CHANGE='palabra:groups-changed'
 export function notifyGroups(){if(typeof window!=='undefined')window.dispatchEvent(new Event(GROUP_CHANGE))}
 export function result<T>(request:IDBRequest<T>):Promise<T>{return new Promise((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})}
@@ -39,7 +40,29 @@ export class GroupLocal {
   async write<T>(store:Store,key:string,value:T):Promise<void>{const db=await this.open(),tx=db.transaction(store,'readwrite'),saved=done(tx);tx.objectStore(store).put(value,key);await saved}
   async remove(store:Store,key:string):Promise<void>{const db=await this.open(),tx=db.transaction(store,'readwrite'),saved=done(tx);tx.objectStore(store).delete(key);await saved}
   async getBinding(){return this.read<GroupBinding>('groupState','binding')}
-  async saveBinding(binding:GroupBinding|undefined,guard?:{epoch:string|undefined}){
+  async guard():Promise<GroupGuard>{const db=await this.open(),state=db.transaction('groupState').objectStore('groupState');const [epoch,sharingEpoch]=await Promise.all([result(state.get('identityEpoch')),result(state.get('sharingEpoch'))]);return{epoch,sharingEpoch}}
+  private whenCurrent(state:IDBObjectStore,guard:GroupGuard,apply:()=>void){
+    const epoch=state.get('identityEpoch'),sharing=state.get('sharingEpoch'),enabled=state.get('enabled')
+    enabled.onsuccess=()=>{if(epoch.result===guard.epoch&&sharing.result===guard.sharingEpoch&&enabled.result!==false)apply()}
+  }
+  async setSharing(enabled:boolean){
+    const db=await this.open(),tx=db.transaction('groupState','readwrite'),saved=done(tx),state=tx.objectStore('groupState'),binding=state.get('binding')
+    state.put(enabled,'enabled');state.put(crypto.randomUUID(),'sharingEpoch');state.delete('lease')
+    binding.onsuccess=()=>{if(binding.result)state.put({...binding.result,enabled:false},'binding')}
+    await saved;notifyGroups()
+  }
+  async authItem(key:string,epoch:string|undefined,write?:{value?:string}):Promise<string|null>{
+    const db=await this.open(),tx=db.transaction(['groupState','groupAuth'],write?'readwrite':'readonly'),saved=done(tx),check=tx.objectStore('groupState').get('identityEpoch')
+    let value:string|null=null
+    check.onsuccess=()=>{
+      if(check.result!==epoch)return
+      const auth=tx.objectStore('groupAuth')
+      if(write){if(write.value===undefined)auth.delete(key);else auth.put(write.value,key)}
+      else{const read=auth.get(key);read.onsuccess=()=>{value=read.result??null}}
+    }
+    await saved;return value
+  }
+  async saveBinding(binding:GroupBinding|undefined,guard?:GroupGuard){
     const db=await this.open(),tx=db.transaction(['groupState','groupOutbox','groupCache','groupDrafts'],'readwrite'),saved=done(tx)
     const state=tx.objectStore('groupState'),read=state.get('binding') as IDBRequest<GroupBinding|undefined>
     let changed=false,accepted=false
@@ -51,15 +74,15 @@ export class GroupLocal {
         }
         if(binding)state.put(binding,'binding');else state.delete('binding')
       }
-      if(guard){const epoch=state.get('identityEpoch');epoch.onsuccess=()=>{if(epoch.result===guard.epoch)apply()}}
+      if(guard)this.whenCurrent(state,guard,apply)
       else apply()
     }
     await saved;if(changed)notifyGroups();return accepted
   }
-  async cacheSnapshot(value:unknown,epoch:string|undefined){
-    const db=await this.open(),tx=db.transaction(['groupState','groupCache'],'readwrite'),saved=done(tx),read=tx.objectStore('groupState').get('identityEpoch')
+  async cacheSnapshot(value:unknown,epoch:string|undefined,sharingEpoch?:string){
+    const db=await this.open(),tx=db.transaction(['groupState','groupCache'],'readwrite'),saved=done(tx)
     let accepted=false
-    read.onsuccess=()=>{if(read.result===epoch){tx.objectStore('groupCache').put(value,'snapshot');accepted=true}}
+    this.whenCurrent(tx.objectStore('groupState'),{epoch,sharingEpoch},()=>{tx.objectStore('groupCache').put(value,'snapshot');accepted=true})
     await saved;return accepted
   }
   async outbox():Promise<GroupOutboxItem[]>{const db=await this.open();return result(db.transaction('groupOutbox').objectStore('groupOutbox').getAll())}
@@ -108,10 +131,14 @@ export class GroupLocal {
       if(!binding.result?.enabled)return
       const read=state.get('lease') as IDBRequest<{owner:string;expiresAt:number;binding:string}|undefined>
       read.onsuccess=()=>{
+        const enabled=state.get('enabled')
+        enabled.onsuccess=()=>{
+        if(enabled.result===false)return
         const previous=read.result,key=bindingKey(binding.result)
         if(renew&&(!previous||previous.owner!==owner||previous.binding!==key||previous.expiresAt<=now))return
         if(!renew&&previous&&previous.binding===key&&previous.expiresAt>now&&previous.owner!==owner)return
         state.put({owner,expiresAt:now+30000,binding:key},'lease');acquired=true
+        }
       }
     }
     await saved;return acquired
@@ -122,15 +149,17 @@ export class GroupLocal {
   }
   async reserveIdentity<T extends {operationId:string}>(value:T,epoch?:string){return this.changeIdentity(undefined,value,epoch)}
   async updateIdentity<T extends {operationId:string}>(operationId:string,value?:T){return this.changeIdentity(operationId,value)}
-  private async changeIdentity<T extends {operationId:string}>(expected:string|undefined,value:T|undefined,epoch?:string){
-    const db=await this.open(),tx=db.transaction('groupState','readwrite'),saved=done(tx),state=tx.objectStore('groupState'),read=state.get('pendingIdentity')
+  async reserveInvite<T extends {operationId:string}>(value:T,epoch?:string){return this.changeIdentity(undefined,value,epoch,'inviteOperation')}
+  async updateInvite<T extends {operationId:string}>(operationId:string,value?:T){return this.changeIdentity(operationId,value,undefined,'inviteOperation')}
+  private async changeIdentity<T extends {operationId:string}>(expected:string|undefined,value:T|undefined,epoch?:string,key='pendingIdentity'){
+    const db=await this.open(),tx=db.transaction('groupState','readwrite'),saved=done(tx),state=tx.objectStore('groupState'),read=state.get(key)
     let changed=false
     read.onsuccess=()=>{
       if(read.result?.operationId!==expected)return
       const epochRead=state.get('identityEpoch')
       epochRead.onsuccess=()=>{
         if(expected===undefined&&epochRead.result!==epoch)return
-        if(value)state.put(value,'pendingIdentity');else state.delete('pendingIdentity');changed=true
+        if(value)state.put(value,key);else state.delete(key);changed=true
       }
     }
     await saved;return changed

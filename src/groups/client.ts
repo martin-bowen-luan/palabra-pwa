@@ -25,20 +25,33 @@ export interface GroupService extends GroupRemote {
   stop():void
 }
 class SupabaseGroups implements GroupService {
-  constructor(private sdk:SupabaseClient,private config:{url:string;key:string}){}
-  async uid(){const {data,error}=await this.sdk.auth.getSession();if(error)throw new GroupError('AUTH_REQUIRED');return data.session?.user.id}
+  constructor(private sdk:SupabaseClient,private config:{url:string;key:string},private valid:()=>Promise<boolean>,private lifetime:AbortController){}
+  private async session(){
+    if(!await this.valid())throw new GroupError('IDENTITY_CHANGED')
+    const {data,error}=await this.sdk.auth.getSession()
+    if(!await this.valid())throw new GroupError('IDENTITY_CHANGED')
+    if(error){
+      if(error.name==='AuthRetryableFetchError'||error.status===0||(error.status??0)>=500)throw new GroupError('SERVER_UNAVAILABLE',true)
+      throw new GroupError('AUTH_REQUIRED')
+    }
+    return data.session
+  }
+  uid(){return timed(async()=> (await this.session())?.user.id,this.lifetime.signal)}
   async authenticate(captchaToken?:string){
+    return timed(async()=>{
     const uid=await this.uid();if(uid)return uid
     const {data,error}=await this.sdk.auth.signInAnonymously({options:{captchaToken}})
+    if(!await this.valid())throw new GroupError('IDENTITY_CHANGED')
     if(error||!data.user)throw new GroupError(error?.code==='captcha_failed'?'CAPTCHA_FAILED':'AUTH_FAILED')
     return data.user.id
+    },this.lifetime.signal)
   }
   async rpc<T>(name:RpcName,params:Record<string,unknown>={},signal=new AbortController().signal):Promise<RpcResult<T>>{
     return timed(async requestSignal=>{
-      const {data,error}=await this.sdk.auth.getSession()
-      if(error||!data.session)throw new GroupError('AUTH_REQUIRED')
-      const response=await fetch(`${this.config.url}/rest/v1/palabra_${name}`,{
-        method:'POST',headers:{apikey:this.config.key,Authorization:`Bearer ${data.session.access_token}`,'Content-Type':'application/json'},
+      const session=await this.session()
+      if(!session)throw new GroupError('AUTH_REQUIRED')
+      const response=await fetch(`${this.config.url}/rest/v1/rpc/palabra_${name}`,{
+        method:'POST',headers:{apikey:this.config.key,Authorization:`Bearer ${session.access_token}`,'Content-Type':'application/json'},
         body:JSON.stringify(params),signal:requestSignal,cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',
       })
       if(response.status===401||response.status===403)throw new GroupError('AUTH_REQUIRED')
@@ -57,7 +70,7 @@ class SupabaseGroups implements GroupService {
     p_membership_id:payload.membershipId,p_membership_generation:payload.membershipGeneration,p_device_generation:payload.deviceGeneration,
     p_date:payload.date,p_version:version,p_text:payload.text,
   },signal)
-  stop(){this.sdk.auth.stopAutoRefresh()}
+  stop(){this.lifetime.abort();void this.sdk.auth.stopAutoRefresh()?.catch(()=>{})}
 }
 const instances=new WeakMap<PalabraStorage,Promise<GroupService|undefined>>()
 export const groupConfig:GroupConfig={enabled:import.meta.env.VITE_GROUPS_ENABLED==='true',url:import.meta.env.VITE_SUPABASE_URL??'',key:import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY??''}
@@ -65,17 +78,27 @@ export function getGroupClient(db:PalabraStorage):Promise<GroupService|undefined
   const existing=instances.get(db);if(existing)return existing
   const pending=(async()=>{
     const config=validateGroupConfig(groupConfig,import.meta.env.DEV);if(!config)return undefined
+    const epoch=await db.groups.read<string>('groupState','identityEpoch')
     const {createClient}=await import('@supabase/supabase-js')
-    const sdk=createClient(config.url,config.key,{auth:{persistSession:true,detectSessionInUrl:false,autoRefreshToken:true,
+    const lifetime=new AbortController()
+    const authFetch:typeof fetch=async(input,init)=>{
+      const linked=new AbortController(),abort=()=>linked.abort()
+      lifetime.signal.addEventListener('abort',abort,{once:true});init?.signal?.addEventListener('abort',abort,{once:true})
+      if(lifetime.signal.aborted||init?.signal?.aborted)abort()
+      try{return await timed(signal=>fetch(input,{...init,signal}),linked.signal)}
+      finally{lifetime.signal.removeEventListener('abort',abort);init?.signal?.removeEventListener('abort',abort)}
+    }
+    const sdk=createClient(config.url,config.key,{global:{fetch:authFetch},auth:{persistSession:true,detectSessionInUrl:false,autoRefreshToken:true,
       storageKey:`palabra-group-auth:${new URL(config.url).host}`,
-      storage:{getItem:key=>db.readAuthItem(key),setItem:(key,value)=>db.writeAuthItem(key,value),removeItem:key=>db.removeAuthItem(key)},
+      storage:{getItem:key=>db.groups.authItem(key,epoch),setItem:async(key,value)=>{await db.groups.authItem(key,epoch,{value})},removeItem:async key=>{await db.groups.authItem(key,epoch,{})}},
     }})
-    return new SupabaseGroups(sdk,config)
+    return new SupabaseGroups(sdk,config,async()=>await db.groups.read('groupState','identityEpoch')===epoch,lifetime)
   })()
   instances.set(db,pending);void pending.catch(()=>instances.delete(db));return pending
 }
 export function releaseGroupClient(db:PalabraStorage){const previous=instances.get(db);instances.delete(db);void previous?.then(client=>client?.stop()).catch(()=>{})}
 const messages:Record<string,string>={
+  OFFLINE:'目前离线，已保存的打卡和留言会在联网后补传。',CAPTCHA_REQUIRED:'请先完成验证码。',RECOVERY_CODE_REQUIRED:'请重新输入原恢复码以继续未完成的操作。',PENDING_INVITE:'请先保存当前邀请码。',
   DISABLED:'小组服务暂未开放，本地背词不受影响。',INVALID_CONFIG:'小组服务配置不完整。',AUTH_REQUIRED:'身份验证已失效，请重新打开小组或恢复身份。',
   AUTH_FAILED:'无法建立设备身份，请检查网络及验证码。',CAPTCHA_FAILED:'验证码未通过，请重新验证。',DEVICE_REPLACED:'身份已在另一台设备恢复，本机仍可继续背词。',
   NOT_REGISTERED:'尚未建立小组身份。',NOT_MEMBER:'你目前不在小组中。',STALE_BINDING:'小组资格已变更，旧待传记录不会共享。',
