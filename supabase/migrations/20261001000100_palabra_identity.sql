@@ -91,7 +91,7 @@ $$;
 create function palabra_private.replay(op uuid,params jsonb) returns jsonb language plpgsql set search_path='' as $$
 declare receipt palabra_private.operation_receipts;
 begin
-  select * into receipt from palabra_private.operation_receipts where auth_uid=auth.uid() and operation_id=op;
+  select * into receipt from palabra_private.operation_receipts where auth_uid=auth.uid() and operation_id=op and created_at>=now()-interval '30 days';
   if found then
     if receipt.fingerprint<>palabra_private.digest(params::text) then return palabra_private.fail('OPERATION_CONFLICT'); end if;
     return receipt.result;
@@ -100,6 +100,7 @@ begin
 end $$;
 create function palabra_private.receipt(op uuid,params jsonb,result jsonb) returns jsonb language plpgsql set search_path='' as $$
 begin
+  delete from palabra_private.operation_receipts where auth_uid=auth.uid() and operation_id=op and created_at<now()-interval '30 days';
   insert into palabra_private.operation_receipts(auth_uid,operation_id,fingerprint,result)
   values(auth.uid(),op,palabra_private.digest(params::text),result);
   return result;
@@ -123,7 +124,7 @@ declare err jsonb; result jsonb;
 begin
   err:=palabra_private.guard(); if err is not null then return err; end if;
   if exists(select 1 from palabra_private.device_bindings where auth_uid=auth.uid() and not active) then return palabra_private.fail('NOT_FOUND'); end if;
-  select r.result into result from palabra_private.operation_receipts r where auth_uid=auth.uid() and operation_id=p_operation_id;
+  select r.result into result from palabra_private.operation_receipts r where auth_uid=auth.uid() and operation_id=p_operation_id and created_at>=now()-interval '30 days';
   return coalesce(result,palabra_private.fail('NOT_FOUND'));
 end $$;
 create function public.palabra_register(p_nickname text,p_recovery_hash text,p_operation_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$

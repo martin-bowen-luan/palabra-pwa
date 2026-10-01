@@ -122,7 +122,8 @@ begin
       update public.palabra_groups set name=btrim(p_name) where id=grp.id;
     when 'rotate_invite' then
       if p_invite_hash is null or p_invite_hash !~ '^[a-f0-9]{64}$' or exists(select 1 from palabra_private.group_invites where code_hash=p_invite_hash) then return palabra_private.fail('INVALID_INPUT'); end if;
-      update palabra_private.group_invites set code_hash=p_invite_hash,expires_at=now()+interval '7 days' where group_id=grp.id;
+      insert into palabra_private.group_invites(group_id,code_hash) values(grp.id,p_invite_hash)
+      on conflict(group_id) do update set code_hash=excluded.code_hash,expires_at=now()+interval '7 days';
     when 'remove','transfer' then
       if p_target_profile_id is null or p_target_profile_id=actor or not exists(select 1 from public.palabra_memberships where profile_id=p_target_profile_id and group_id=grp.id and left_at is null) then return palabra_private.fail('INVALID_TARGET'); end if;
       if p_action='remove' then update public.palabra_memberships set left_at=now() where profile_id=p_target_profile_id and left_at is null;
