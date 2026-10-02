@@ -5,4 +5,5 @@ coverage/
 *.log
 .DS_Store
 work/
-
+.env.local
+.env.*.local

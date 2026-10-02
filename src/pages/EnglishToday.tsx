@@ -7,6 +7,7 @@ import { PrimaryRangeFilter } from '../wordbooks/PrimaryRangeFilter'
 import { toLocalDate } from '../domain/stats'
 import type { StudyMode } from '../types'
 import styles from '../styles/App.module.css'
+import { GroupEntry } from '../groups/GroupEntry'
 
 export function EnglishToday() {
   const { activeSession, dailyPlan, progress, sessions, settings, streak, startSession,selectedWordbook,wordbooks,allEnglishDueCount,updateSettings } = useAppState()
@@ -43,6 +44,7 @@ export function EnglishToday() {
       {!remaining && !activeSession && dailyPlan.newWords.length > 0 && <button className={styles.textButton} disabled={busy} onClick={() => void begin('learn', 5)}>再学 5 个</button>}
       {error && <p role="alert" className={styles.inlineNotice}>{error}</p>}
     </section>
+    <GroupEntry />
     <Link to="/wordle" className={styles.wordleEntry}><span>Wordle 猜词</span><small>五个字母，六次机会 · 随时来一局</small></Link>
     <section className={styles.wordPreview}><p>让记忆慢慢变牢</p><span>新词短时间内回访，记住后逐步拉长间隔。拼写跳过的词会较早回来，标为熟练的词不再复习。</span></section>
   </main>

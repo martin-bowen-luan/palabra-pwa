@@ -12,6 +12,8 @@ import styles from './styles/App.module.css'
 import { AiProvider } from './ai/AiProvider'
 import { WordlePage } from './wordle/WordlePage'
 import { SpanishProvider } from './spanish/SpanishProvider'
+import { GroupsProvider } from './groups/GroupsProvider'
+import { GroupsPage } from './groups/GroupsPage'
 
 function AppRoutes({ storageClient }: { storageClient?: PalabraStorage }) {
   const { loadError, ready } = useAppState()
@@ -32,6 +34,7 @@ function AppRoutes({ storageClient }: { storageClient?: PalabraStorage }) {
       <Route path="/wordle" element={<WordlePage storageClient={storageClient} />} />
       <Route path="/progress" element={<ProgressPage />} />
       <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/groups" element={<GroupsPage />} />
       <Route path="*" element={<Navigate to="/today" replace />} />
     </Routes>
     {!immersive && <BottomNav />}
@@ -39,5 +42,5 @@ function AppRoutes({ storageClient }: { storageClient?: PalabraStorage }) {
 }
 
 export default function App({ storageClient }: { storageClient?: PalabraStorage }) {
-  return <AppStateProvider storageClient={storageClient}><SpanishProvider storageClient={storageClient}><AiProvider storageClient={storageClient}><AppRoutes storageClient={storageClient} /></AiProvider></SpanishProvider></AppStateProvider>
+  return <AppStateProvider storageClient={storageClient}><GroupsProvider storageClient={storageClient}><SpanishProvider storageClient={storageClient}><AiProvider storageClient={storageClient}><AppRoutes storageClient={storageClient} /></AiProvider></SpanishProvider></GroupsProvider></AppStateProvider>
 }

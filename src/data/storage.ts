@@ -13,8 +13,10 @@ import { DEFAULT_AI_SETTINGS, type AiSettings, type EncryptedCredential, type Wo
 
 import type { WordleDictionaryEntry, WordleGame } from '../wordle/types'
 import type { SpanishDailyRecord, SpanishDailyUpdate } from '../spanish/sessionTypes'
+import { CHECKIN_STORES,GROUP_STORES,GroupLocal,putGroupCheckin,notifyGroups } from '../groups/local'
+import type { CheckinEvent,GroupBinding } from '../groups/types'
 
-const DB_VERSION = 7
+const DB_VERSION = 8
 const STORE_WORDBOOKS = 'wordbooks'
 const STORE_SPANISH_DAYS = 'spanishDays'
 const STORE_WORDLE = 'wordleGame'
@@ -204,6 +206,16 @@ function migrateToVersionThree(transaction: IDBTransaction): void {
 }
 
 export class PalabraStorage {
+  readonly groups=new GroupLocal(()=>this.open())
+  getGroupBinding(){return this.groups.getBinding()}
+  saveGroupBinding(binding:GroupBinding|undefined,guard?:{epoch:string|undefined;sharingEpoch?:string}){return this.groups.saveBinding(binding,guard)}
+  getGroupOutbox(){return this.groups.outbox()}
+  ackGroupItem(key:string,version:number){return this.groups.ack(key,version)}
+  saveGroupDraft(date:string,text:string){return this.groups.saveDraft(date,text)}
+  publishGroupDraft(date:string){return this.groups.publishDraft(date)}
+  async readAuthItem(key:string){return await this.groups.read<string>('groupAuth',key)??null}
+  writeAuthItem(key:string,value:string){return this.groups.write('groupAuth',key,value)}
+  removeAuthItem(key:string){return this.groups.remove('groupAuth',key)}
   private databasePromise?: Promise<IDBDatabase>
   private vocabularyInitialization?: Promise<void>
   private readonly vocabularySeeds: Record<LearningLanguage, readonly VocabularyEntry[]>
@@ -237,6 +249,7 @@ export class PalabraStorage {
         let blocked = false
         request.onupgradeneeded = (event) => {
           const database = request.result
+          for(const name of GROUP_STORES)if(!database.objectStoreNames.contains(name))database.createObjectStore(name)
           if (!database.objectStoreNames.contains(STORE_WORDBOOKS)) database.createObjectStore(STORE_WORDBOOKS, { keyPath:'id' })
           if (!database.objectStoreNames.contains(STORE_SPANISH_DAYS)) database.createObjectStore(STORE_SPANISH_DAYS, { keyPath: 'id' })
           if (!database.objectStoreNames.contains(STORE_WORDLE)) database.createObjectStore(STORE_WORDLE, { keyPath: 'id' })
@@ -453,10 +466,10 @@ export class PalabraStorage {
     return result
   }
 
-  async commitStudyStep(progress: WordProgress | undefined, active: ActiveSession, daily?: SpanishDailyUpdate): Promise<void> {
+  async commitStudyStep(progress: WordProgress | undefined, active: ActiveSession, daily?: SpanishDailyUpdate, checkin?:CheckinEvent): Promise<void> {
     if (daily && active.language !== 'es') throw new Error('Spanish daily entry requires Spanish session')
     const database = await this.open()
-    const transaction = database.transaction([STORE_PROGRESS, STORE_ACTIVE, ...(daily ? [STORE_SPANISH_DAYS] : [])], 'readwrite')
+    const transaction = database.transaction([STORE_PROGRESS, STORE_ACTIVE, ...(daily ? [STORE_SPANISH_DAYS] : []),...(checkin?CHECKIN_STORES:[])], 'readwrite')
     const activeStore = transaction.objectStore(STORE_ACTIVE)
     const request = activeStore.get(activeSessionId(active.language)) as IDBRequest<ActiveSession | undefined>
     let stale = false
@@ -469,20 +482,23 @@ export class PalabraStorage {
       if (progress) transaction.objectStore(STORE_PROGRESS).put({ ...progress, language: inferredLanguage(progress) })
       activeStore.put({ ...active, id: activeSessionId(active.language) })
       if (daily) putSpanishDailyUpdate(transaction, daily)
+      if(checkin)putGroupCheckin(transaction,checkin)
     }
     try {
       await transactionDone(transaction)
+      if(checkin)notifyGroups()
     } catch (error) {
       if (stale) throw new StaleStudySessionError()
       throw error
     }
   }
 
-  async completeStudyGroup(completed: StudySession, language: LearningLanguage, progress?: WordProgress, finalSession?: ActiveSession, daily?: SpanishDailyUpdate | readonly SpanishDailyUpdate[]): Promise<void> {
+  async completeStudyGroup(completed: StudySession, language: LearningLanguage, progress?: WordProgress, finalSession?: ActiveSession, daily?: SpanishDailyUpdate | readonly SpanishDailyUpdate[], checkin?:CheckinEvent): Promise<void> {
     if (daily && language !== 'es') throw new Error('Spanish daily entry requires Spanish session')
     const database = await this.open()
     const stores = progress ? [STORE_SESSIONS, STORE_ACTIVE, STORE_PROGRESS] : [STORE_SESSIONS, STORE_ACTIVE]
     if (daily) stores.push(STORE_SPANISH_DAYS)
+    if(checkin)stores.push(...CHECKIN_STORES)
     const transaction = database.transaction(stores, 'readwrite')
     const activeStore = transaction.objectStore(STORE_ACTIVE)
     const commit = () => {
@@ -490,6 +506,7 @@ export class PalabraStorage {
       transaction.objectStore(STORE_SESSIONS).put({ ...completed, language })
       activeStore.delete(activeSessionId(language))
       if (daily) putSpanishDailyUpdates(transaction, Array.isArray(daily) ? daily : [daily as SpanishDailyUpdate])
+      if(checkin)putGroupCheckin(transaction,checkin)
     }
     let stale = false
     if (finalSession) {
@@ -503,6 +520,7 @@ export class PalabraStorage {
     } else commit()
     try {
       await transactionDone(transaction)
+      if(checkin)notifyGroups()
     } catch (error) {
       if (stale) throw new StaleStudySessionError()
       throw error
@@ -546,10 +564,10 @@ export class PalabraStorage {
   }
 
   /** One CAS transaction owns every effect of a cloze step, including the final step. */
-  async commitSpanishStep(active: ActiveSession, progress?: WordProgress, update?: SpanishDailyUpdate, completed?: StudySession): Promise<void> {
+  async commitSpanishStep(active: ActiveSession, progress?: WordProgress, update?: SpanishDailyUpdate, completed?: StudySession, checkin?:CheckinEvent): Promise<void> {
     if (active.language !== 'es' || !active.spanish) throw new Error('Invalid Spanish session')
     const db = await this.open()
-    const tx = db.transaction([STORE_ACTIVE, STORE_PROGRESS, STORE_SPANISH_DAYS, STORE_SESSIONS], 'readwrite')
+    const tx = db.transaction([STORE_ACTIVE, STORE_PROGRESS, STORE_SPANISH_DAYS, STORE_SESSIONS,...(checkin?CHECKIN_STORES:[])], 'readwrite')
     const activeStore = tx.objectStore(STORE_ACTIVE)
     const request = activeStore.get('active-session:es') as IDBRequest<ActiveSession | undefined>
     let stale = false
@@ -561,8 +579,9 @@ export class PalabraStorage {
         activeStore.delete('active-session:es')
       } else activeStore.put(active)
       if (update) putSpanishDailyUpdate(tx, update)
+      if(checkin)putGroupCheckin(tx,checkin)
     }
-    try { await transactionDone(tx) } catch (error) {
+    try { await transactionDone(tx);if(checkin)notifyGroups() } catch (error) {
       if (stale) throw new StaleStudySessionError()
       throw error
     }

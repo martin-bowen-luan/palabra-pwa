@@ -6,6 +6,7 @@ import { buildSpanishGroup, eligibleSpanish } from './course'
 import { useSpanish } from './SpanishProvider'
 import base from '../styles/App.module.css'
 import styles from './Spanish.module.css'
+import { GroupEntry } from '../groups/GroupEntry'
 
 export function SpanishToday() {
   const {activeSession,settings,vocabulary,progress}=useAppState(),course=useSpanish(),navigate=useNavigate()
@@ -35,5 +36,6 @@ export function SpanishToday() {
       <div><h2>学习</h2><p>{newRemaining} 个待学词形</p><small>到期复习优先，再加入新词。</small></div>
       <div><h2>复习</h2><p>{due} 个已到期</p><button className={base.textButton} disabled={course.busy||!due} onClick={()=>void begin('review',count>=goal)}>只复习到期词</button></div>
     </section>
+    <GroupEntry />
   </main>
 }

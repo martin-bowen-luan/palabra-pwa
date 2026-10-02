@@ -5,6 +5,7 @@ import { toLocalDate } from '../domain/stats'
 import { advanceSpanish, buildSpanishGroup, createSpanishSession, currentSpanishWord, eligibleSpanish, removeSpanishWord, scheduleSpanishReview, spanishHint, submitSpanish } from './course'
 import type { ActiveSession, StudySession, WordProgress } from '../types'
 import type { SpanishDailyRecord, SpanishDailyUpdate, SpanishOutcome } from './sessionTypes'
+import type { CheckinEvent,PracticeOutcome } from '../groups/types'
 
 interface SpanishContextValue {
   enabled: boolean
@@ -92,7 +93,11 @@ export function SpanishProvider({children,storageClient=defaultStorage}:{childre
   }
   const identity=()=>active.current?.spanish?`${active.current.startedAt}:${active.current.practice?.promptNumber}`:undefined
   const displayedIdentity=()=>appRef.current.activeSession?.spanish?`${appRef.current.activeSession.startedAt}:${appRef.current.activeSession.practice?.promptNumber}`:undefined
-  async function persist(next:ActiveSession,progress?:WordProgress,daily?:SpanishDailyUpdate):Promise<boolean> {
+  function groupCheckin(session:ActiveSession,outcome:PracticeOutcome):CheckinEvent {
+    const wordId=currentSpanishWord(session)!.id
+    return {wordId,language:'es',kind:session.newWordIds.includes(wordId)?'new':'review',outcome,at:new Date().toISOString(),goal:appRef.current.settings.spanishDailyGoal??50}
+  }
+  async function persist(next:ActiveSession,progress?:WordProgress,daily?:SpanishDailyUpdate,checkin?:CheckinEvent):Promise<boolean> {
     const finished=!next.practice?.pendingIds.length&&!next.practice?.delayed.length
     const now=new Date()
     const state=next.spanish!
@@ -104,7 +109,7 @@ export function SpanishProvider({children,storageClient=defaultStorage}:{childre
       totalCount:tested.length,durationSeconds:Math.max(0,Math.round((now.getTime()-Date.parse(next.startedAt))/1000)),completed:true,skippedCount:state.skippedIds.length,
     }:undefined
     const revised={...next,revision:(active.current?.revision??0)+1}
-    await storageClient.commitSpanishStep(revised,progress,daily,completed)
+    await storageClient.commitSpanishStep(revised,progress,daily,completed,checkin)
     if(finished)ended.current=revised.startedAt
     active.current=finished?undefined:revised
     // Apply the acknowledged transaction directly. A subsequent read failure must not
@@ -166,7 +171,7 @@ export function SpanishProvider({children,storageClient=defaultStorage}:{childre
       // On a wrong attempt persist the shortened interval immediately, even if the user leaves.
       const previous=appRef.current.progress[update.wordId]
       const progress=outcome==='forgotten'&&!session.spanish.failedIds.includes(update.wordId)?scheduleSpanishReview(previous,update.wordId,outcome):undefined
-      await persist(next,progress,update)
+      await persist(next,progress,update,groupCheckin(session,!feedback.correct?'wrong':feedback.assisted?'assisted':'passed'))
     },undefined)
   }
   const next=()=>{
@@ -189,7 +194,7 @@ export function SpanishProvider({children,storageClient=defaultStorage}:{childre
       const session=active.current
       if(!session?.spanish||prompt!==identity())return false
       const word=currentSpanishWord(session)!
-      return persist(removeSpanishWord(session,outcome),scheduleSpanishReview(appRef.current.progress[word.id],word.id,outcome),dailyUpdate(session,outcome))
+      return persist(removeSpanishWord(session,outcome),scheduleSpanishReview(appRef.current.progress[word.id],word.id,outcome),dailyUpdate(session,outcome),outcome==='skipped'?groupCheckin(session,'skipped'):undefined)
     },false)
   }
   const flush=async()=>{

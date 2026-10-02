@@ -3,6 +3,7 @@ import { useAppState } from '../app/AppState'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { AudioPackSettings } from '../components/AudioPackSettings'
 import { AiSettingsPanel } from '../components/AiSettingsPanel'
+import { GroupSettingsPanel } from '../groups/GroupAdmin'
 import type { ThemeMode, UserSettings } from '../types'
 import styles from '../styles/App.module.css'
 import { useSpanish } from '../spanish/SpanishProvider'
@@ -29,6 +30,7 @@ export function SettingsPage() {
       </div>
     </section>
     {settings.learningLanguage === 'en' && <AudioPackSettings />}
+    <GroupSettingsPanel />
     {settings.learningLanguage === 'en' && <AiSettingsPanel />}
     {spanish.enabled && <section className={styles.settingsSection}><div className={styles.settingTitle}><h2>西语情境填词</h2></div><p className={styles.settingDescription}>在句子中练习词义、阴阳性和变位。每组最多 10 个，同一原词的新变化形式分散学习。</p><p className={styles.settingDescription}>复习间隔逐步延长：10 分钟、1 天、2 天、4 天、7 天、15 天、30 天。提示、答错或跳过后缩短间隔，跳过优先复习。</p></section>}
     {!spanish.enabled && <section className={styles.settingsSection}>
@@ -47,7 +49,7 @@ export function SettingsPage() {
     </section>
     <section className={styles.dangerSection}>
       <h2>学习数据</h2>
-      {!confirming ? <button onClick={() => setConfirming(true)}>{settings.learningLanguage==='en'?'清空全部英语学习记录':'清空学习记录'}</button> : <div className={styles.confirmClear}><p>{settings.learningLanguage==='en'?'高考与小学共用记忆，都会重置。西语、词典、设置、AI 与 Wordle 会保留。':'这会删除进度和打卡记录，设置会保留。'}</p><button onClick={() => { void clearLearningData(); setConfirming(false) }}>确认清空</button><button onClick={() => setConfirming(false)}>取消</button></div>}
+      {!confirming ? <button onClick={() => setConfirming(true)}>{settings.learningLanguage==='en'?'清空全部英语学习记录':'清空学习记录'}</button> : <div className={styles.confirmClear}><p>{settings.learningLanguage==='en'?'高考与小学共用记忆，都会重置。西语、词典、设置、AI 与 Wordle 会保留。':'这会删除本机西语进度与每日记录，设置会保留。'}小组共享历史不会删除，仍按原期限保留。</p><button onClick={() => { void clearLearningData(); setConfirming(false) }}>确认清空</button><button onClick={() => setConfirming(false)}>取消</button></div>}
     </section>
   </main>
 }

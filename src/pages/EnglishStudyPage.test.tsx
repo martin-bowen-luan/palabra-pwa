@@ -57,7 +57,7 @@ it.each(['','soluble'])('reveals full English spelling from input "%s" without c
   expect(await screen.findByRole('region',{name:'完整答案'})).toHaveTextContent('soluble')
   expect(screen.getByRole('button',{name:'播放 soluble 发音'})).toBeEnabled()
   await user.click(screen.getByRole('button',{name:'重新拼写'}))
-  expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument()
+  await waitFor(()=>expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument())
   expect(screen.getByRole('textbox',{name:'英语'})).toHaveValue('')
   await user.type(screen.getByRole('textbox',{name:'英语'}),'soluble')
   await user.click(screen.getByRole('button',{name:'检查答案'}))
