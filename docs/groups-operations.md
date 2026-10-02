@@ -6,6 +6,7 @@
 
 ## 2026-10-02 生产接入记录
 
+- 发布续项：PR #9 已合并，首次 Pages 发布（36958253161）在旧分组测试失败。日志停在第 9/10 词，测试连续点击时没有等待 IndexedDB 保存、下一词显示，部分点击被正常的保存防重入保护忽略。仅修正三个同类测试的条件等待，不关闭保护、不增加固定延时；本地 488/488 测试、类型检查与构建再次通过，等待后续 Pages 发布结果。
 - 项目 `bjhmqulttnipvnkeqbcc`（palabra-groups）状态正常；迁移前 public 无业务表、函数或策略，其他项目未操作。
 - 已导出 public 结构 `/tmp/palabra-production-before-20261002.sql` 与原迁移列表 `/tmp/palabra-production-migrations-before-20261002.txt`；原远端迁移为空。
 - 先预演，再应用 `20261001000100`、`20261001000200`、`20261001000300`；未推送本地 Auth 配置或 Vault secrets。
