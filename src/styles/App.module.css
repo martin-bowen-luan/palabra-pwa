@@ -111,9 +111,9 @@
 .languageSwitch .languageActive { color: var(--ink); font-weight: 600; }
 .languageSwitch .languageActive::after { background: var(--blue); }
 
-.bottomNav { position: fixed; z-index: 20; bottom: 0; left: 50%; display: grid; grid-template-columns: repeat(4, 1fr); width: min(100%, 480px); padding: 9px 12px calc(9px + var(--safe-bottom)); transform: translateX(-50%); border-top: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 94%, transparent); backdrop-filter: blur(16px); }
+.bottomNav { position: fixed; z-index: 20; bottom: 0; left: 50%; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); width: min(100%, 480px); padding: 9px 12px calc(9px + var(--safe-bottom)); transform: translateX(-50%); border-top: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 94%, transparent); backdrop-filter: blur(16px); }
 .navItem { min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); text-decoration: none; font-size: 11px; }
-.navItemActive { color: var(--blue); }
+.navItemActive { color: var(--blue); font-weight: 650; }
 .navItem svg { width: 21px; height: 21px; }
 
 .studyPage { min-height: 100vh; display: flex; flex-direction: column; padding: 0 24px calc(24px + var(--safe-bottom)); }

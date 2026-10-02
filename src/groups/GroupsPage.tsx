@@ -1,28 +1,14 @@
 import { useEffect,useRef,useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useGroups } from './GroupsProvider'
-import { IdentityPanel,SecretCode } from './IdentityPanel'
+import { IdentityPanel } from './IdentityPanel'
 import { GroupAdmin,GroupSettingsPanel } from './GroupAdmin'
 import { GroupMembers } from './GroupMembers'
 import { groupDate } from './projection'
-import { groupErrorText } from './client'
+import { JoinGroup } from './JoinGroup'
+import { GroupInvitation } from './GroupInvitation'
 import base from '../styles/App.module.css'
 import styles from './Groups.module.css'
-function JoinGroup(){
-  const groups=useGroups(),[name,setName]=useState(''),[code,setCode]=useState(''),[preview,setPreview]=useState<{name:string;memberCount:number}>(),[error,setError]=useState(''),[busy,setBusy]=useState(false)
-  const version=useRef(0)
-  const inspect=async()=>{const turn=++version.current;setBusy(true);setError('');try{const data=await groups.call<{name:string;memberCount:number}>('preview_invite',{p_code:code});if(turn===version.current)setPreview(data)}catch(cause){if(turn===version.current)setError(groupErrorText(cause))}finally{setBusy(false)}}
-  return <section className={styles.section}>
-    <h2>选一个开始</h2>
-    <p className={styles.caption}>每个身份同时加入一个小组，最多 10 人。只共享加入之后的实际练习。</p>
-    <label className={styles.field}>新小组名称<input value={name} onChange={e=>setName(Array.from(e.target.value).slice(0,30).join(''))} placeholder="例如：每天十个词"/></label>
-    <button className={styles.primary} disabled={groups.busy||!groups.online||Array.from(name.trim()).length<2} onClick={()=>void groups.inviteGroup('create',name.trim())}>创建小组</button>
-    <label className={styles.field}>朋友的邀请码<input value={code} onChange={e=>{version.current++;setCode(e.target.value);setPreview(undefined)}} autoComplete="off" spellCheck={false}/></label>
-    <button disabled={busy||groups.busy||!groups.online||!code.trim()} onClick={()=>void inspect()}>查看邀请</button>
-    {preview&&<div><p>加入「{preview.name}」？目前 {preview.memberCount} / 10 人。</p><button className={styles.primary} disabled={groups.busy||preview.memberCount>=10} onClick={()=>void groups.perform('join_group',{p_code:code,p_operation_id:crypto.randomUUID()})}>确认加入</button></div>}
-    {error&&<p className={styles.error} role="alert">{error}</p>}
-  </section>
-}
 function DailyNote({date}:{date:string}){
   const groups=useGroups(),[text,setText]=useState(''),[error,setError]=useState(''),[saving,setSaving]=useState(false)
   const chain=useRef<Promise<void>>(Promise.resolve()),editVersion=useRef(0)
@@ -36,24 +22,34 @@ function DailyNote({date}:{date:string}){
 }
 export function GroupsPage(){
   const groups=useGroups(),today=groupDate(new Date().toISOString()),[date,setDate]=useState(today)
+  const [inviteOpen,setInviteOpen]=useState(false),[settingsOpen,setSettingsOpen]=useState(false)
+  const settingsRef=useRef<HTMLDetailsElement>(null)
+  const inviteTrigger=useRef<HTMLButtonElement>(null)
+  const closeInvite=()=>{setInviteOpen(false);inviteTrigger.current?.focus()}
+  const openSettings=()=>{
+    setSettingsOpen(true)
+    requestAnimationFrame(()=>{settingsRef.current?.scrollIntoView?.({block:'start'});settingsRef.current?.querySelector('summary')?.focus()})
+  }
   const earliest=new Date(`${today}T00:00:00Z`);earliest.setUTCDate(earliest.getUTCDate()-29)
   const since=[earliest.toISOString().slice(0,10),groups.group?groupDate(groups.group.binding.joinedAt):''].sort().at(-1)
+  const statusText=(!groups.enabled?'共享已关闭':!groups.online?`离线显示本机缓存${groups.cachedAt?`，更新于 ${new Date(groups.cachedAt).toLocaleString('zh-CN')}`:''}`:groups.syncing?'正在同步…':groups.error&&groups.cachedAt?'同步未完成，显示本机缓存':groups.cachedAt?`最近同步 ${new Date(groups.cachedAt).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`:'加入后，背词记录自动打卡')+(groups.pendingCount>0?` · 待同步 ${groups.pendingCount} 条`:'')
   if(!groups.ready)return <main className={`${base.page} ${styles.surface}`}><p role="status">正在读取本机小组资料…</p><Link to="/today">回到今日</Link></main>
   return <main className={`${base.page} ${styles.surface}`}>
-    <header className={styles.header}><Link to="/today">回到今日</Link>{groups.configured&&<button className={styles.quiet} disabled={groups.syncing||!groups.online||!groups.enabled} onClick={()=>void groups.refresh()}>刷新</button>}</header>
+    <header className={styles.header}><Link to="/today">回到今日</Link><div className={styles.actions}>{groups.configured&&groups.hasIdentity&&<button className={styles.quiet} disabled={groups.syncing||!groups.online||!groups.enabled} onClick={()=>void groups.refresh()}>刷新</button>}{groups.group?<button onClick={openSettings} aria-controls="group-settings" aria-expanded={settingsOpen}>小组设置</button>:null}</div></header>
     <h1>{groups.group?.group.name??'好友小组'}</h1>
     {!groups.configured?<p>好友小组尚未开放，正在完成服务与隐私配置。本地背词照常可用。</p>:<>
-      <p role="status" className={styles.status}>{!groups.enabled?'共享已关闭':!groups.online?`离线显示本机缓存${groups.cachedAt?`，更新于 ${new Date(groups.cachedAt).toLocaleString('zh-CN')}`:''}`:groups.syncing?'正在同步…':groups.error&&groups.cachedAt?'同步未完成，显示本机缓存':groups.cachedAt?`最近同步 ${new Date(groups.cachedAt).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`:'从加入后的练习开始共享'}{groups.pendingCount>0?` · 待同步 ${groups.pendingCount} 条`:''}</p>
+      {groups.group?<div className={styles.groupHeading}><div><span className={styles.caption}>{groups.group.memberProfiles.length} / 10 位成员</span><p role="status" className={styles.status}>{statusText}</p></div><button ref={inviteTrigger} className={styles.primary} onClick={()=>setInviteOpen(value=>!value)} aria-expanded={inviteOpen||Boolean(groups.invite)} aria-controls="group-invitation">邀请朋友</button></div>:<><p className={styles.intro}>一起背词，也记得给朋友加油。</p><p role="status" className={styles.status}>{statusText}</p></>}
       {groups.error&&<p role="alert" className={styles.error}>{groups.error}</p>}
       {groups.notice&&<p className={styles.caption}>{groups.notice==='DEVICE_REPLACED'?'旧设备的未同步记录不会转移到新身份。':groups.notice}</p>}
       {!groups.enabled?<button className={styles.primary} disabled={groups.busy} onClick={()=>void groups.setEnabled(true)}>重新开启共享</button>:<>
         {groups.pending||!groups.profile?<IdentityPanel/>:<>
-          {groups.invite&&<section className={styles.section} aria-label="邀请朋友"><h2>邀请朋友</h2>{groups.invite.confirmed?<><SecretCode label="邀请码" value={groups.invite.secret}/><p className={styles.caption}>仅分享给信任的朋友，7 天内有效。代码不放进网页链接。</p><button disabled={groups.busy} onClick={()=>void groups.dismissInvite()}>我已保存邀请码</button></>:<><p>邀请码操作结果尚待确认，请继续原操作。</p><button disabled={groups.busy} onClick={()=>void groups.inviteGroup(groups.invite!.action,groups.invite!.name)}>确认邀请码操作</button></>}</section>}
+          <div id="group-invitation">{(inviteOpen||groups.invite)&&<GroupInvitation onClose={closeInvite}/>}</div>
           {groups.group?<>
             {groups.activity?.nudges.filter(n=>n.receiverId===groups.profile?.profileId&&!n.readAt).map(n=><div className={styles.inbox} key={n.id}><p>{groups.group?.memberProfiles.find(p=>p.id===n.senderId)?.nickname??'朋友'}{n.kind==='cheer'?'给你加油了':'提醒你来学习'}</p><button disabled={groups.busy||!groups.online} onClick={()=>void groups.perform('read_nudge',{p_nudge_id:n.id})}>知道了</button></div>)}
-            <div className={styles.header}><span className={styles.caption}>组内日期 · 北京时间</span><label><span className={styles.caption}>查看日期 </span><input className={styles.date} type="date" aria-label="查看打卡日期" value={date} min={since} max={today} onChange={e=>{if(e.target.value)setDate(e.target.value)}}/></label></div>
-            {date===today&&<DailyNote date={today}/>}
-            <GroupMembers date={date}/><GroupAdmin key={groups.group.group.id}/>
+            <div className={styles.activityHeading}><div><h2>{date===today?'今日打卡':'历史打卡'}</h2><span className={styles.caption}>根据实际背词自动更新</span></div><label><span className={styles.caption}>查看日期 · 北京时间</span><input className={styles.date} type="date" aria-label="查看打卡日期" value={date} min={since} max={today} onChange={e=>{if(e.target.value)setDate(e.target.value)}}/></label></div>
+            <GroupMembers date={date}/>
+            {date===today&&<details className={styles.noteComposer}><summary>写一句话</summary><DailyNote date={today}/></details>}
+            <details ref={settingsRef} id="group-settings" className={styles.section} open={settingsOpen} onToggle={e=>setSettingsOpen(e.currentTarget.open)}><summary>小组管理</summary><GroupAdmin key={groups.group.group.id}/></details>
           </>:<JoinGroup/>}
         </>}
       </>}
