@@ -59,6 +59,17 @@ async function renderApp(
   return storage
 }
 
+async function markDisplayedWordFluent(user: ReturnType<typeof userEvent.setup>) {
+  const heading = await screen.findByRole('heading', { level: 1 })
+  const term = heading.textContent ?? ''
+  const button = await screen.findByRole('button', { name: '标为熟练' })
+  await waitFor(() => expect(button).toBeEnabled())
+  await user.click(button)
+  // A click does not await the IndexedDB commit. Wait for the next word or
+  // result screen, otherwise another click can be swallowed by the save guard.
+  await waitFor(() => expect(screen.queryByRole('heading', { level: 1, name: term })).not.toBeInTheDocument())
+}
+
 describe('Palabra app', () => {
   it('finishes and persists a final spelling skip without marking the word fluent', async () => {
     const user = userEvent.setup()
@@ -84,7 +95,7 @@ describe('Palabra app', () => {
     }, { vocabularySeeds: { en: words } })
     await user.click(await screen.findByRole('button', { name: '开始复习' }))
     expect((await storage.getActiveSession('en'))?.newWordIds).toEqual([])
-    for (let i = 0; i < 10; i++) await user.click(await screen.findByRole('button', { name: '标为熟练' }))
+    for (let i = 0; i < 10; i++) await markDisplayedWordFluent(user)
     await user.click(await screen.findByRole('button', { name: '开始下一组' }))
     await waitFor(async () => expect((await storage.getActiveSession('en'))?.reviewWordIds).toHaveLength(1))
     expect((await storage.getActiveSession('en'))?.newWordIds).toHaveLength(0)
@@ -96,7 +107,7 @@ describe('Palabra app', () => {
     const storage = await renderApp('/today', async client => { await client.saveSettings({ ...DEFAULT_SETTINGS, learningLanguage: 'en', dailyNewWords: 20 }) }, { vocabularySeeds: { en: words } })
     await user.click(await screen.findByRole('button', { name: '开始学习' }))
     expect((await storage.getActiveSession('en'))?.wordIds).toHaveLength(10)
-    for (let i = 0; i < 10; i++) await user.click(await screen.findByRole('button', { name: '标为熟练' }))
+    for (let i = 0; i < 10; i++) await markDisplayedWordFluent(user)
     expect(await storage.getActiveSession('en')).toBeUndefined()
     await user.click(await screen.findByRole('button', { name: '开始下一组' }))
     await waitFor(async () => expect((await storage.getActiveSession('en'))?.wordIds).toEqual(words.slice(10).map(w => w.id)))
@@ -317,7 +328,7 @@ describe('Palabra app', () => {
     await user.click(await screen.findByRole('button', { name: '开始今天的学习' }))
     expect((await storage.getActiveSession('es'))?.wordIds).toHaveLength(10)
     for (let index = 0; index < 10; index += 1) {
-      await user.click(await screen.findByRole('button', { name: '标为熟练' }))
+      await markDisplayedWordFluent(user)
     }
     expect(await screen.findByRole('button', { name: '开始下一组' })).toBeInTheDocument()
     expect((await storage.getSessions('es'))[0].newCount).toBe(10)
