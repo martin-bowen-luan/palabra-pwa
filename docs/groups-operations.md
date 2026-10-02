@@ -1,6 +1,23 @@
 # 好友小组：接入与维护
 
-当前仅完成本地实现与测试。生产默认关闭，未授权执行远端迁移或发布。
+2026-10-02：用户已授权完成接入后部署。指定生产项目已应用三份数据库迁移，功能开关保持关闭；前端尚未推送或公开发布。用户已配置 Turnstile 私钥，已开启验证码保护下的匿名登录；真实验证码成功路径、小组权限及恢复验收仍待完成。
+
+## 2026-10-02 生产接入记录
+
+- 项目 `bjhmqulttnipvnkeqbcc`（palabra-groups）状态正常；迁移前 public 无业务表、函数或策略，其他项目未操作。
+- 已导出 public 结构 `/tmp/palabra-production-before-20261002.sql` 与原迁移列表 `/tmp/palabra-production-migrations-before-20261002.txt`；原远端迁移为空。
+- 先预演，再应用 `20261001000100`、`20261001000200`、`20261001000300`；未推送本地 Auth 配置或 Vault secrets。
+- 远端核验：13 张小组表全部启用 RLS；anon/authenticated/PUBLIC 无直接表授权；公开 RPC 均为受限 SECURITY DEFINER，anon 无执行权限；数据库功能开关为 false。这不替代真实用户 JWT 的生产验收。
+- 已核验唯一维护任务 `palabra-groups-cleanup`，每小时第 17 分钟执行 `select palabra_private.cleanup();`，active=true；清理命令只作用于小组超期数据。
+- Auth 只读核验：匿名登录 false、CAPTCHA false、站点 URL 仍是 `http://localhost:3000`；未修改现有邮件/MFA 设置。
+- 本次重新运行本地数据库测试：6 文件、85 项全部通过。
+- 后续配置：用户提供公开 Site key `0x4AAAAAAFLnCeNj0eu6-PWE` 并确认在控制台配置私钥；只读核对 CAPTCHA=true、provider=turnstile。用独立最小配置仅更新 anonymous sign-ins=true、正式 Site URL 和 `http://localhost:5198/palabra-pwa/**` 测试回跳；每 IP 每小时匿名登录限额仍为 30。未发送或改变 CAPTCHA 私钥，邮件/MFA 等未声明属性保持不变。
+- 服务端负向验证：使用无效验证码的匿名注册被 HTTP 400 `invalid-input-response` 拒绝；这不证明有效验证码成功。验证前基线 anonymous_users=0、profiles=0、groups_enabled=false。
+- 重新运行全套测试时发现一处测试夹具混用动态加入时间与固定留言日期；统一固定日期后 487/487 通过，类型检查和携带正式公开配置的生产构建通过。现有大资源包警告仍在。
+- 本机生产预览 `http://localhost:5198/palabra-pwa/groups` 已启动（真实 Supabase、真实 Turnstile），等待用户完成验证码并点击建立身份；开关关闭时预期小组 RPC 提示“服务暂未开放”，用于先确认真实 Auth 成功，不能声称小组已开放。
+- GitHub Pages 工作流已准备公开变量注入，默认功能仍 false，新增类型检查；尚未设置 GitHub 变量、推送或部署。
+- 下一步：真实验证码和普通用户 JWT 验收（包括双身份、恢复和旧设备撤权），通过后才开放小组并按授权发布。
+- 浏览器诊断：内置浏览器曾返回 Turnstile 300030（challenge failure）；随后同一页面建立身份按钮已启用，但旧错误文本残留。修复成功回调清除旧错误，回归测试覆盖失败→恢复成功→过期重新禁用；先失败后通过，完整套件 488/488、类型检查及生产构建通过。未模拟或绕过真实验证码；测试页面仍等待用户实际提交，真实服务器成功路径尚未确认。
 
 ## 生产启用前的确认门
 

@@ -29,7 +29,14 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
+      - name: Check TypeScript
+        run: npm run typecheck
       - name: Build PWA
+        env:
+          VITE_GROUPS_ENABLED: ${{ vars.VITE_GROUPS_ENABLED || 'false' }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
         run: npm run build
       - name: Add SPA fallback
         run: cp dist/index.html dist/404.html

@@ -18,7 +18,7 @@ export function Turnstile({onToken}:{onToken:(token:string)=>void}){
     let active=true,id:string|undefined
     void load().then(()=>{
       if(!active||!ref.current||!window.turnstile)return
-      id=window.turnstile.render(ref.current,{sitekey:key,theme:'auto',size:'flexible',callback:(token:string)=>{if(active)callback.current(token)},
+      id=window.turnstile.render(ref.current,{sitekey:key,theme:'auto',size:'flexible',callback:(token:string)=>{if(active){setError('');callback.current(token)}},
         'expired-callback':()=>{if(active){callback.current('');setError('验证已过期，请重新验证。')}},
         'error-callback':()=>{if(active){callback.current('');setError('验证暂不可用，请检查网络后重试。')}},
       })

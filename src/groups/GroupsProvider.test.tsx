@@ -69,7 +69,7 @@ it('does not recreate an invite secret after cross-tab logout while its request 
 })
 it('does not re-enable a binding or upload after sharing is disabled in another tab',async()=>{
   const db=new PalabraStorage(crypto.randomUUID());dbs.push(db);await db.groups.write('groupState','consent',true)
-  const binding={profileId:'p',groupId:'g',membershipId:'m',membershipGeneration:1,deviceGeneration:1,joinedAt:new Date().toISOString(),enabled:true}
+  const binding={profileId:'p',groupId:'g',membershipId:'m',membershipGeneration:1,deviceGeneration:1,joinedAt:'2026-10-01T00:00:00Z',enabled:true}
   await db.saveGroupBinding(binding);await db.saveGroupDraft('2026-10-01','待传');await db.publishGroupDraft('2026-10-01')
   let release!:()=>void,started!:()=>void,uploads=0
   const waiting=new Promise<void>(resolve=>release=resolve),entered=new Promise<void>(resolve=>started=resolve)
