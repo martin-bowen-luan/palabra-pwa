@@ -13,15 +13,14 @@ export function GroupAdmin(){
   if(!groups.group||!groups.profile)return null
   const own=groups.group.group.ownerId===groups.profile.profileId
   const manage=(action:string,targetId:string|null=null,nextName:string|null=null)=>groups.perform('manage_group',{p_action:action,p_target_profile_id:targetId,p_name:nextName,p_invite_hash:null,p_operation_id:crypto.randomUUID()})
-  return <details className={styles.section}><summary>小组管理</summary>
+  return <section className={styles.management}>
     {own?<><label className={styles.field}>小组名称<input value={name} onChange={e=>setName(Array.from(e.target.value).slice(0,30).join(''))}/></label>
-      <div className={styles.actions}><button disabled={groups.busy||Array.from(name.trim()).length<2} onClick={()=>void manage('rename',null,name.trim())}>保存组名</button><button disabled={groups.busy||Boolean(groups.invite)} onClick={()=>void groups.inviteGroup('rotate')}>生成新邀请码</button></div>
-      <p className={styles.caption}>新邀请码 7 天有效，生成后旧码立即失效。</p>
+      <div className={styles.actions}><button disabled={groups.busy||!groups.online||Array.from(name.trim()).length<2} onClick={()=>void manage('rename',null,name.trim())}>保存组名</button></div>
       <label className={styles.field}>选择成员<select value={target} onChange={e=>setTarget(e.target.value)}><option value="">请选择</option>{groups.group.memberProfiles.filter(p=>p.id!==groups.profile?.profileId).map(p=><option key={p.id} value={p.id}>{p.nickname} · {p.id.slice(0,4)}</option>)}</select></label>
       <div className={styles.actions}><ConfirmButton label="移除成员" disabled={groups.busy||!target} description="该成员将立即失去小组访问权，旧待传记录不再共享。" onConfirm={()=>manage('remove',target)}/><ConfirmButton label="转交组主" disabled={groups.busy||!target} description="转交后，你将成为普通成员，失去小组管理权限。" onConfirm={()=>manage('transfer',target)}/></div>
       <ConfirmButton label="解散小组" disabled={groups.busy} description="所有成员将退出小组，邀请码失效，待传记录不再共享。本机背词记录不受影响。" onConfirm={()=>manage('dissolve')}/>
     </>:<ConfirmButton label="离开小组" disabled={groups.busy} description="离开后不能再查看组员记录，旧待传记录不再共享。本机背词记录保留。" onConfirm={()=>manage('leave')}/>}
-  </details>
+  </section>
 }
 export function GroupSettingsPanel(){
   const groups=useGroups()
