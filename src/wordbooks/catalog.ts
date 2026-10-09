@@ -10,9 +10,12 @@ export function projectWordbook(words:readonly VocabularyEntry[],book:WordbookCa
   return [...book.members].filter(m=>matchesPrimaryRange(m,range)).sort((a,b)=>rank(a)-rank(b)||(a.sourceOrder??a.order)-(b.sourceOrder??b.order)).flatMap(member=>{
     const word=byId.get(member.wordId);if(!word)return []
     const senses=member.senseIds?.flatMap(id=>word.senses?.filter(s=>s.id===id)??[])??[]
-    const examples=member.exampleKeys?.flatMap(key=>word.examples.filter(e=>exampleKey(e)===key))
+    const examples=member.exampleKeys?.flatMap(key=>{const example=word.examples.find(e=>exampleKey(e)===key);return example?[example]:[]})
     return [{...word,term:member.displayTerm??word.term,
+      ...(member.senseIds?{senses}:{}),
       ...(senses.length?{partOfSpeech:senses[0].partOfSpeech,meaningZh:senses[0].meaningZh.split(/[；;]/u).filter(Boolean).slice(0,3).join('；')}:{}),
-      ...(examples?.length?{examples}:{}),category:book.title}]
+      ...(member.displayMeaningZh!==undefined?{meaningZh:member.displayMeaningZh}:{}),
+      ...(member.displayPartOfSpeech!==undefined?{partOfSpeech:member.displayPartOfSpeech}:{}),
+      ...(member.exampleKeys?{examples:examples??[]}:{}),category:book.title}]
   })
 }

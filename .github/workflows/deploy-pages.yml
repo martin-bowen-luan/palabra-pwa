@@ -29,6 +29,8 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
+      - name: Validate wordbooks
+        run: npm run check:wordbooks
       - name: Check TypeScript
         run: npm run typecheck
       - name: Build PWA

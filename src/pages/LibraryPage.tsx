@@ -13,6 +13,7 @@ import { SpanishDictionary, groupSpanishResults } from '../spanish/SpanishDictio
 import spanishStyles from '../spanish/Spanish.module.css'
 import { WordbookSwitch } from '../wordbooks/WordbookSwitch'
 import { PrimaryRangeFilter } from '../wordbooks/PrimaryRangeFilter'
+import { EditorialExampleNote, EditorialMeaningNote } from '../components/EditorialNote'
 import { projectWordbook } from '../wordbooks/catalog'
 import type { PrimaryRange } from '../wordbooks/types'
 
@@ -80,12 +81,14 @@ export function LibraryPage() {
         </div>}
         <span className={styles.annotationLine} />
         <div><span>{selected.partOfSpeech}</span><strong>{selected.meaningZh}</strong></div>
+        <EditorialMeaningNote word={selected} />
         {selected.examples.slice(0, 3).map((example) => <div className={styles.examplePair} key={`${example.text}-${example.translationZh}`}>
+          <EditorialExampleNote example={example} />
           <blockquote lang={selected.language}>{example.text}</blockquote>
           {aiSettings.enabled && selected.language === 'en' && <SentenceSpeechButton text={example.text} />}
           <p>{example.translationZh}</p>
         </div>)}
-        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} bookContext={contextBook?.id==='en-oxford-primary'?contextBook.id:undefined} />
+        <WordRelations key={selected.id} word={selected} vocabulary={vocabulary} bookContext={contextBook?.id==='en-highschool'?undefined:contextBook?.id} />
         <SpanishDictionary word={selected} vocabulary={vocabulary} progress={progress} select={id=>setSearchParams({word:id},{state:{wordLinkFrom:location.pathname+location.search}})} />
         <footer>{progress[selected.id]?.skipReview ? '已标为熟练 · 无需复习' : stage === undefined ? '还没有学习' : `记忆阶段 ${stage + 1} / ${progress[selected.id]?.scheduleVersion === 1 ? 7 : 5}`}{progress[selected.id]?.reviewPriority === 'skipped' && ' · 拼写跳过，优先复习'}</footer>
       </section>

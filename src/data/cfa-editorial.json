@@ -1,0 +1,1170 @@
+{
+  "serve to": {
+    "definition": "v. 起到……的作用；有助于（后接动词原形）",
+    "reviewed": true
+  },
+  "a pool of": {
+    "definition": "n. 一组汇集的……；一池……（如资金、贷款或资产）",
+    "example": [
+      "The securities are backed by a pool of residential mortgages.",
+      "这些证券由一组住房抵押贷款作为支持。"
+    ],
+    "reviewed": true
+  },
+  "student loan": {
+    "definition": "n. 学生贷款；用于支付学费及相关学习、生活费用的助学贷款",
+    "example": [
+      "She uses part of her monthly salary to repay her student loan.",
+      "她每月拿出部分工资偿还助学贷款。"
+    ],
+    "reviewed": true
+  },
+  "auto loan": {
+    "definition": "n. 汽车贷款；用于购买汽车的贷款",
+    "reviewed": true,
+    "example": [
+      "The borrower repays the auto loan in monthly installments.",
+      "借款人按月分期偿还汽车贷款。"
+    ],
+    "note": "编辑纠错（原创例句覆盖）：替换含 auto open loan 及中文不通顺的源例句。"
+  },
+  "cease to": {
+    "definition": "v. 停止……；不再……（后接动词原形）",
+    "example": [
+      "The company will cease to pay dividends while it restructures its debt.",
+      "该公司在债务重组期间将停止派发股息。"
+    ],
+    "reviewed": true
+  },
+  "made up": {
+    "definition": "adj. 编造的；虚构的；由……组成的（用于 be made up of）",
+    "note": "编辑纠错（原创例句覆盖）：使用 be made up of 表示构成，替换源例句的英汉错配；表示虚构的前置定语通常写作 made-up，源键不改。",
+    "reviewed": true,
+    "example": [
+      "The portfolio is made up of government bonds and corporate bonds.",
+      "该投资组合由政府债券和公司债券组成。"
+    ]
+  },
+  "transactions costs": {
+    "definition": "n. 交易成本；完成交易产生的费用和成本，如佣金、买卖价差及市场冲击成本",
+    "note": "保留源词 transactions costs；较常见的形式是 transaction costs，例句采用源词已有的复数变体。",
+    "example": [
+      "High transactions costs reduced the portfolio's net return.",
+      "较高的交易成本降低了投资组合的净收益率。"
+    ],
+    "reviewed": true
+  },
+  "in lieu": {
+    "definition": "adv. 作为替代；代替（后接替代对象时通常用 in lieu of）",
+    "reviewed": true,
+    "example": [
+      "The company issued shares in lieu of a cash payment.",
+      "公司以发行股份代替现金支付。"
+    ],
+    "note": "编辑纠错（原创例句覆盖）：替换含未填写编号的源例句；使用完整结构 in lieu of。"
+  },
+  "credit default swaps": {
+    "definition": "n. 信用违约互换（复数）；保护买方支付费用、保护卖方在约定信用事件发生时提供赔付的信用衍生合约",
+    "reviewed": true,
+    "example": [
+      "The bank bought protection through credit default swaps on corporate debt.",
+      "银行通过针对公司债务的信用违约互换买入信用保护。"
+    ],
+    "note": "编辑纠错（原创例句覆盖）：替换源例句的片段句和语法问题，说明信用保护的购买。"
+  },
+  "ongoing": {
+    "definition": "adj. 持续进行的；尚在进行中的",
+    "example": [
+      "The audit committee receives updates on the ongoing investigation.",
+      "审计委员会会收到有关正在进行的调查的最新进展。"
+    ],
+    "reviewed": true
+  },
+  "pure-play": {
+    "definition": "adj. 专注于单一业务或行业的（常用于可比公司分析）",
+    "reviewed": true,
+    "example": [
+      "The analyst selected a pure-play retailer as a comparable company.",
+      "分析师选择了一家专营零售业务的公司作为可比公司。"
+    ],
+    "note": "编辑纠错（原创例句覆盖）：替换有连字和碎片问题的源例句，采用单一业务可比公司语境。"
+  },
+  "ally with": {
+    "definition": "v. 与……结盟；与……建立合作关系",
+    "reviewed": true,
+    "example": [
+      "The firm plans to ally with a payment provider to enter a new market.",
+      "该公司计划与一家支付服务商合作，进入新市场。"
+    ],
+    "note": "编辑纠错（原创例句覆盖）：替换未直接展示目标结构的源例句；释义采用结盟合作义，不沿用源英文 untie 的疑似笔误。"
+  },
+  "deferred tax asset": {
+    "definition": "n. 递延所得税资产；由可抵扣暂时性差异、可结转税务亏损或税款抵减产生、符合确认条件的未来所得税抵减额",
+    "example": [
+      "The company recognized a deferred tax asset for losses it expects to offset against future taxable profits.",
+      "公司就预计可抵减未来应税利润的亏损确认了递延所得税资产。"
+    ],
+    "reviewed": true
+  },
+  "be reluctant to": {
+    "definition": "v. 不愿意……；对……有所犹豫（后接动词原形）",
+    "reviewed": true
+  },
+  "prevailing": {
+    "definition": "adj. 现行的；当时通行的；普遍存在的（如市场价格或利率）",
+    "example": [
+      "The bonds were priced using the prevailing market interest rate.",
+      "这些债券按当时的市场利率定价。"
+    ],
+    "reviewed": true
+  },
+  "perceive as": {
+    "definition": "v. 将……视为；认为……是（通常用 perceive A as B）",
+    "note": "源词省略宾语；例句采用 perceive A as B，目标短语被宾语隔开，不要求连续字面匹配。",
+    "example": [
+      "Investors may perceive the delay as a sign of financial stress.",
+      "投资者可能将此次延迟视为财务压力的迹象。"
+    ],
+    "reviewed": true
+  },
+  "whistle blower": {
+    "definition": "n. 举报人；揭露组织内部不当行为或违法行为的人",
+    "note": "保留源词的分写形式 whistle blower；常见写法还有 whistleblower 和 whistle-blower。",
+    "example": [
+      "A whistle blower reported the falsified accounts to the compliance team.",
+      "一名举报人向合规团队报告了账目造假问题。"
+    ],
+    "reviewed": true
+  },
+  "prudence": {
+    "definition": "n. 审慎；谨慎判断（在不确定性下作出估计或投资决策时保持谨慎）",
+    "reviewed": true
+  },
+  "timberland": {
+    "example": [
+      "The pension fund bought timberland to earn income from timber sales.",
+      "该养老基金购买林地，以获取木材销售收入。"
+    ],
+    "reviewed": true
+  },
+  "backfill": {
+    "example": [
+      "Some funds backfill a database with returns earned before they began reporting.",
+      "一些基金会将开始报送数据之前的收益记录补录到数据库中。"
+    ],
+    "note": "编辑纠错（释义覆盖）：补充金融数据库语境，取代仅有的工程回填释义；选择性补录可能造成回填偏差。",
+    "reviewed": true,
+    "definition": "v. 回填；向金融数据库补录开始报送数据之前的历史业绩记录"
+  },
+  "survivorship": {
+    "example": [
+      "Excluding failed funds can create survivorship bias in the performance data.",
+      "排除已倒闭的基金可能使业绩数据产生幸存者偏差。"
+    ],
+    "note": "编辑纠错（释义覆盖）：采用基金业绩分析语境，不将存续本身等同于偏差，不采用源释义中的财产继承义。",
+    "reviewed": true,
+    "definition": "n. 存续；幸存（投资业绩分析中常用于 survivorship bias，指忽略已退出或失败对象导致的幸存者偏差）"
+  },
+  "limited partner": {
+    "example": [
+      "A limited partner committed capital to the private equity fund.",
+      "一名有限合伙人承诺向该私募股权基金出资。"
+    ],
+    "reviewed": true
+  },
+  "fund of funds": {
+    "example": [
+      "A fund of funds invests in other funds rather than buying individual securities directly.",
+      "基金中的基金投资于其他基金，而非直接购买单只证券。"
+    ],
+    "note": "编辑纠错（释义覆盖）：更正源释义“总投资公司”。",
+    "reviewed": true,
+    "definition": "n. 基金中的基金；以其他投资基金为投资对象的基金"
+  },
+  "predetermine": {
+    "example": [
+      "The committee will predetermine the criteria for selecting a fund manager.",
+      "委员会将预先确定选择基金管理人的标准。"
+    ],
+    "reviewed": true
+  },
+  "mistime": {
+    "example": [
+      "Even experienced investors can mistime a purchase during a volatile market.",
+      "即使是经验丰富的投资者，也可能在市场波动时选错买入时机。"
+    ],
+    "reviewed": true
+  },
+  "secured creditor": {
+    "example": [
+      "The bank became a secured creditor when the borrower pledged equipment as collateral.",
+      "借款人将设备作为抵押品后，银行成为有担保债权人。"
+    ],
+    "reviewed": true
+  },
+  "freddie mac": {
+    "example": [
+      "The analyst compared mortgage securities issued by Freddie Mac and Fannie Mae.",
+      "分析师比较了房地美和房利美发行的抵押贷款证券。"
+    ],
+    "reviewed": true
+  },
+  "fannie mae": {
+    "example": [
+      "The report examines the credit risks of securities issued by Fannie Mae.",
+      "该报告分析了房利美发行的证券的信用风险。"
+    ],
+    "reviewed": true
+  },
+  "balloon payment": {
+    "example": [
+      "The borrower must make a large balloon payment at the end of the loan term.",
+      "借款人必须在贷款期末支付一笔大额尾款。"
+    ],
+    "reviewed": true
+  },
+  "renegotiable": {
+    "example": [
+      "The contract includes a renegotiable fee that the parties may revise by agreement.",
+      "合同包含一项可重新协商的费用，双方可经协商予以调整。"
+    ],
+    "reviewed": true
+  },
+  "emerging market": {
+    "example": [
+      "The fund increased its exposure to an emerging market by buying local shares.",
+      "该基金通过购买当地股票，增加了对一个新兴市场的投资敞口。"
+    ],
+    "reviewed": true
+  },
+  "corporate bonds": {
+    "example": [
+      "The portfolio holds corporate bonds issued by several industrial companies.",
+      "该投资组合持有多家工业企业发行的公司债券。"
+    ],
+    "reviewed": true
+  },
+  "housing loan": {
+    "example": [
+      "The bank approved a housing loan after reviewing the applicant's income.",
+      "银行审核申请人的收入后，批准了一笔住房贷款。"
+    ],
+    "reviewed": true
+  },
+  "tranche": {
+    "example": [
+      "The senior tranche receives payments before the junior tranche.",
+      "优先级份额先于次级份额获得偿付。"
+    ],
+    "note": "编辑纠错（释义覆盖）：扩展源释义过窄的国际货币基金贷款分批义，用于结构化融资分层。",
+    "reviewed": true,
+    "definition": "n. 分层份额；同一融资或证券化安排中具有特定偿付顺序、风险或收益特征的一档证券或债务"
+  },
+  "interpolation": {
+    "example": [
+      "The analyst used interpolation to estimate a yield between two observed maturities.",
+      "分析师用插值法估计了两个已观测期限之间的收益率。"
+    ],
+    "reviewed": true
+  },
+  "clean price": {
+    "example": [
+      "The bond's clean price excludes accrued interest.",
+      "债券的净价不包含应计利息。"
+    ],
+    "reviewed": true
+  },
+  "accrued interest": {
+    "example": [
+      "The buyer paid the quoted clean price plus accrued interest.",
+      "买方支付了报价所示的净价以及应计利息。"
+    ],
+    "reviewed": true
+  },
+  "repo": {
+    "example": [
+      "The dealer used a repo to borrow cash against government bonds.",
+      "交易商通过回购协议，以政府债券融资借入现金。"
+    ],
+    "note": "编辑纠错（释义覆盖）：纠正 repurchase agreement 被误译为“重新达成协议”的问题。",
+    "reviewed": true,
+    "definition": "n. 回购协议；一方出售证券并约定按商定条件买回，以此进行短期融资的交易"
+  },
+  "private placement": {
+    "example": [
+      "The company raised capital through a private placement with a small group of investors.",
+      "该公司通过向少数投资者私募发行证券筹集了资金。"
+    ],
+    "reviewed": true
+  },
+  "retail investor": {
+    "example": [
+      "A retail investor bought shares through an online brokerage account.",
+      "一名个人投资者通过网上经纪账户购买了股票。"
+    ],
+    "reviewed": true
+  },
+  "institutional investor": {
+    "example": [
+      "The pension fund is an institutional investor with a long investment horizon.",
+      "该养老基金是一家投资期限较长的机构投资者。"
+    ],
+    "reviewed": true
+  },
+  "lump-sum": {
+    "example": [
+      "The retiree chose a lump-sum payment instead of monthly payments.",
+      "这位退休人员选择一次性领取款项，而非按月领取。"
+    ],
+    "reviewed": true
+  },
+  "step-up": {
+    "example": [
+      "The step-up bond pays a higher coupon rate after its third year.",
+      "这只递增利率债券在第三年结束后支付更高的票面利率。"
+    ],
+    "reviewed": true
+  },
+  "sinking fund": {
+    "example": [
+      "The issuer makes annual deposits into a sinking fund to repay the bonds.",
+      "发行人每年向偿债基金缴存资金，用于偿还债券。"
+    ],
+    "reviewed": true
+  },
+  "trust deed": {
+    "example": [
+      "The trust deed describes the bondholders' rights and the trustee's duties.",
+      "信托契据说明了债券持有人的权利和受托人的职责。"
+    ],
+    "reviewed": true
+  },
+  "semi-annual": {
+    "example": [
+      "The bond makes semi-annual interest payments in June and December.",
+      "该债券每半年支付一次利息，付息时间为六月和十二月。"
+    ],
+    "reviewed": true
+  },
+  "perpetual bond": {
+    "example": [
+      "A perpetual bond has no scheduled maturity date.",
+      "永续债券没有预定的到期日。"
+    ],
+    "reviewed": true
+  },
+  "multistage": {
+    "example": [
+      "The analyst used a multistage model to value a company with changing growth rates.",
+      "分析师使用多阶段模型，为一家增长率不断变化的公司估值。"
+    ],
+    "reviewed": true
+  },
+  "capital gain": {
+    "example": [
+      "Selling the shares above their purchase price produced a capital gain.",
+      "以高于买入价的价格卖出这些股票产生了资本利得。"
+    ],
+    "reviewed": true
+  },
+  "top down": {
+    "example": [
+      "The team analyzes the economy from the top down before selecting individual stocks.",
+      "团队在选择个股之前，先自上而下分析经济。"
+    ],
+    "note": "编辑纠错（释义覆盖）：保留源词空格形式；作前置定语时通常写作 top-down，替换源释义“组织严密”。",
+    "reviewed": true,
+    "definition": "adv. 自上而下地（投资分析中指先考察宏观经济和行业，再分析具体公司）"
+  },
+  "leveraged buyout": {
+    "example": [
+      "The acquisition was a leveraged buyout financed largely with debt.",
+      "这次收购属于杠杆收购，资金主要来自债务融资。"
+    ],
+    "reviewed": true
+  },
+  "initial public offering": {
+    "example": [
+      "The company sold shares to the public through an initial public offering.",
+      "该公司通过首次公开募股向公众出售了股票。"
+    ],
+    "reviewed": true
+  },
+  "ipo": {
+    "example": [
+      "The company hired an investment bank to prepare for its IPO.",
+      "该公司聘请了一家投资银行，为首次公开募股作准备。"
+    ],
+    "reviewed": true
+  },
+  "maintenance margin": {
+    "example": [
+      "The broker required more collateral when the account fell below the maintenance margin requirement.",
+      "账户低于维持保证金要求时，经纪商要求补充抵押品。"
+    ],
+    "note": "编辑纠错（释义覆盖）：将源释义“维修范围”更正为持仓期间的保证金要求，不设定统一法定比例。",
+    "reviewed": true,
+    "definition": "n. 维持保证金；持仓期间账户必须维持的最低权益或保证金水平"
+  },
+  "initial margin": {
+    "example": [
+      "The trader posted initial margin before opening the futures position.",
+      "交易员在建立期货头寸前缴纳了初始保证金。"
+    ],
+    "reviewed": true
+  },
+  "unfunded": {
+    "example": [
+      "The pension plan reported an unfunded liability because its obligations exceeded its assets.",
+      "该养老金计划的义务超过资产，因此报告了未获资金支持的负债。"
+    ],
+    "reviewed": true
+  },
+  "securitize": {
+    "example": [
+      "The lender plans to securitize a portfolio of auto loans.",
+      "贷款机构计划将一个汽车贷款组合证券化。"
+    ],
+    "reviewed": true
+  },
+  "systematic risk": {
+    "example": [
+      "Diversifying across many stocks does not eliminate systematic risk.",
+      "投资于多只股票进行分散化，并不能消除系统性风险。"
+    ],
+    "reviewed": true,
+    "definition": "n. 系统性风险；由广泛影响市场的共同因素引起、不能通过分散持有证券消除的风险",
+    "note": "编辑纠错（释义覆盖）：替换源释义“不可避免的风险”；不与金融体系传染风险 systemic risk 混同。"
+  },
+  "unsystematic": {
+    "example": [
+      "Holding shares in many companies can reduce unsystematic risk.",
+      "持有多家公司的股票可以降低非系统性风险。"
+    ],
+    "reviewed": true
+  },
+  "venture capital": {
+    "example": [
+      "The startup raised venture capital to develop its payment software.",
+      "这家初创企业获得风险投资，用于开发支付软件。"
+    ],
+    "reviewed": true
+  },
+  "sovereign wealth fund": {
+    "example": [
+      "The sovereign wealth fund invested part of its assets in foreign equities.",
+      "该主权财富基金将部分资产投资于外国股票。"
+    ],
+    "reviewed": true
+  },
+  "mutual funds": {
+    "example": [
+      "She compared the fees and investment objectives of three mutual funds.",
+      "她比较了三只共同基金的费用和投资目标。"
+    ],
+    "reviewed": true
+  },
+  "portfolio management": {
+    "example": [
+      "Portfolio management involves balancing expected returns against risk and client needs.",
+      "投资组合管理需要权衡预期收益、风险与客户需求。"
+    ],
+    "reviewed": true
+  },
+  "capital rationing": {
+    "example": [
+      "Capital rationing forced the company to rank projects within a fixed investment budget.",
+      "资本限额迫使公司在固定投资预算内对项目进行排序。"
+    ],
+    "reviewed": true
+  },
+  "incremental cash flow": {
+    "example": [
+      "The analyst estimated the incremental cash flow generated by the new factory.",
+      "分析师估算了新工厂带来的增量现金流。"
+    ],
+    "reviewed": true
+  },
+  "npv": {
+    "example": [
+      "The project has a positive NPV when its cash flows are discounted at the required return.",
+      "按要求收益率折现现金流后，该项目的净现值为正。"
+    ],
+    "note": "例句将 npv 按财务语境解释为 net present value，并采用标准大写 NPV。",
+    "reviewed": true
+  },
+  "retention rate": {
+    "example": [
+      "With a dividend payout ratio of 30 percent, the earnings retention rate is 70 percent.",
+      "股利支付率为百分之三十时，收益留存率为百分之七十。"
+    ],
+    "reviewed": true
+  },
+  "variable costs": {
+    "example": [
+      "Variable costs rise as the factory produces more units.",
+      "随着工厂产量增加，可变成本也随之上升。"
+    ],
+    "reviewed": true
+  },
+  "breakeven": {
+    "example": [
+      "The business reached breakeven when total revenue equaled total costs.",
+      "总收入等于总成本时，该企业达到了盈亏平衡点。"
+    ],
+    "reviewed": true
+  },
+  "cash dividend": {
+    "example": [
+      "The board declared a cash dividend of one dollar per share.",
+      "董事会宣布每股派发一美元现金股息。"
+    ],
+    "reviewed": true
+  },
+  "greenmail": {
+    "example": [
+      "The board rejected a greenmail demand to buy back a hostile investor's shares at a premium.",
+      "董事会拒绝了敌意投资者提出的以溢价回购其所持股份的绿票讹诈。"
+    ],
+    "reviewed": true
+  },
+  "golden parachute": {
+    "example": [
+      "The executive's contract includes a golden parachute if a takeover leads to her dismissal.",
+      "这名高管的合同含有金降落伞条款，若收购导致她被解雇，她将获得补偿。"
+    ],
+    "reviewed": true
+  },
+  "subtract from": {
+    "example": [
+      "Which expenses should we subtract from revenue to calculate operating profit?",
+      "计算营业利润时，我们应从收入中减去哪一些费用？"
+    ],
+    "reviewed": true
+  },
+  "off-balance-sheet": {
+    "example": [
+      "The analyst reviewed the company's off-balance-sheet commitments in the notes.",
+      "分析师查阅了附注中该公司的表外承诺事项。"
+    ],
+    "note": "编辑纠错（释义覆盖）：纠正源释义遗漏 off 的问题；表外事项仍可能需要在附注中披露。",
+    "reviewed": true,
+    "definition": "adj. 表外的；未在资产负债表内确认为资产或负债的"
+  },
+  "audit committee": {
+    "example": [
+      "The audit committee discussed the findings with the external auditor.",
+      "审计委员会与外部审计师讨论了审计发现。"
+    ],
+    "reviewed": true
+  },
+  "tax haven": {
+    "example": [
+      "The report examines profits shifted to subsidiaries in a tax haven.",
+      "报告研究了被转移至避税地子公司的利润。"
+    ],
+    "reviewed": true
+  },
+  "substance over form": {
+    "example": [
+      "Substance over form requires the analysis to reflect the transaction's economic reality.",
+      "实质重于形式要求分析反映交易的经济实质。"
+    ],
+    "reviewed": true
+  },
+  "taxable income": {
+    "example": [
+      "Allowable deductions reduced the company's taxable income.",
+      "允许扣除的项目减少了该公司的应纳税所得额。"
+    ],
+    "reviewed": true
+  },
+  "earnings per share": {
+    "example": [
+      "The share buyback increased earnings per share while net income remained unchanged.",
+      "在净利润不变的情况下，股份回购提高了每股收益。"
+    ],
+    "reviewed": true
+  },
+  "cash conversion cycle": {
+    "example": [
+      "Faster collection of receivables shortened the cash conversion cycle.",
+      "加快应收账款回收缩短了现金转换周期。"
+    ],
+    "reviewed": true
+  },
+  "common equity": {
+    "example": [
+      "The bank raised common equity by issuing new ordinary shares.",
+      "银行通过发行新的普通股筹集了普通股权益资本。"
+    ],
+    "reviewed": true
+  },
+  "liquidity ratio": {
+    "example": [
+      "The analyst calculated a liquidity ratio to assess the firm's ability to meet short-term obligations.",
+      "分析师计算了一项流动性比率，以评估公司的短期偿债能力。"
+    ],
+    "note": "编辑纠错（释义覆盖）：泛指一类比率，包括流动比率和速动比率，不仅指 current ratio。",
+    "reviewed": true,
+    "definition": "n. 流动性比率；衡量企业以流动资产等资源履行短期偿债义务能力的财务比率"
+  },
+  "carrying value": {
+    "example": [
+      "The impairment charge reduced the asset's carrying value.",
+      "减值损失降低了该资产的账面价值。"
+    ],
+    "note": "编辑纠错（释义覆盖）：补正源释义未清楚表达的会计语境。",
+    "reviewed": true,
+    "definition": "n. 账面价值；资产或负债在财务报表中确认和列报的金额"
+  },
+  "obsolescence": {
+    "example": [
+      "Rapid technological change increased the risk of inventory obsolescence.",
+      "技术快速变化加大了存货过时的风险。"
+    ],
+    "reviewed": true
+  },
+  "unidentifiable": {
+    "example": [
+      "The valuation team could not assign a separate value to the unidentifiable intangible benefits.",
+      "估值团队无法为这些不可辨认的无形利益单独确定价值。"
+    ],
+    "reviewed": true
+  },
+  "accident-prone": {
+    "example": [
+      "The insurer charged a higher premium to cover the accident-prone driver.",
+      "保险公司向这名容易出事故的司机收取了更高的保费。"
+    ],
+    "reviewed": true
+  },
+  "incurrence": {
+    "example": [
+      "The loan agreement restricts the incurrence of additional debt.",
+      "贷款协议限制新增债务的发生。"
+    ],
+    "reviewed": true
+  },
+  "columnar": {
+    "example": [
+      "The accountant used a columnar worksheet to compare monthly expenses.",
+      "会计师使用分栏工作表比较每月费用。"
+    ],
+    "reviewed": true
+  },
+  "treasury stock": {
+    "example": [
+      "The company recorded its repurchased shares as treasury stock.",
+      "公司将回购的自身股份记为库存股。"
+    ],
+    "reviewed": true
+  },
+  "dilutive": {
+    "example": [
+      "The analyst included dilutive options in the calculation of diluted earnings per share.",
+      "分析师在计算稀释每股收益时计入了具有稀释作用的期权。"
+    ],
+    "reviewed": true
+  },
+  "ordinary stock": {
+    "example": [
+      "Holders of ordinary stock receive dividends only when they are declared.",
+      "普通股持有人仅在公司宣布派息时才有权获得股息。"
+    ],
+    "reviewed": true
+  },
+  "phaseout": {
+    "example": [
+      "The budget assumes a gradual phaseout of the subsidy over three years.",
+      "预算假设该补贴将在三年内逐步取消。"
+    ],
+    "reviewed": true
+  },
+  "subtotal": {
+    "example": [
+      "The accountant checked the subtotal before adding the remaining expenses.",
+      "会计师在加上其余费用之前核对了小计。"
+    ],
+    "reviewed": true
+  },
+  "confirmatory": {
+    "example": [
+      "The new sales figures provide confirmatory evidence for the earlier forecast.",
+      "新的销售数据为先前的预测提供了佐证。"
+    ],
+    "reviewed": true
+  },
+  "understandability": {
+    "example": [
+      "Clear notes improve the understandability of financial statements.",
+      "清晰的附注提高了财务报表的可理解性。"
+    ],
+    "reviewed": true
+  },
+  "double entry": {
+    "example": [
+      "Under double entry, every transaction has equal total debits and credits.",
+      "在复式记账法下，每笔交易的借方总额与贷方总额相等。"
+    ],
+    "reviewed": true
+  },
+  "general journal": {
+    "example": [
+      "The accountant recorded the adjusting entry in the general journal.",
+      "会计师在普通日记账中记录了这笔调整分录。"
+    ],
+    "reviewed": true
+  },
+  "journal entry": {
+    "example": [
+      "The journal entry debits cash and credits sales revenue.",
+      "这笔会计分录借记现金，贷记销售收入。"
+    ],
+    "reviewed": true
+  },
+  "retained earning": {
+    "example": [
+      "Retained earnings increased because net income exceeded the dividends declared.",
+      "由于净利润超过了已宣告的股利，留存收益有所增加。"
+    ],
+    "note": "源词 retained earning 保留不改；会计项目通常使用复数 retained earnings，例句采用该标准形式。",
+    "reviewed": true
+  },
+  "contra account": {
+    "example": [
+      "Accumulated depreciation is a contra account that reduces the reported value of equipment.",
+      "累计折旧是一个备抵账户，用于减少设备列报的价值。"
+    ],
+    "reviewed": true
+  },
+  "proxy statement": {
+    "example": [
+      "The investor read the proxy statement before voting on executive compensation.",
+      "投资者在就高管薪酬投票前阅读了委托投票说明书。"
+    ],
+    "note": "编辑纠错（释义覆盖）：区别于股东签署的委托投票授权书。",
+    "reviewed": true,
+    "definition": "n. 委托投票说明书；公司为征求股东委托投票而提供的议案及相关信息披露文件"
+  },
+  "nonconforming": {
+    "example": [
+      "The lender sold the nonconforming mortgage through a separate channel.",
+      "贷款机构通过单独渠道出售了这笔不符合标准的抵押贷款。"
+    ],
+    "reviewed": true
+  },
+  "crawling peg": {
+    "example": [
+      "Under a crawling peg, the exchange rate is adjusted in small steps over time.",
+      "在爬行钉住汇率制度下，汇率会随时间逐步小幅调整。"
+    ],
+    "reviewed": true
+  },
+  "cross rate": {
+    "example": [
+      "The trader derived the euro-yen cross rate from two dollar exchange rates.",
+      "交易员根据两种兑美元汇率计算出欧元兑日元的交叉汇率。"
+    ],
+    "reviewed": true
+  },
+  "central bank": {
+    "example": [
+      "The central bank raised its policy rate to curb inflation.",
+      "中央银行提高了政策利率，以抑制通货膨胀。"
+    ],
+    "reviewed": true
+  },
+  "spot market": {
+    "example": [
+      "The importer bought foreign currency in the spot market to pay an invoice.",
+      "进口商在即期市场买入外币，以支付货款。"
+    ],
+    "reviewed": true
+  },
+  "wto": {
+    "example": [
+      "The analyst reviewed a WTO report on barriers to international trade.",
+      "分析师查阅了一份世界贸易组织关于国际贸易壁垒的报告。"
+    ],
+    "note": "WTO 在此指 World Trade Organization（世界贸易组织）。",
+    "reviewed": true
+  },
+  "international monetary fund": {
+    "example": [
+      "The report cites economic forecasts published by the International Monetary Fund.",
+      "该报告引用了国际货币基金组织发布的经济预测。"
+    ],
+    "reviewed": true,
+    "definition": "n. 国际货币基金组织（IMF）；促进国际货币合作和金融稳定并向成员提供政策建议及融资支持的国际组织",
+    "note": "编辑纠错（释义覆盖）：更正源中文名称“国际货币基金会”，保留英文原词。"
+  },
+  "estate tax": {
+    "example": [
+      "The executor set aside cash to cover the estate tax due.",
+      "遗产执行人预留了现金，用于缴纳应付的遗产税。"
+    ],
+    "reviewed": true,
+    "definition": "n. 遗产税；对死者遗留财产按适用制度征收的税",
+    "note": "编辑纠错（释义覆盖）：更正仅限房地产的源释义；具体税制和税率因司法辖区而异。"
+  },
+  "capital gain tax": {
+    "example": [
+      "The investor estimated the capital gains tax due on the sale.",
+      "投资者估算了此次出售应缴纳的资本利得税。"
+    ],
+    "note": "源词 capital gain tax 保留不改；例句采用惯用的 capital gains tax，因此不作连续字面匹配。",
+    "reviewed": true
+  },
+  "quantitative easing": {
+    "example": [
+      "The central bank used quantitative easing to purchase longer-term securities.",
+      "中央银行通过量化宽松购买较长期限的证券。"
+    ],
+    "reviewed": true
+  },
+  "budget surplus": {
+    "example": [
+      "The government recorded a budget surplus because revenue exceeded expenditure.",
+      "由于收入超过支出，政府录得预算盈余。"
+    ],
+    "reviewed": true
+  },
+  "wpi": {
+    "example": [
+      "The economist used the WPI to track changes in wholesale prices.",
+      "经济学家使用批发价格指数追踪批发价格的变化。"
+    ],
+    "note": "wpi 在此指 wholesale price index，例句使用大写 WPI。",
+    "reviewed": true
+  },
+  "ppi": {
+    "example": [
+      "The PPI tracks changes in the prices producers receive for their output.",
+      "生产者价格指数追踪生产者出售其产出时所获价格的变化。"
+    ],
+    "note": "编辑纠错（释义覆盖）：采用宏观经济学义；源释义仅列非相关缩写展开，源键 ppi 保留。",
+    "reviewed": true,
+    "definition": "n. 生产者价格指数（Producer Price Index）；衡量生产者出售其产出所获价格平均变化的指标"
+  },
+  "cpi": {
+    "example": [
+      "The analyst compared wage growth with the change in the CPI.",
+      "分析师将工资增长与消费者价格指数的变化进行了比较。"
+    ],
+    "reviewed": true
+  },
+  "undistributed": {
+    "example": [
+      "The company kept its undistributed profits to finance expansion.",
+      "公司保留了未分配利润，用于为业务扩张提供资金。"
+    ],
+    "reviewed": true
+  },
+  "quasi": {
+    "example": [
+      "The analyst classified the deposit as quasi-money because it was not directly usable for payments.",
+      "分析师将这笔存款归为准货币，因为它不能直接用于支付。"
+    ],
+    "note": "quasi 在本例中作为构词成分，用于 quasi-money（准货币）。",
+    "reviewed": true
+  },
+  "equity capital": {
+    "example": [
+      "The founders raised equity capital by selling shares to new investors.",
+      "创始人通过向新投资者出售股份筹集了权益资本。"
+    ],
+    "reviewed": true
+  },
+  "abnormal profit": {
+    "example": [
+      "The firm earned an abnormal profit because revenue exceeded all explicit and implicit costs.",
+      "由于收入超过了全部显性成本和隐性成本，该企业获得了超额利润。"
+    ],
+    "reviewed": true
+  },
+  "budget line": {
+    "example": [
+      "A higher income shifts the budget line outward if prices remain unchanged.",
+      "在价格不变的情况下，收入增加会使预算线向外平移。"
+    ],
+    "reviewed": true
+  },
+  "satiation": {
+    "example": [
+      "At satiation, an additional unit of the good provides no extra utility.",
+      "达到饱和点时，额外一单位商品不再带来额外效用。"
+    ],
+    "reviewed": true
+  },
+  "unsubsidized": {
+    "example": [
+      "The firm financed the project with an unsubsidized loan at a market interest rate.",
+      "公司以市场利率借入一笔无补贴贷款，为项目融资。"
+    ],
+    "reviewed": true
+  },
+  "nonmonetary": {
+    "example": [
+      "The company offered flexible working hours as a nonmonetary benefit.",
+      "公司提供弹性工作时间作为一项非货币福利。"
+    ],
+    "reviewed": true
+  },
+  "underproduction": {
+    "example": [
+      "The subsidy was intended to reduce underproduction of goods with positive externalities.",
+      "该补贴旨在减少具有正外部性的商品的生产不足。"
+    ],
+    "reviewed": true
+  },
+  "deadweight loss": {
+    "example": [
+      "The tax created a deadweight loss by preventing some mutually beneficial trades.",
+      "该税收阻碍了部分互利交易，从而造成了无谓损失。"
+    ],
+    "reviewed": true
+  },
+  "consumer surplus": {
+    "example": [
+      "Consumer surplus rises when buyers pay less for a good they value highly.",
+      "当买家为自己高度重视的商品支付更低价格时，消费者剩余会增加。"
+    ],
+    "reviewed": true
+  },
+  "contrarian": {
+    "example": [
+      "A contrarian investor may buy shares that most other investors avoid.",
+      "逆向投资者可能会买入大多数其他投资者回避的股票。"
+    ],
+    "reviewed": true
+  },
+  "overbought": {
+    "example": [
+      "The indicator suggested that the stock was overbought after its rapid rise.",
+      "该指标表明，这只股票在快速上涨后处于超买状态。"
+    ],
+    "reviewed": true
+  },
+  "intraday": {
+    "example": [
+      "The trader monitored intraday price movements before placing an order.",
+      "交易员在下单前观察了日内价格波动。"
+    ],
+    "reviewed": true
+  },
+  "cross-sectional": {
+    "example": [
+      "The study used cross-sectional data to compare company valuations at one date.",
+      "该研究使用横截面数据，比较同一时点各家公司的估值。"
+    ],
+    "note": "编辑纠错（释义覆盖）：更正金融统计语境下不适用的“代表性的”。",
+    "reviewed": true,
+    "definition": "adj. 横截面的；涉及同一时点或时期不同观察对象的数据或比较的"
+  },
+  "subgroup": {
+    "example": [
+      "The analyst compared returns for a subgroup of small companies.",
+      "分析师比较了一个小型公司子组的收益率。"
+    ],
+    "reviewed": true
+  },
+  "monte carlo simulation": {
+    "example": [
+      "The risk team used Monte Carlo simulation to generate possible portfolio outcomes.",
+      "风险团队使用蒙特卡罗模拟生成投资组合的可能结果。"
+    ],
+    "reviewed": true
+  },
+  "lognormal": {
+    "example": [
+      "The model assumes that the future stock price has a lognormal distribution.",
+      "该模型假设未来股价服从对数正态分布。"
+    ],
+    "reviewed": true
+  },
+  "asymptotic": {
+    "example": [
+      "The statistician derived an asymptotic approximation for a large sample.",
+      "统计学家为大样本推导了一个渐近近似。"
+    ],
+    "reviewed": true
+  },
+  "factorial": {
+    "example": [
+      "The number of ways to arrange five distinct assets is five factorial.",
+      "五项不同资产的排列方式共有五的阶乘种。"
+    ],
+    "reviewed": true
+  },
+  "inferential statistics": {
+    "example": [
+      "The analyst used inferential statistics to draw conclusions about a population from a sample.",
+      "分析师运用推断统计，根据样本对总体作出推断。"
+    ],
+    "reviewed": true
+  },
+  "descriptive statistics": {
+    "example": [
+      "The report uses descriptive statistics to summarize monthly returns.",
+      "报告使用描述统计概括月度收益率。"
+    ],
+    "reviewed": true
+  },
+  "skewness": {
+    "example": [
+      "Negative skewness indicates a longer or more pronounced left tail in the return distribution.",
+      "负偏度表明收益率分布的左尾更长或更突出。"
+    ],
+    "reviewed": true
+  },
+  "arithmetic mean": {
+    "example": [
+      "The arithmetic mean of returns of 2 percent and 6 percent is 4 percent.",
+      "百分之二与百分之六这两个收益率的算术平均值为百分之四。"
+    ],
+    "reviewed": true
+  },
+  "internal rate of return": {
+    "example": [
+      "The internal rate of return is the discount rate that makes the project's NPV equal to zero.",
+      "内部收益率是使项目净现值等于零的折现率。"
+    ],
+    "reviewed": true
+  },
+  "additivity": {
+    "example": [
+      "The additivity of present values lets us value each cash flow separately and then sum the results.",
+      "现值的可加性使我们可以分别计算各笔现金流的现值，再将结果相加。"
+    ],
+    "reviewed": true
+  },
+  "excruciate": {
+    "example": [
+      "Memories of the accident continued to excruciate him.",
+      "对那场事故的回忆仍使他痛苦不堪。"
+    ],
+    "note": "excruciate 是罕见且语气强烈的动词，意为使极度痛苦；保留源词，用一般语境例句，不推测替换成其他词。",
+    "reviewed": true
+  },
+  "a stream of": {
+    "example": [
+      "The bond provides a stream of interest payments until maturity.",
+      "该债券在到期前提供一系列利息支付。"
+    ],
+    "reviewed": true
+  },
+  "default risk": {
+    "example": [
+      "The lender charged a higher interest rate to compensate for greater default risk.",
+      "贷款机构收取更高的利率，以补偿更大的违约风险。"
+    ],
+    "reviewed": true
+  },
+  "preload": {
+    "example": [
+      "The app can preload the price chart before the user opens it.",
+      "应用可以在用户打开价格图表之前预加载该图表。"
+    ],
+    "note": "preload 为技术用词，本例采用金融应用的预加载场景；不擅自改成其他疑似金融词。",
+    "reviewed": true
+  },
+  "oversubscribe": {
+    "example": [
+      "Investors may oversubscribe an offering when demand exceeds the number of shares available.",
+      "当需求超过可供认购的股份数量时，投资者可能会超额认购该次发行。"
+    ],
+    "reviewed": true
+  },
+  "market manipulation": {
+    "example": [
+      "The compliance team investigated trading patterns that suggested market manipulation.",
+      "合规团队调查了涉嫌市场操纵的交易模式。"
+    ],
+    "reviewed": true
+  },
+  "flat fee": {
+    "example": [
+      "The adviser charged a flat fee regardless of the number of trades.",
+      "顾问收取固定费用，不随交易次数变化。"
+    ],
+    "note": "编辑纠错（释义覆盖）：区别于按资产或交易金额计算的固定百分比费率。",
+    "reviewed": true,
+    "definition": "n. 固定费用；不随约定服务范围内的交易次数或交易金额按比例变动的收费金额"
+  },
+  "best practice": {
+    "example": [
+      "The team adopted a best practice for documenting investment decisions.",
+      "团队采用了一项记录投资决策的最佳实践。"
+    ],
+    "reviewed": true
+  },
+  "legal counsel": {
+    "example": [
+      "The board asked legal counsel to review the merger agreement.",
+      "董事会请法律顾问审阅合并协议。"
+    ],
+    "reviewed": true
+  },
+  "dissociate from": {
+    "example": [
+      "The adviser decided to dissociate from the misleading marketing campaign.",
+      "该顾问决定与这项误导性的营销活动划清界限。"
+    ],
+    "reviewed": true
+  },
+  "gilt": {
+    "definition": "n. 英国国债；英国政府发行的英镑计价债券",
+    "example": [
+      "The fund bought a gilt issued by the UK government.",
+      "该基金买入了一只英国政府发行的国债。"
+    ],
+    "note": "编辑纠错（释义及原创例句覆盖）：采用债券义，替换小母猪、镀金等非金融释义及镀金相关源例句。",
+    "reviewed": true
+  },
+  "duration": {
+    "definition": "n. 久期；麦考利久期为债券现金流现值加权的平均期限，修正久期用于衡量价格对收益率变动的敏感度",
+    "example": [
+      "The analyst used modified duration to estimate the bond's price sensitivity to a small yield change.",
+      "分析师使用修正久期，估计债券价格对收益率小幅变动的敏感度。"
+    ],
+    "note": "编辑纠错（释义及原创例句覆盖）：采用固定收益语境，区别麦考利久期与修正久期；替换仅表示持续时间的源释义和例句。",
+    "reviewed": true
+  },
+  "mezzanine": {
+    "definition": "n. 夹层融资；偿付顺序通常低于优先债务、高于普通股权益，可能附带股权参与安排的融资",
+    "example": [
+      "The acquisition used mezzanine financing alongside senior debt and equity.",
+      "此次收购同时使用了夹层融资、优先债务和股权资金。"
+    ],
+    "note": "编辑纠错（释义及原创例句覆盖）：采用资本结构语境，替换建筑夹层、剧院座位的源释义和例句。",
+    "reviewed": true
+  },
+  "drawdown": {
+    "definition": "n. 回撤；资产或投资组合价值从此前高点下降的幅度，常以百分比表示",
+    "example": [
+      "The portfolio fell from its peak value of 100 to 90, a drawdown of 10 percent.",
+      "该投资组合的价值从高点一百降至九十，回撤为百分之十。"
+    ],
+    "note": "编辑纠错（释义及原创例句覆盖）：采用投资业绩回撤义，替换水位降低等源释义及截断的军事例句；不与贷款提款义混同。",
+    "reviewed": true
+  },
+  "fixed income": {
+    "definition": "n. 固定收益；以债券等债务工具为主、具有约定现金流安排的资产类别",
+    "example": [
+      "The fund's fixed income allocation includes government and corporate bonds.",
+      "该基金的固定收益资产配置包括政府债券和公司债券。"
+    ],
+    "note": "编辑纠错（释义及原创例句覆盖）：采用资产类别义；固定收益不代表投资回报有保证，也不限于固定票息，替换一般固定收入语境的破损源例句。",
+    "reviewed": true
+  },
+  "pension funds": {
+    "definition": "n. 养老基金（复数）；汇集和投资资金以支付退休福利的基金",
+    "example": [
+      "Pension funds invest contributions to help meet future retirement payments.",
+      "养老基金将缴款用于投资，以帮助支付未来的退休福利。"
+    ],
+    "note": "编辑纠错（释义及原创例句覆盖）：更正源释义和例句中的“抚恤基金”，采用养老退休福利语境。",
+    "reviewed": true
+  }
+}

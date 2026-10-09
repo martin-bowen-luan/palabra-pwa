@@ -9,6 +9,7 @@ export default defineConfig(({ command, isPreview }) => {
     base,
     build: {rollupOptions:{output:{manualChunks(id){
       if(id.endsWith('/english-wordbooks.json'))return 'english-wordbooks'
+      if(id.endsWith('/cfa-wordbook.json'))return 'cfa-wordbook'
     }}}},
     plugins: [
     react(),
