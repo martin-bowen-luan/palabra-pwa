@@ -7,6 +7,7 @@ import { SpellingComparison } from '../components/SpellingComparison'
 import { SpellingAnswer } from '../components/SpellingAnswer'
 import { WordRelations } from '../components/WordRelations'
 import { SentenceSpeechButton } from '../components/SentenceSpeechButton'
+import { EditorialExampleNote, EditorialMeaningNote } from '../components/EditorialNote'
 import { useAi } from '../ai/AiProvider'
 import { pronunciationPlayer } from '../audio/pronunciation'
 import { studyChoiceOptions } from '../domain/choiceOptions'
@@ -98,9 +99,10 @@ function EnglishPrompt({ session, word, busy, perform, header, error }: { sessio
     <p className={styles.quizPrompt}>第 {MEMORY_ROUNDS.indexOf(round) + 1} 关 · {ROUND_LABELS[round]}{session.practice?.stateById[word.id] === 'retry' ? ' · 再试一次' : session.practice?.stateById[word.id] === 'revisit' ? ' · 再回想一次' : ''}</p>
     <div className={styles.memoryIdentity}>
       <h1 lang={round === 'spelling' ? 'zh-CN' : 'en'} className={round === 'spelling' ? styles.meaningPrompt : ''}>{round === 'spelling' ? <><span className={styles.promptPartOfSpeech}>{word.partOfSpeech} </span>{word.meaningZh}</> : word.term}</h1>
+      {round === 'spelling' && <EditorialMeaningNote word={word} />}
       <div className={styles.pronunciationRow}><span>{word.pronunciation?.ipa || '美式发音'}</span><PronunciationButton word={word} /></div>
     </div>
-    {round === 'context' && !revealed && <><blockquote className={styles.contextSentence} lang="en">{word.examples[0]?.text || '这个词暂未收录例句，请直接回忆词义。'}</blockquote>{aiSettings.enabled && word.examples[0] && <SentenceSpeechButton text={word.examples[0].text} />}</>}
+    {round === 'context' && !revealed && <><EditorialExampleNote example={word.examples[0]} /><blockquote className={styles.contextSentence} lang="en">{word.examples[0]?.text || '这个词暂未收录例句，请直接回忆词义。'}</blockquote>{aiSettings.enabled && word.examples[0] && <SentenceSpeechButton text={word.examples[0].text} />}</>}
     {round === 'recall' && !revealed && <p className={styles.recallInstruction}>先在心里说出词义，再核对答案。</p>}
     {round === 'choice' && choices && !feedback?.correct && <>
       <div className={styles.memoryChoices} role="group" aria-label="选择释义">{choices.map(option => {
@@ -113,9 +115,10 @@ function EnglishPrompt({ session, word, busy, perform, header, error }: { sessio
     </>}
     {revealed && round !== 'spelling' && <div className={styles.memoryDefinition}>
       <p><small>{word.partOfSpeech}</small><strong>{word.meaningZh}</strong></p>
-      {word.examples[0] && <><blockquote lang="en">{word.examples[0].text}</blockquote>{aiSettings.enabled && <SentenceSpeechButton text={word.examples[0].text} />}<p>{word.examples[0].translationZh}</p></>}
+      <EditorialMeaningNote word={word} />
+      {word.examples[0] && <><EditorialExampleNote example={word.examples[0]} /><blockquote lang="en">{word.examples[0].text}</blockquote>{aiSettings.enabled && <SentenceSpeechButton text={word.examples[0].text} />}<p>{word.examples[0].translationZh}</p></>}
       {selectedWord && !feedback?.correct && <div className={styles.choiceComparison} role="region" aria-label="释义错误对比"><small>你选的是</small><strong lang="en">{selectedWord.term}</strong><p>{selectedWord.partOfSpeech} {selectedWord.meaningZh}</p><small>本题单词</small><strong lang="en">{word.term}</strong><p>{word.partOfSpeech} {word.meaningZh}</p></div>}
-      <details className={styles.studyDetails}><summary>词汇详情</summary><WordRelations word={word} vocabulary={vocabulary} bookContext={session.sourceWordbook==='en-oxford-primary'?session.sourceWordbook:undefined} /></details>
+      <details className={styles.studyDetails}><summary>词汇详情</summary><WordRelations word={word} vocabulary={vocabulary} bookContext={session.sourceWordbook==='en-highschool'?undefined:session.sourceWordbook} /></details>
     </div>}
     {feedback && <div className={`${styles.memoryFeedback} ${feedback.correct ? styles.feedbackCorrect : styles.feedbackWrong}`} role="status">
       <strong>{feedback.correct ? '正确' : correctingChoice ? '请在上方选对释义后继续' : '再记一次'}</strong>

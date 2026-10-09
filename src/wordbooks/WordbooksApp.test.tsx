@@ -74,7 +74,7 @@ it('shows shared mastery in primary details and filters grades without changing 
 it('warns that clearing English resets both books and preserves records on cancel',async()=>{
   const db=await mountApp('/settings'),user=userEvent.setup()
   await user.click(await screen.findByRole('button',{name:'清空全部英语学习记录'}))
-  expect(screen.getByText(/高考与小学共用记忆/)).toBeInTheDocument()
+  expect(screen.getByText(/全部英语词书.*共用记忆/)).toBeInTheDocument()
   await user.click(screen.getByRole('button',{name:'取消'}))
   expect(await db.getAllProgress('en')).toHaveLength(1)
   await user.click(screen.getByRole('button',{name:'清空全部英语学习记录'}))

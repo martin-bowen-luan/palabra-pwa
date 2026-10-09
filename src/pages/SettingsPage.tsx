@@ -30,6 +30,12 @@ export function SettingsPage() {
       </div>
     </section>
     {settings.learningLanguage === 'en' && <AudioPackSettings />}
+    {settings.learningLanguage === 'en' && settings.englishWordbook === 'en-cfa-level1' && <section className={styles.settingsSection}>
+      <h2>CFA 词书来源</h2>
+      <p className={styles.settingDescription}>根据所提供的新东方在线词典整理，收录 1,152 个单词与短语。包含通用义项，并非 CFA 官方教材；专业用法请结合课程教材核对。</p>
+      <p className={styles.settingDescription}>部分释义和例句由 AI 辅助编辑补充，并单独标注。已检查资料缺口及发现的误译，尚未对全部原始例句逐句人工审校。</p>
+      <a href="https://www.koolearn.com/dict/tag_2716_1.html" target="_blank" rel="noopener noreferrer">原始词表</a> · <a href="https://github.com/martin-bowen-luan/palabra-pwa/blob/main/docs/cfa-editorial-review.md" target="_blank" rel="noopener noreferrer">补充与校订说明</a>
+    </section>}
     <GroupSettingsPanel />
     {settings.learningLanguage === 'en' && <AiSettingsPanel />}
     {spanish.enabled && <section className={styles.settingsSection}><div className={styles.settingTitle}><h2>西语情境填词</h2></div><p className={styles.settingDescription}>在句子中练习词义、阴阳性和变位。每组最多 10 个，同一原词的新变化形式分散学习。</p><p className={styles.settingDescription}>复习间隔逐步延长：10 分钟、1 天、2 天、4 天、7 天、15 天、30 天。提示、答错或跳过后缩短间隔，跳过优先复习。</p></section>}
@@ -49,7 +55,7 @@ export function SettingsPage() {
     </section>
     <section className={styles.dangerSection}>
       <h2>学习数据</h2>
-      {!confirming ? <button onClick={() => setConfirming(true)}>{settings.learningLanguage==='en'?'清空全部英语学习记录':'清空学习记录'}</button> : <div className={styles.confirmClear}><p>{settings.learningLanguage==='en'?'高考与小学共用记忆，都会重置。西语、词典、设置、AI 与 Wordle 会保留。':'这会删除本机西语进度与每日记录，设置会保留。'}小组共享历史不会删除，仍按原期限保留。</p><button onClick={() => { void clearLearningData(); setConfirming(false) }}>确认清空</button><button onClick={() => setConfirming(false)}>取消</button></div>}
+      {!confirming ? <button onClick={() => setConfirming(true)}>{settings.learningLanguage==='en'?'清空全部英语学习记录':'清空学习记录'}</button> : <div className={styles.confirmClear}><p>{settings.learningLanguage==='en'?'全部英语词书（高考、小学、CFA）共用记忆，都会重置。西语、词典、设置、AI 与 Wordle 会保留。':'这会删除本机西语进度与每日记录，设置会保留。'}小组共享历史不会删除，仍按原期限保留。</p><button onClick={() => { void clearLearningData(); setConfirming(false) }}>确认清空</button><button onClick={() => setConfirming(false)}>取消</button></div>}
     </section>
   </main>
 }

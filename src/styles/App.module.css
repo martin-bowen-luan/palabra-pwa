@@ -164,7 +164,7 @@
 .spellingForm label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 13px; }
 .spellingForm input { width: 100%; height: 48px; margin-bottom: 4px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--control); font: 500 25px 'Source Serif 4 Variable', serif; }
 .studyHelpers { display:flex; flex-wrap:wrap; gap:4px; justify-content:space-between; }
-.wordbookSwitch { display:flex; gap:12px; border-bottom:1px solid var(--line); }
+.wordbookSwitch { display:flex; flex-wrap:wrap; gap:4px 12px; border-bottom:1px solid var(--line); }
 .wordbookSwitch button { min-height:44px; border:0; border-bottom:2px solid transparent; padding:8px 0; background:none; text-align:left; font-size:13px; color:var(--muted); cursor:pointer; }
 .wordbookSwitch button[aria-pressed='true'] { border-bottom-color:var(--blue); color:var(--blue); }
 .bookRange { display:flex; gap:12px; margin-top:16px; }
