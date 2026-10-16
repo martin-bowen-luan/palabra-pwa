@@ -62,7 +62,7 @@ describe('Spanish contextual course',()=>{
     cleanup();render(<MemoryRouter initialEntries={['/study']}><App storageClient={db}/></MemoryRouter>)
     expect(await screen.findByRole('region',{name:'完整答案'})).toHaveTextContent('hablo')
     await user.click(screen.getByRole('button',{name:'重新拼写'}))
-    expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument()
+    await waitFor(()=>expect(screen.queryByRole('region',{name:'完整答案'})).not.toBeInTheDocument())
     expect(screen.getByRole('textbox',{name:'填写缺少的西语词'})).toHaveValue('')
     expect(screen.getByRole('region',{name:'西语句子填词'})).toHaveTextContent('____')
     await user.type(screen.getByRole('textbox',{name:'填写缺少的西语词'}),'hablo')
