@@ -8,6 +8,7 @@ import type { ThemeMode, UserSettings } from '../types'
 import styles from '../styles/App.module.css'
 import { useSpanish } from '../spanish/SpanishProvider'
 import { WordbookSwitch } from '../wordbooks/WordbookSwitch'
+import { SpanishCategorySwitch } from '../spanish/SpanishCategorySwitch'
 
 const goals: UserSettings['dailyNewWords'][] = [5, 10, 15, 20]
 const themes: Array<{ value: ThemeMode; label: string }> = [
@@ -23,6 +24,7 @@ export function SettingsPage() {
     <header className={styles.pageHeader}><h1>设置</h1></header>
     <LanguageSwitch />
     <WordbookSwitch />
+    <SpanishCategorySwitch />
     <section className={styles.settingsSection}>
       <div className={styles.settingTitle}><h2>{spanish.enabled?'西语每日总量':'每日新词'}</h2><span>{spanish.enabled?'新词形与复习合计，可不完成':'按自己的节奏学习'}</span></div>
       <div className={styles.segmented}>
