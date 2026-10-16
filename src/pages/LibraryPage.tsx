@@ -16,6 +16,7 @@ import { PrimaryRangeFilter } from '../wordbooks/PrimaryRangeFilter'
 import { EditorialExampleNote, EditorialMeaningNote } from '../components/EditorialNote'
 import { projectWordbook } from '../wordbooks/catalog'
 import type { PrimaryRange } from '../wordbooks/types'
+import { SpanishCategorySwitch } from '../spanish/SpanishCategorySwitch'
 
 export function LibraryPage() {
   const { categories, progress, settings, vocabulary, bookVocabulary,selectedWordbook,wordbooks } = useAppState()
@@ -111,6 +112,7 @@ export function LibraryPage() {
     <div className={styles.categoryRail} aria-label="词库分类">
       {categories.map((item) => <button key={item} className={category === item ? styles.categoryActive : ''} onClick={() => setCategory(item)}>{item}</button>)}
     </div>
+    <SpanishCategorySwitch category={category} />
     <div className={styles.dictionaryList}>
       {spanishGroups ? spanishGroups.slice(0,visibleCount).map(group=>group.words.length===1?<button key={group.term} className={`${styles.dictionaryRow} ${spanishStyles.resultRow}`} onClick={()=>setSearchParams({word:group.words[0].id},{state:{wordLinkFrom:'/library'}})}><span><strong>{group.term}</strong><small>{group.words[0].spanishData?.grammarLabel??group.words[0].partOfSpeech}</small></span><span>{group.words[0].meaningZh}</span></button>:<details key={group.term} className={spanishStyles.searchGroup}><summary><strong lang="es">{group.term}</strong><span>{group.words.length} 种语法用法</span></summary>{group.words.map(word=><button key={word.id} className={spanishStyles.formRow} onClick={()=>setSearchParams({word:word.id},{state:{wordLinkFrom:'/library'}})}><strong>{word.meaningZh}</strong><span>{word.spanishData?.lemma} · {word.spanishData?.grammarLabel}</span></button>)}</details>) : visibleWords.map((word) => <button key={word.id} className={styles.dictionaryRow} onClick={() => setSearchParams({ word: word.id }, { state: { wordLinkFrom: '/library' } })}>
         <span><strong>{word.term}</strong><small>{word.partOfSpeech}</small></span>

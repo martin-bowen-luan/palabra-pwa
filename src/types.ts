@@ -99,6 +99,7 @@ export interface UserSettings {
   englishWordbook?: WordbookId
   primaryNewWordRange?: PrimaryRange
   spanishDailyGoal?: 10 | 20 | 30 | 50
+  spanishNewCategory?: string
   id: 'settings'
   dailyNewWords: 5 | 10 | 15 | 20
   enableChoice: boolean

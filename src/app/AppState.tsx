@@ -49,6 +49,7 @@ interface AppStateValue {
   completeQuizItem: () => Promise<boolean>
   exitSession: () => Promise<void>
   updateSettings: (patch: Partial<UserSettings>) => Promise<void>
+  getSettledSettings: () => Promise<UserSettings>
   setLearningLanguage: (language: LearningLanguage) => Promise<void>
   clearLearningData: () => Promise<void>
 }
@@ -486,6 +487,12 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     return job
   }
   const updateSettings = (patch: Partial<UserSettings>) => writeSettings(patch)
+  const getSettledSettings = async () => {
+    // Settings writes outlive the page that initiated them. Use the last durable
+    // selection even when study starts before React has rendered that selection.
+    await settingsQueue.current.catch(() => {})
+    return settingsRef.current
+  }
   const setEnglishWordbook=async(id:WordbookId)=>{
     const version=++bookSelectionVersion.current
     const books=await storageClient.getWordbooks()
@@ -548,6 +555,7 @@ export function AppStateProvider({ children, storageClient = defaultStorage }: {
     skipSpellingWord,
     exitSession,
     updateSettings,
+    getSettledSettings,
     setLearningLanguage,
     clearLearningData,
   }

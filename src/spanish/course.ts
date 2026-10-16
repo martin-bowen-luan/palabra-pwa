@@ -8,7 +8,7 @@ import type { SpanishDailyRecord, SpanishOutcome } from './sessionTypes'
 export const normalizeSpanish = (text: string) => text.normalize('NFC').trim().toLocaleLowerCase('es')
 export const eligibleSpanish = (word: VocabularyEntry) => word.language === 'es' && word.spanishData?.eligible === true && word.spanishData.cloze.reviewed
 
-export function buildSpanishGroup(words: VocabularyEntry[], progress: Record<string, WordProgress>, day: SpanishDailyRecord, goal: number, now = new Date(), extra = false, mode: 'learn'|'review' = 'learn'): DailyPlan {
+export function buildSpanishGroup(words: VocabularyEntry[], progress: Record<string, WordProgress>, day: SpanishDailyRecord, goal: number, now = new Date(), extra = false, mode: 'learn'|'review' = 'learn', newCategory = ''): DailyPlan {
   const capacity = extra ? 10 : Math.min(10, Math.max(0, goal - Object.keys(day.entries).length))
   if (!capacity) return {all:[],review:[],newWords:[]}
   const eligible = words.filter(eligibleSpanish)
@@ -20,6 +20,7 @@ export function buildSpanishGroup(words: VocabularyEntry[], progress: Record<str
   const groupFamilies = new Set(review.map(word=>word.spanishData!.lemmaId))
   if (mode !== 'review') for (const word of eligible) {
     if (review.length+newWords.length >= capacity) break
+    if (newCategory && word.category !== newCategory) continue
     const family=word.spanishData!.lemmaId
     if (progress[word.id] || day.entries[word.id] || groupFamilies.has(family) || (familyCount.get(family)??0)>=5) continue
     newWords.push(word)
