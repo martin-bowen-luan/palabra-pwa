@@ -4,15 +4,18 @@ import { advancePractice, createPracticeQueue, currentPracticeWord, removePracti
 import { isDue, markFluent } from '../domain/reviewScheduler'
 import { reviewUrgency, scheduleEnglishReview } from '../domain/englishReview'
 import type { SpanishDailyRecord, SpanishOutcome } from './sessionTypes'
+import { toLocalDate } from '../domain/stats'
 
 export const normalizeSpanish = (text: string) => text.normalize('NFC').trim().toLocaleLowerCase('es')
 export const eligibleSpanish = (word: VocabularyEntry) => word.language === 'es' && word.spanishData?.eligible === true && word.spanishData.cloze.reviewed
 
-export function buildSpanishGroup(words: VocabularyEntry[], progress: Record<string, WordProgress>, day: SpanishDailyRecord, goal: number, now = new Date(), extra = false, mode: 'learn'|'review' = 'learn', newCategory = ''): DailyPlan {
+export const spanishReviewsDeferred = (deferredOn?: string, now = new Date()) => deferredOn === toLocalDate(now)
+
+export function buildSpanishGroup(words: VocabularyEntry[], progress: Record<string, WordProgress>, day: SpanishDailyRecord, goal: number, now = new Date(), extra = false, mode: 'learn'|'review' = 'learn', newCategory = '', deferredOn?: string): DailyPlan {
   const capacity = extra ? 10 : Math.min(10, Math.max(0, goal - Object.keys(day.entries).length))
   if (!capacity) return {all:[],review:[],newWords:[]}
   const eligible = words.filter(eligibleSpanish)
-  const review = eligible.filter(word => progress[word.id] && isDue(progress[word.id], now))
+  const review = mode !== 'review' && spanishReviewsDeferred(deferredOn, now) ? [] : eligible.filter(word => progress[word.id] && isDue(progress[word.id], now))
     .sort((a,b) => reviewUrgency(progress[b.id],now)-reviewUrgency(progress[a.id],now) || a.id.localeCompare(b.id)).slice(0, capacity)
   const newWords: VocabularyEntry[] = []
   const familyCount = new Map<string,number>()

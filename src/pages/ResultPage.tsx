@@ -14,7 +14,7 @@ export function ResultPage() {
   if (!session) return <Navigate to="/today" replace />
   if (session.id.startsWith('es-cloze:')) return <SpanishResult session={session} />
   const moreGroupsToday = spanish.enabled
-    ? buildSpanishGroup(vocabulary, progress, spanish.day, settings.spanishDailyGoal ?? 50, new Date(), false, session.mode ?? 'learn').all.length > 0
+    ? buildSpanishGroup(vocabulary, progress, spanish.day, settings.spanishDailyGoal ?? 50, new Date(), false, session.mode ?? 'learn', settings.spanishNewCategory, settings.spanishReviewDeferredOn).all.length > 0
     : legacyMoreGroups
   const accuracy = session.totalCount ? Math.round(session.correctCount / session.totalCount * 100) : undefined
   return <main className={styles.resultPage}>

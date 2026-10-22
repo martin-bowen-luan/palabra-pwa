@@ -100,6 +100,8 @@ export interface UserSettings {
   primaryNewWordRange?: PrimaryRange
   spanishDailyGoal?: 10 | 20 | 30 | 50
   spanishNewCategory?: string
+  /** Local date on which automatic Spanish reviews are deferred; never changes due dates. */
+  spanishReviewDeferredOn?: string
   id: 'settings'
   dailyNewWords: 5 | 10 | 15 | 20
   enableChoice: boolean

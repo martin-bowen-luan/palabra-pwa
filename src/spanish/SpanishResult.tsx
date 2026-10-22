@@ -8,7 +8,7 @@ import base from '../styles/App.module.css'
 export function SpanishResult({session}:{session:StudySession}) {
   const course=useSpanish(),app=useAppState(),navigate=useNavigate()
   const mode=session.mode??'learn'
-  const more=buildSpanishGroup(app.vocabulary,app.progress,course.day,app.settings.spanishDailyGoal??50,new Date(),false,mode,app.settings.spanishNewCategory).all.length>0
+  const more=buildSpanishGroup(app.vocabulary,app.progress,course.day,app.settings.spanishDailyGoal??50,new Date(),false,mode,app.settings.spanishNewCategory,app.settings.spanishReviewDeferredOn).all.length>0
   const accuracy=session.totalCount?Math.round(session.correctCount/session.totalCount*100):undefined
   return <main className={base.resultPage}>
     <div className={base.completionMark}><span>✓</span></div><p>本组练习完成</p>
