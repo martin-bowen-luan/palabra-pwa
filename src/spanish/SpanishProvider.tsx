@@ -135,7 +135,7 @@ export function SpanishProvider({children,storageClient=defaultStorage}:{childre
     const currentApp=appRef.current
     const now=new Date()
     const [records,todayRecord]=await Promise.all([storageClient.getAllProgress('es'),storageClient.getSpanishDay(toLocalDate(now))])
-    const plan=buildSpanishGroup(currentApp.vocabulary,Object.fromEntries(records.map(p=>[p.wordId,p])),todayRecord,settings.spanishDailyGoal??50,now,extra,mode,settings.spanishNewCategory)
+    const plan=buildSpanishGroup(currentApp.vocabulary,Object.fromEntries(records.map(p=>[p.wordId,p])),todayRecord,settings.spanishDailyGoal??50,now,extra,mode,settings.spanishNewCategory,settings.spanishReviewDeferredOn)
     if(!plan.all.length){await refresh();return false}
     active.current=await storageClient.createActiveSession(createSpanishSession(plan,now,mode))
     await refresh();return true

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppState } from '../app/AppState'
 import { useSpanish } from './SpanishProvider'
+import { spanishReviewsDeferred } from './course'
 import styles from '../styles/App.module.css'
 
 /** Category names come from the same dictionary list used by LibraryPage. */
@@ -33,7 +34,7 @@ export function SpanishCategorySwitch({ category, onSavingChange }: { category?:
         {categories.filter(item => item !== '全部').map(item => <option key={item} value={item}>{item}</option>)}
       </select></label>
     </div>}
-    <p className={styles.bookNote}>{activeSession ? '当前组不变，类别从下一组生效。' : '新词按所选类别安排。'}到期复习包含所有类别。</p>
+    <p className={styles.bookNote}>{activeSession ? '当前组不变，类别从下一组生效。' : '新词按所选类别安排。'}{spanishReviewsDeferred(settings.spanishReviewDeferredOn)?'今天暂缓复习，复习记录保留。':'到期复习包含所有类别。'}</p>
     {error && <p role="alert" className={styles.inlineNotice}>{error}</p>}
   </section>
 }
